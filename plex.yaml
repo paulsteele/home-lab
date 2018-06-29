@@ -1,0 +1,81 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: plex
+spec:
+  rules:
+    - host: media.paul-steele.com
+      http:
+        paths:
+          - backend:
+              serviceName: plex
+              servicePort: 32400
+            path: /
+  tls:
+    - secretName: paul-steele.com
+      hosts:
+        - media.paul-steele.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex
+spec:
+  selector:
+    app: plex
+  ports:
+    - protocol: TCP
+      port: 32400
+      targetPort: 32400
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plex
+  labels:
+    app: plex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plex
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+            #on first time server setup this had to be true???
+            #hostNetwork: true
+      containers:
+        - name: plex
+          image: plexinc/pms-docker
+          ports:
+            - containerPort: 32400
+          env:
+            - name: PGID
+              value: '1000'
+            - name: PUID
+              value: '1000'
+            - name: ADVERTISE_IP
+              value: 'https://media.paul-steele.com'
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: plex
+                  key: PLEX_CLAIM
+          volumeMounts:
+            - name: config
+              mountPath: "/config"
+            - name: media
+              mountPath: "/media"
+      volumes:
+        - name: config
+          hostPath:
+            type: DirectoryOrCreate
+            path: /home/paul/plex/volumes/plex-config
+        - name: media
+          hostPath:
+            type: Directory
+            path: /home/paul/plex/volumes/media

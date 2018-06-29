@@ -1,0 +1,73 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: wordpress
+spec:
+  rules:
+    - host: blog.paul-steele.com
+      http:
+        paths:
+          - backend:
+              serviceName: wordpress
+              servicePort: 80
+            path: /
+  tls:
+    - secretName: paul-steele.com
+      hosts:
+        - blog.paul-steele.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+spec:
+  selector:
+    app: wordpress
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template: 
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress:latest
+          ports: 
+            - containerPort: 80
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: database-mysql:3306
+            - name: WORDPRESS_DB_USER
+              value: eos
+            - name: WORDPRESS_DB_NAME
+              value: wordpress
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-mysql
+                  key: mysql-password
+          volumeMounts:
+            - name: config
+              mountPath: "/var/www/html/wp-content"
+      volumes:
+        - name: config
+          hostPath:
+            type: Directory
+            path: /home/paul/wordpress/volumes/wp-content

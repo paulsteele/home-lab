@@ -1,0 +1,86 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: homeassistant
+spec:
+  rules:
+    - host: home.paul-steele.com
+      http:
+        paths:
+          - backend:
+              serviceName: homeassistant
+              servicePort: 80
+            path: /
+  tls:
+    - secretName: paul-steele.com
+      hosts:
+        - home.paul-steele.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: homeassistant
+spec:
+  selector:
+    app: homeassistant
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8123
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homeassistant
+  labels:
+    app: homeassistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homeassistant
+  template: 
+    metadata:
+      labels:
+        app: homeassistant
+    spec:
+      containers:
+        - name: homeassistant
+          image: homeassistant/home-assistant
+          ports: 
+            - containerPort: 8123
+            - containerPort: 8300
+          volumeMounts:
+            - name: config
+              mountPath: "/config"
+            - name: zwave-stick
+              mountPath: "/dev/ttyACM0"
+          securityContext:
+            privileged: true
+        - name: zrc-90-listener
+          image: registry.paul-steele.com/zrc-90:latest
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: homeassistant
+                  key: APP_KEY
+            - name: API_URI
+              value: http://localhost:8123/api/events/custom_scene
+            - name: MASTER_NODE
+              value: Node009
+          volumeMounts:
+           - name: config
+             mountPath: "/home/hass/hass"
+      imagePullSecrets:
+        - name: registry.paul-steele.com
+      volumes:
+        - name: config
+          hostPath:
+            type: Directory
+            path: /home/paul/homeassistant/volumes/homeassistant
+        - name: zwave-stick
+          hostPath:
+            path: /dev/ttyACM0
