@@ -1,4 +1,4 @@
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --feature-gates=CoreDNS=false
 #sysctl net.bridge.bridge-nf-call-iptables=1
 #kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
 rm $HOME/.kube/config

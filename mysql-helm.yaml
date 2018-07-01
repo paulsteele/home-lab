@@ -15,7 +15,7 @@ mysqlUser: eos
 
 ## Allow unauthenticated access, uncomment to enable
 ##
-# mysqlAllowEmptyPassword: true
+#mysqlAllowEmptyPassword: true
 
 ## Create a database
 ##
@@ -73,7 +73,6 @@ configurationFiles:
   mysql.cnf: |-
     [mysqld]
     skip-name-resolve
-
 
 ## Configure the service
 ## ref: http://kubernetes.io/docs/user-guide/services/
