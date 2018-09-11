@@ -1,0 +1,1 @@
+kubectl create configmap mirror --from-file=config.js=mirror.config.js
