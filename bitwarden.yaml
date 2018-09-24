@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: passwords
+spec:
+  rules:
+    - host: passwords.paul-steele.com
+      http:
+        paths:
+          - backend:
+              serviceName: passwords
+              servicePort: 80
+            path: /
+  tls:
+    - secretName: paul-steele.com
+      hosts:
+        - passwords.paul-steele.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: passwords
+spec:
+  selector:
+    app: passwords
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passwords
+  labels:
+    app: passwords
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: passwords
+  template:
+    metadata:
+      labels:
+        app: passwords
+    spec:
+      containers:
+        - name: passwords
+          image: mprasil/bitwarden:latest
+          ports:
+            - containerPort: 80
+          env:
+          volumeMounts:
+            - name: data
+              mountPath: "/data"
+      volumes:
+        - name: data
+          hostPath:
+            type: Directory
+            path: /home/paul/bitwarden-rs/data
+            
