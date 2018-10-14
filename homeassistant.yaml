@@ -56,8 +56,13 @@ spec:
             - name: config
               mountPath: "/config"
             - name: zwave-stick
-              mountPath: "/dev/ttyACM0"
+              mountPath: "/dev/ttyUSB0"
+            - name: zha-stick
+              mountPath: "/dev/ttyUSB1"
+
           securityContext:
+            capabilities:
+              #add: ["SYS_RAWIO", "SYS_ADMIN", "SYS_TTY_CONFIG", "FOWNER"]
             privileged: true
         - name: zrc-90-listener
           image: registry.paul-steele.com/zrc-90:latest
@@ -83,4 +88,9 @@ spec:
             path: /home/paul/homeassistant/volumes/homeassistant
         - name: zwave-stick
           hostPath:
-            path: /dev/ttyACM0
+            type: File
+            path: /dev/ttyUSB0
+        - name: zha-stick
+          hostPath:
+            type: CharDevice
+            path: /dev/ttyUSB1
