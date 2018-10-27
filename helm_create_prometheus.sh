@@ -1,1 +1,1 @@
-helm install stable/prometheus -n prometheus --namespace prometheus -f prometheus-helm.yaml
+helm install stable/prometheus-operator -n metrics --namespace metrics -f prometheus-helm.yaml
