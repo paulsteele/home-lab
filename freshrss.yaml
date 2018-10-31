@@ -55,10 +55,10 @@ spec:
             - name: CRON_MIN
               value: '5,35'
           volumeMounts:
-            - name: data
-              mountPath: "/var/www/FreshRSS/data"
+            - name: config
+              mountPath: "/config"
       volumes:
-        - name: data
+        - name: config
           hostPath:
             type: Directory
-            path: /home/paul/freshrss/data
+            path: /home/paul/freshrss/config
