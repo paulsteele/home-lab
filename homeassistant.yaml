@@ -30,6 +30,9 @@ spec:
       port: 80
       targetPort: 8123
 ---
+# requires ser2net to be installed on host device, with the following values in /etc/ser2net.conf
+#3333:raw:0:/dev/ttyUSB0:115200 8DATABITS NONE 1STOPBIT
+#3334:raw:0:/dev/ttyUSB1:57600 8DATABITS NONE 1STOPBIT
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -49,8 +52,6 @@ data:
           start
           ;;
         status)
-          # code to check status of app comes here 
-          # example: status program_name
           ;;
         *)
           echo "Usage: $0 {start|stop|status|restart}"
@@ -71,8 +72,6 @@ data:
           start
           ;;
         status)
-          # code to check status of app comes here 
-          # example: status program_name
           ;;
         *)
           echo "Usage: $0 {start|stop|status|restart}"
@@ -103,7 +102,7 @@ spec:
             - containerPort: 8123
             - containerPort: 8300
           command: ["sh"]
-          args: ["-c", "apt-get update && apt-get install socat && service zwave start && python -m homeassistant --config /config"]
+          args: ["-c", "apt-get update && apt-get install socat && service zwave start && service zha start && python -m homeassistant --config /config"]
           volumeMounts:
             - name: config
               mountPath: "/config"
