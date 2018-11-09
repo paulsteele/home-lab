@@ -4,6 +4,7 @@ metadata:
   name: mysqldump
 spec:
   schedule: "0 1 * * 4"
+  successfulJobsHistoryLimit: 0
   jobTemplate:
     spec:
       template:
