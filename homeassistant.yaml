@@ -30,6 +30,56 @@ spec:
       port: 80
       targetPort: 8123
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homeassistant-systemd-services
+data:
+  zwave: |
+    #!/bin/bash
+    case "$1" in 
+        start)
+          socat pty,link=/dev/ttyUSB0,raw,user=0,group=0,mode=777 tcp:192.168.0.110:3333 &
+          ;;
+        stop)
+          stop
+          ;;
+        restart)
+          stop
+          start
+          ;;
+        status)
+          # code to check status of app comes here 
+          # example: status program_name
+          ;;
+        *)
+          echo "Usage: $0 {start|stop|status|restart}"
+    esac
+
+    exit 0 
+  zha: |
+    #!/bin/bash
+    case "$1" in 
+        start)
+          socat pty,link=/dev/ttyUSB1,raw,user=0,group=0,mode=777 tcp:192.168.0.110:3334 &
+          ;;
+        stop)
+          stop
+          ;;
+        restart)
+          stop
+          start
+          ;;
+        status)
+          # code to check status of app comes here 
+          # example: status program_name
+          ;;
+        *)
+          echo "Usage: $0 {start|stop|status|restart}"
+    esac
+
+    exit 0 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,18 +102,17 @@ spec:
           ports: 
             - containerPort: 8123
             - containerPort: 8300
+          command: ["sh"]
+          args: ["-c", "apt-get update && apt-get install socat && service zwave start && python -m homeassistant --config /config"]
           volumeMounts:
             - name: config
               mountPath: "/config"
-            - name: zwave-stick
-              mountPath: "/dev/ttyUSB0"
-            - name: zha-stick
-              mountPath: "/dev/ttyUSB1"
-
-          securityContext:
-            capabilities:
-              #add: ["SYS_RAWIO", "SYS_ADMIN", "SYS_TTY_CONFIG", "FOWNER"]
-            privileged: true
+            - name: zwave-config
+              mountPath: /etc/init.d/zwave
+              subPath: zwave
+            - name: zha-config
+              mountPath: /etc/init.d/zha
+              subPath: zha
         - name: zrc-90-listener
           image: registry.paul-steele.com/zrc-90:latest
           env:
@@ -77,8 +126,8 @@ spec:
             - name: MASTER_NODE
               value: Node009
           volumeMounts:
-           - name: config
-             mountPath: "/home/hass/hass"
+            - name: config
+              mountPath: "/home/hass/hass"
       imagePullSecrets:
         - name: registry.paul-steele.com
       volumes:
@@ -86,11 +135,17 @@ spec:
           hostPath:
             type: Directory
             path: /home/paul/homeassistant/volumes/homeassistant
-        - name: zwave-stick
-          hostPath:
-            type: File
-            path: /dev/ttyUSB0
-        - name: zha-stick
-          hostPath:
-            type: CharDevice
-            path: /dev/ttyUSB1
+        - name: zwave-config
+          configMap:
+            name: homeassistant-systemd-services
+            defaultMode: 0755
+            items: 
+              - key: zwave
+                path: zwave
+        - name: zha-config
+          configMap:
+            defaultMode: 0755
+            name: homeassistant-systemd-services
+            items: 
+              - key: zha
+                path: zha
