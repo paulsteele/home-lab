@@ -5,4 +5,4 @@ HTPASSWD="paulsteele:$PASS"
 
 echo $HTPASSWD
 
-kubectl create secret generic radicale-secret --from-literal=httpasswd=$HTPASSWD
+kubectl create secret generic radicale-secret --from-literal=auth=$HTPASSWD

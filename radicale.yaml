@@ -3,6 +3,12 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "radicale-secret"
+    nginx.ingress.kubernetes.io/auth-realm: "realm string"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header     X-Remote-User $remote_user;
+
   name: radicale
 spec:
   rules:
@@ -81,10 +87,10 @@ data:
 
     # Authentication method
     # Value: none | htpasswd | remote_user | http_x_remote_user
-    type = htpasswd
+    type = http_x_remote_user
 
     # Htpasswd filename
-    htpasswd_filename = /radicale-secret/httpasswd
+    htpasswd_filename = /radicale-secret/auth
 
     # Htpasswd encryption method
     # Value: plain | sha1 | ssha | crypt | bcrypt | md5
@@ -137,7 +143,7 @@ data:
     # Threshold for the logger
     # Value: debug | info | warning | error | critical
     #level = info
-    debug = false
+    debug = true
 
     # Don't include passwords in logs
     mask_passwords = True
