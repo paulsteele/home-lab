@@ -31,8 +31,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-body-size: 0
   tls:
     # Secrets must be manually created in the namespace.
-    - secretName: paul-steele.com
-      hosts:
+    - hosts:
         - registry.paul-steele.com
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

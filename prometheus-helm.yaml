@@ -286,8 +286,7 @@ grafana:
     ## Secret must be manually created in the namespace
     ##
     tls: 
-      - secretName: paul-steele.com
-        hosts:
+      - hosts:
          - metrics.paul-steele.com
 
   sidecar:

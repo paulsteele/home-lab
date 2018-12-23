@@ -104,8 +104,7 @@ Master:
       kubernetes.io/tls-acme: "true"
 
     TLS:
-      - secretName: paul-steele.com
-        hosts:
+      - hosts:
           - jenkins.paul-steele.com
 
 Agent:

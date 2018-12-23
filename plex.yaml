@@ -14,8 +14,7 @@ spec:
               servicePort: 32400
             path: /
   tls:
-    - secretName: paul-steele.com
-      hosts:
+    - hosts:
         - media.paul-steele.com
 ---
 apiVersion: v1
