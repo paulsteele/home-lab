@@ -47,8 +47,15 @@ def getActionableFiles(path: str) -> List[str]:
 
 def main(argv: List[str]) -> None:
   paths = getPaths(argv)
+
+  didError = False
+
   for path in paths:
-    handleService(path)
+    if not handleService(path):
+      didError = True
+
+  if didError:
+    sys.exit(1)
 
 def getPaths(argv: List[str]) -> List[str]:
   if len(argv) < 2:
