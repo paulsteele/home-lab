@@ -53,6 +53,8 @@ spec:
           env:
             - name: TZ
               value: America/Indiana/Indianapolis
+            - name: LANG
+              value: en_US.UTF-8
           volumeMounts:
             - name: config
               mountPath: "/subsonic"
@@ -60,6 +62,8 @@ spec:
               mountPath: "/music"
             - name: data
               mountPath: "/data"
+            - name: video
+              mountPath: "/video"
       volumes:
         - name: config
           hostPath:
@@ -73,3 +77,7 @@ spec:
           hostPath:
             type: Directory
             path: /home/paul/plex/volumes/media/music/Music
+        - name: video
+          hostPath:
+            type: Directory
+            path: /home/paul/plex/volumes/media/video

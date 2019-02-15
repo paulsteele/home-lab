@@ -4,6 +4,6 @@ let homeassistant  = {
   domain = "paul-steele.com"
 } : ../dhall/k8s/ingress/input.dhall
 
-let create = ../dhall/k8s/ingress/create.dhall
+let createIngress = ../dhall/k8s/ingress/create.dhall
 
-in create homeassistant
+in createIngress homeassistant
