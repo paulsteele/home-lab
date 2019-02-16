@@ -1,14 +1,14 @@
-\(service : ./input.dhall) ->
+\(values: ../common.dhall //\\ ./input.dhall) ->
 
 {
   apiVersion = "v1",
   kind = "Service",
   metadata = {
-    name = "${service.name}"
+    name = "${values.name}"
   },
   spec = {
     selector = {
-      app = "${service.name}"
+      app = "${values.name}"
     },
     ports = [
       {

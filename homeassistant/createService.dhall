@@ -1,7 +1,7 @@
-let homeassistant  = {
-  name = "homeassistant"
-} : ../dhall/k8s/service/input.dhall
+let values = ./values.dhall
 
 let createService = ../dhall/k8s/service/create.dhall
 
-in createService homeassistant
+let input = values.common /\ values.service
+
+in createService input

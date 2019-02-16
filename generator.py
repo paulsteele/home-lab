@@ -15,9 +15,10 @@ def handleService(path : str) -> bool:
   
   print("Generating configs for {}...\n".format(path))
   for item in items:
-    print("Processing {}/{}".format(path, item))
+    
     result = subprocess.run(["dhall-to-yaml"], capture_output=True, text=True , input="[ ./{}/{} ]".format(path, item))
     if result.returncode != 0:
+      print("{}/{} ✗".format(path, item))
       print(result.stderr, file=sys.stderr)
       return False
     outputFileName = convertFileName(item)
@@ -27,6 +28,8 @@ def handleService(path : str) -> bool:
 
     with open("{}/output/{}".format(path, outputFileName), 'w') as outputFile:
       outputFile.write(result.stdout)
+    
+    print("{}/{} ✓".format(path, item))
   
   print("")
   return True

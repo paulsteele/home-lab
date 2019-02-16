@@ -1,12 +1,12 @@
-\(ingress : ./input.dhall) ->
+\(values: ../common.dhall //\\ ./input.dhall) ->
 
-let keyValue = ../annotation/keyValue.dhall
+let keyValue = ../annotation/create.dhall
 
 in {
   apiVersion = "extensions/v1beta1",
   kind = "Ingress",
   metadata = {
-    name = "${ingress.name}",
+    name = "${values.name}",
     annotation = [
       keyValue "kubernetes.io/ingress.class" "nginx"
     ]
@@ -14,12 +14,12 @@ in {
   spec = {
     rules = [ 
       {
-        host = "${ingress.hostName}.${ingress.domain}",
+        host = "${values.hostName}.${values.domain}",
         http = {
           paths = [
             {
               backend = {
-                serviceName = "${ingress.name}",
+                serviceName = "${values.name}",
                 servicePort = "80"
               },
               path = "/"
