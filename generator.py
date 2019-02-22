@@ -16,7 +16,7 @@ def handleService(path : str) -> bool:
   print("Generating configs for {}...\n".format(path))
   for item in items:
     
-    result = subprocess.run(["dhall-to-yaml"], capture_output=True, text=True , input="[ ./{}/{} ]".format(path, item))
+    result = subprocess.run(["dhall-to-yaml", "--omitNull"], capture_output=True, text=True , input="[ ./{}/{} ]".format(path, item))
     if result.returncode != 0:
       print("{}/{} ✗".format(path, item))
       print(result.stderr, file=sys.stderr)

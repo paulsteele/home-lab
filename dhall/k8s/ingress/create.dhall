@@ -1,6 +1,6 @@
 \(values: ../common.dhall //\\ ./input.dhall) ->
 
-let keyValue = ../annotation/create.dhall
+let keyValue = ../../dynamic/create.dhall
 
 in {
   apiVersion = "extensions/v1beta1",
@@ -29,5 +29,4 @@ in {
       }
     ]
   }
-
 }

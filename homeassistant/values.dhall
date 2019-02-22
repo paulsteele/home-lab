@@ -6,5 +6,17 @@
     hostName = "home",
     domain = "paul-steele.com"
   },
-  service = {=}
+  service = {=},
+  configMap = {
+    data = [
+      {
+        mapKey = "zwave",
+        mapValue = ./resources/zwave.sh as Text
+      },
+      {
+        mapKey = "zha",
+        mapValue = ./resources/zha.sh as Text
+      }
+    ]
+  }
 }
