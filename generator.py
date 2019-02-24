@@ -1,10 +1,14 @@
 #! /usr/bin/env python3
-import sys, getopt, os, subprocess
+import sys, getopt, os, subprocess, git
 from typing import List
 
 ACTIONABLE_PREFIX = "create"
 INPUT_FILE_TYPE = "dhall"
 OUTPUT_FILE_TYPE = "yaml"
+DEPENDENCIES = {
+  'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
+  'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
+}
 
 def handleService(path : str) -> bool:
   items = getActionableFiles(path)
@@ -49,16 +53,37 @@ def getActionableFiles(path: str) -> List[str]:
   return items
 
 def main(argv: List[str]) -> None:
-  paths = getPaths(argv)
+  if (shouldInit(argv)):
+    init()
+  else :
+    paths = getPaths(argv)
 
-  didError = False
+    didError = False
 
-  for path in paths:
-    if not handleService(path):
-      didError = True
+    for path in paths:
+      if not handleService(path):
+        didError = True
 
-  if didError:
-    sys.exit(1)
+    if didError:
+      sys.exit(1)
+
+def shouldInit(argv: List[str]) -> bool:
+  return "--init" in argv
+
+def init():
+  for key, value in DEPENDENCIES.items():
+    path = "dhall/dependencies"
+    if not os.path.exists(path):
+      os.makedirs((path))
+    repo = git.cmd.Git(path)
+    try:
+      print("Checking {}".format(key))
+      repo.clone(value)
+      print("Cloned {}".format(key))
+    except git.exc.GitCommandError:
+      repo.pull()
+      print("Pulled {}".format(key))
+  print("Dependencies pulled...")
 
 def getPaths(argv: List[str]) -> List[str]:
   if len(argv) < 2:

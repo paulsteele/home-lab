@@ -3,3 +3,4 @@ htpasswd
 **/output/**
 .mypy_cache
 .vscode
+dhall/dependencies**

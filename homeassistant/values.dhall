@@ -1,6 +1,8 @@
-{
+let mainName = "homeassistant"
+
+in {
   common = {
-    name = "homeassistant"
+    name = mainName
   },
   ingress = {
     hostName = "home",
@@ -16,6 +18,22 @@
       {
         mapKey = "zha",
         mapValue = ./resources/zha.sh as Text
+      }
+    ]
+  },
+  deployment = {
+    containers = [
+      {
+        name = mainName,
+        image = "homeassistant/home-assistant",
+        ports = [
+          {
+            containerPort = 8123
+          },
+          {
+            containerPort = 8300
+          }
+        ]
       }
     ]
   }
