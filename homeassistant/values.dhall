@@ -21,20 +21,5 @@ in {
       }
     ]
   },
-  deployment = {
-    containers = [
-      {
-        name = mainName,
-        image = "homeassistant/home-assistant",
-        ports = [
-          {
-            containerPort = 8123
-          },
-          {
-            containerPort = 8300
-          }
-        ]
-      }
-    ]
-  }
+  deployment = {=}
 }
