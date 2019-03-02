@@ -1,11 +1,35 @@
-let defaultDeployment        = ../dhall/k8s/deployment/default.dhall
-let defaultContainer         = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort     = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar            = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
-let defaultEnvVarSource      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVarSource.dhall
-let defaultSecretKeySelector = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.SecretKeySelector.dhall
+let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultEnvVarSource       = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVarSource.dhall
+let defaultSecretKeySelector  = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.SecretKeySelector.dhall
+
+let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createConfigVolumeMapping = ../dhall/k8s/configVolumeMapping/create.dhall
 
 let mainName = "homeassistant"
+
+let configVolumeMapping = createHostVolumeMapping {
+  name = "config",
+  mountPath = "/config",
+  type = "Directory",
+  sourcePath = "/home/paul/homeassistant/volumes/homeassistant"
+}
+
+let zwaveVolumeMapping = createConfigVolumeMapping {
+  name = "zwave-config",
+  mountPath = "/etc/init.d/zwave",
+  defaultMode = 0755,
+  item = "zwave"
+}
+
+let zhaVolumeMapping = createConfigVolumeMapping {
+  name = "zha-config",
+  mountPath = "/etc/init.d/zha",
+  defaultMode = 0775,
+  item = "zha"
+}
 
 in {
   common = {
@@ -19,11 +43,11 @@ in {
   configMap = {
     data = [
       {
-        mapKey = "zwave",
+        mapKey = zwaveVolumeMapping.volumeMount.name,
         mapValue = ./resources/zwave.sh as Text
       },
       {
-        mapKey = "zha",
+        mapKey = zhaVolumeMapping.volumeMount.name,
         mapValue = ./resources/zha.sh as Text
       }
     ]
@@ -42,6 +66,11 @@ in {
         args = Some [
           "-c",
           "apt-get update && apt-get install socat && service zwave start && service zha start && python -m homeassistant --config /config"
+        ],
+        volumeMounts = Some [
+          configVolumeMapping.volumeMount,
+          zwaveVolumeMapping.volumeMount,
+          zhaVolumeMapping.volumeMount
         ]
       },
       defaultContainer {
@@ -72,6 +101,11 @@ in {
           }
         ]
       }
+    ],
+    volumes = [
+      configVolumeMapping.volume,
+      zwaveVolumeMapping.volume,
+      zhaVolumeMapping.volume
     ]
   }
 }
