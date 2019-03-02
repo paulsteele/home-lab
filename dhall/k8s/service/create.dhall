@@ -23,10 +23,10 @@ in defaultService {
     ],
     ports = Some [
       defaultServicePort {
-        port = 80
+        port = values.ingressPort
       } // {
         protocol = Some "TCP",
-        targetPort = Some (IntOrString.Int 8123)
+        targetPort = Some (IntOrString.Int values.targetPort)
       }
     ]
   })

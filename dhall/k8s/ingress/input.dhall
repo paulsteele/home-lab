@@ -1,4 +1,5 @@
 {
   hostName: Text,
-  domain: Text
+  domain: Text,
+  ingressPort: Natural
 }

@@ -1,1 +1,4 @@
-{}
+{
+  ingressPort: Natural,
+  targetPort: Natural
+}

@@ -31,15 +31,22 @@ let zhaVolumeMapping = createConfigVolumeMapping {
   item = "zha"
 }
 
+let ingressPort = 80
+let targetPort = 8123
+
 in {
   common = {
     name = mainName
   },
   ingress = {
     hostName = "home",
-    domain = "paul-steele.com"
+    domain = "paul-steele.com",
+    ingressPort = ingressPort
   },
-  service = {=},
+  service = {
+    ingressPort = ingressPort,
+    targetPort = targetPort
+  },
   configMap = {
     data = [
       {
@@ -59,7 +66,7 @@ in {
       } // {
         image = Some "homeassistant/homeassistant",
         ports = Some [
-          defaultContainerPort {containerPort = 8123},
+          defaultContainerPort {containerPort = targetPort},
           defaultContainerPort {containerPort = 8300}
         ],
         command = Some ["sh" ],
