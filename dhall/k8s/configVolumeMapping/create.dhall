@@ -12,12 +12,14 @@ in {
   volumeMount = (defaultVolumeMount {
     name = values.name,
     mountPath = values.mountPath
+  } // {
+    subPath = Some values.item
   }) : VolumeMount,
   volume = (defaultVolume {
     name = values.name
   } // {
     configMap = Some (defaultConfigMapVolumeSource // {
-      name = Some values.name,
+      name = Some values.configName,
       defaultMode = Some values.defaultMode,
       items = Some [
         defaultKeyToPath {

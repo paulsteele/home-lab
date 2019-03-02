@@ -19,6 +19,7 @@ let configVolumeMapping = createHostVolumeMapping {
 
 let zwaveVolumeMapping = createConfigVolumeMapping {
   name = "zwave-config",
+  configName = mainName,
   mountPath = "/etc/init.d/zwave",
   defaultMode = 0755,
   item = "zwave"
@@ -26,6 +27,7 @@ let zwaveVolumeMapping = createConfigVolumeMapping {
 
 let zhaVolumeMapping = createConfigVolumeMapping {
   name = "zha-config",
+  configName = mainName,
   mountPath = "/etc/init.d/zha",
   defaultMode = 0775,
   item = "zha"

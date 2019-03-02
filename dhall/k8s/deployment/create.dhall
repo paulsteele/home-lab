@@ -37,7 +37,12 @@ in defaultDeployment {
       spec = Some (defaultPodSpec {
         containers = values.containers
       } // {
-        volumes = Some values.volumes
+        volumes = Some values.volumes,
+        imagePullSecrets = Some [
+          {
+            name = Some "registry.paul-steele.com"
+          }
+        ]
       })
     }
   } // {
