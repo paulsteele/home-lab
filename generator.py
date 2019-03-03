@@ -2,16 +2,27 @@
 import sys, getopt, os, subprocess, git
 from typing import List
 
-ACTIONABLE_PREFIX = "create"
-INPUT_FILE_TYPE = "dhall"
 OUTPUT_FILE_TYPE = "yaml"
+INPUT_FILE = "values.dhall"
+DHALL_COMMENT = '--'
+
+RESOURCE_CREATION = """
+let values = {}
+
+let createResource = ./dhall/k8s/{}/create.dhall
+
+let input = values.common /\ values.{}
+
+in createResource input
+"""
+
 DEPENDENCIES = {
   'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
   'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
 }
 
 def handleService(path : str) -> bool:
-  items = getActionableFiles(path)
+  items = getActionableResources(path)
 
   if len(items) < 1:
     print("{} has no actionable files. Skipping...".format(path))
@@ -20,12 +31,12 @@ def handleService(path : str) -> bool:
   print("Generating configs for {}...\n".format(path))
   for item in items:
     
-    result = subprocess.run(["dhall-to-yaml", "--omitNull", "--documents"], capture_output=True, text=True , input="[ ./{}/{} ]".format(path, item))
+    result = subprocess.run(["dhall-to-yaml", "--omitNull"], capture_output=True, text=True , input=RESOURCE_CREATION.format(f"./{path}/{INPUT_FILE}", item, item))
     if result.returncode != 0:
       print("{}/{} ✗".format(path, item))
       print(result.stderr, file=sys.stderr)
       return False
-    outputFileName = convertFileName(item)
+    outputFileName = f"{item}.{OUTPUT_FILE_TYPE}"
 
     if not os.path.exists("{}/output".format(path)):
       os.makedirs("{}/output".format(path))
@@ -37,18 +48,22 @@ def handleService(path : str) -> bool:
   
   print("")
   return True
-  
-def convertFileName(dhallFile: str) -> str:
-  return dhallFile.replace(ACTIONABLE_PREFIX, "").replace(INPUT_FILE_TYPE, OUTPUT_FILE_TYPE).lower()
 
-def getActionableFiles(path: str) -> List[str]:
+def getActionableResources(path: str) -> List[str]:
   items: List[str] = []
 
-  if os.path.isdir(path):
-    for (dirpath, dirnames, filenames) in os.walk(path):
-      for filename in filenames:
-        if ACTIONABLE_PREFIX in filename:
-          items.append(filename)
+  try:
+    with open(f"{path}/{INPUT_FILE}") as file:
+      line = file.readline()
+  except FileNotFoundError:
+    print(f"Could not find {INPUT_FILE} in {path}")
+
+  if line.startswith(DHALL_COMMENT):
+    line = line[len(DHALL_COMMENT):len(line)]
+    items = line.split(",")
+    items = list(filter(None, map(lambda resource: resource.strip(), items)))
+  else:
+    print(f"WARNING: No resource list comment found at top of {path}/{INPUT_FILE}")
 
   return items
 
