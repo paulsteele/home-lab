@@ -23,7 +23,7 @@ in {
       defaultMode = Some values.defaultMode,
       items = Some [
         defaultKeyToPath {
-          key = values.item,
+          key = values.name,
           path = values.item
         }
       ]

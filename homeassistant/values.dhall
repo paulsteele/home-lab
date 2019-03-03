@@ -66,7 +66,7 @@ in {
       defaultContainer {
         name = mainName
       } // {
-        image = Some "homeassistant/homeassistant",
+        image = Some "homeassistant/home-assistant",
         ports = Some [
           defaultContainerPort {containerPort = targetPort},
           defaultContainerPort {containerPort = 8300}
@@ -107,6 +107,11 @@ in {
             name = "MASTER_NODE"
           } // {
             value = Some "Node009"
+          }
+        ],
+        volumeMounts = Some [
+          configVolumeMapping.volumeMount // {
+            mountPath = "/home/hass/hass"
           }
         ]
       }
