@@ -3,10 +3,9 @@ let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
 let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
-let defaultEnvVarSource       = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVarSource.dhall
-let defaultSecretKeySelector  = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.SecretKeySelector.dhall
 
 let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createSecretEnvMapping    = ../dhall/k8s/secretEnvMapping/create.dhall
 let createConfigVolumeMapping = ../dhall/k8s/configVolumeMapping/create.dhall
 
 let mainName = "homeassistant"
@@ -88,17 +87,12 @@ in {
       } // {
         image = Some "registry.paul-steele.com/zrc-90:latest",
         env = Some [
-          defaultEnvVar {
-            name = "API_KEY"
-          } // {
-            valueFrom = Some (defaultEnvVarSource // {
-              secretKeyRef = Some (defaultSecretKeySelector {
-                key = "APP_KEY"
-              } // {
-                name = Some "homeassistant"
-              })
-            })
-          },
+          createSecretEnvMapping {
+            targetKey = "API_KEY",
+            sourceKey = "APP_KEY",
+            sourceSecret = mainName
+          }
+          ,
           defaultEnvVar {
             name = "API_URI"
           } // {
