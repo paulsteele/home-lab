@@ -1,0 +1,4 @@
+{
+  nodePort: Natural,
+  port: Natural
+}
