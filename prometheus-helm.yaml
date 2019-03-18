@@ -336,17 +336,17 @@ kubeControllerManager:
 ## Component scraping coreDns. Use either this or kubeDns
 ##
 coreDns:
-  enabled: false
+  enabled: true
   service:
     port: 9153
     targetPort: 9153
     selector:
-      k8s-app: coredns
+      k8s-app: kube-dns
 
 ## Component scraping kubeDns. Use either this or coreDns
 ##
 kubeDns:
-  enabled: true
+  enabled: false
   service:
     selector:
       k8s-app: kube-dns
