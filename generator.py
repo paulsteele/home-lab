@@ -7,13 +7,13 @@ Dhall Code Generator
 import sys
 import os
 import subprocess
-from typing import List
+import json
+from typing import List, Type
 
 import git
 
 OUTPUT_FILE_TYPE = "yaml"
-INPUT_FILE = "values.dhall"
-DHALL_COMMENT = '--'
+PACKAGE_FILE_NAME = "package.json"
 
 RESOURCE_CREATION = r"""
 let values = {}
@@ -30,58 +30,78 @@ DEPENDENCIES = {
     'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
 }
 
-def handle_service(path: str) -> bool:
-  '''Takes a path to a directory that contains dhall configurations and generates yaml from them'''
-  items = get_actionable_resources(path)
+class Service:
+  dhall = None
+  helm = None
+  path = None
 
-  if not items:
-    print("{} has no actionable files. Skipping...".format(path))
-    return False
+  def __init__(self, path):
+    try:
+      with open(f"{path}/{PACKAGE_FILE_NAME}") as json_data:
+        package = json.load(json_data)
+    except FileNotFoundError:
+      print(f"Could not find {PACKAGE_FILE_NAME} in {path}")
+      return
 
-  print("Generating configs for {}...\n".format(path))
-  for item in items:
-    result = subprocess.run(
-      ["dhall-to-yaml", "--omitNull"],
-      capture_output=True,
-      text=True,
-      input=RESOURCE_CREATION.format(f"./{path}/{INPUT_FILE}", item, item)
-    )
+    self.path = path
 
-    if result.returncode != 0:
-      print("{}/{} ✗".format(path, item))
-      print(result.stderr, file=sys.stderr)
-      return False
-    output_file_name = f"{item}.{OUTPUT_FILE_TYPE}"
+    if 'dhall' in package:
+      self.dhall = package['dhall']
+    if 'helm' in package:
+      self.helm = package['helm']
 
-    if not os.path.exists("{}/output".format(path)):
-      os.makedirs("{}/output".format(path))
+  def _generate_dhall(self) -> bool:
+    print("Dhall Resources:")
 
-    with open("{}/output/{}".format(path, output_file_name), 'w') as output_file:
-      output_file.write(result.stdout)
+    status = True
 
-    print("{}/{} ✓".format(path, item))
+    if 'resources' not in self.dhall or not self.dhall['resources']:
+      print(f"WARNING: no resources specified for {self.path}")
+      return True
 
-  print("")
-  return True
+    for resource in self.dhall['resources']:
+      result = subprocess.run(
+        ["dhall-to-yaml", "--omitNull"],
+        capture_output=True,
+        text=True,
+        input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource, resource)
+      )
 
-def get_actionable_resources(path: str) -> List[str]:
-  '''takes a path and gets a list of resources that can be generated'''
-  items: List[str] = []
+      if result.returncode != 0:
+        print(f"{resource} ✗")
+        print(result.stderr, file=sys.stderr)
+        status = False
+        continue
 
-  try:
-    with open(f"{path}/{INPUT_FILE}") as file:
-      line = file.readline()
-  except FileNotFoundError:
-    print(f"Could not find {INPUT_FILE} in {path}")
+      output_file_name = f"{resource}.{OUTPUT_FILE_TYPE}"
 
-  if line.startswith(DHALL_COMMENT):
-    line = line[len(DHALL_COMMENT):len(line)]
-    items = line.split(",")
-    items = list(filter(None, map(lambda resource: resource.strip(), items)))
-  else:
-    print(f"WARNING: No resource list comment found at top of {path}/{INPUT_FILE}")
+      if not os.path.exists(f"{self.path}/output"):
+        os.makedirs(f"{self.path}/output")
 
-  return items
+      with open(f"{self.path}/output/{output_file_name}", 'w') as output_file:
+        output_file.write(result.stdout)
+
+      print(f"{resource} ✓")
+
+    return status
+
+
+  def _generate_helm(self) -> bool:
+    print("Helm Resources:")
+    return True
+
+  def generate(self) -> bool:
+    '''Generates all resources defined in the service'''
+    status = True
+
+    print(f"Creating Resources for {self.path}:")
+
+    if self.dhall:
+      status = self._generate_dhall() and status
+    if self.helm:
+      status = self._generate_helm() and status
+
+    return status
 
 def should_init(argv: List[str]) -> bool:
   '''Determines whether initialization needs to occur'''
@@ -121,13 +141,14 @@ def main(argv: List[str]) -> None:
   else:
     paths = get_paths(argv)
 
-    did_error = False
+    status = True
 
     for path in paths:
-      if not handle_service(path):
-        did_error = True
+      service = Service(path)
 
-    if did_error:
+      status = service.generate() and status
+
+    if not status:
       sys.exit(1)
 
 if __name__ == "__main__":
