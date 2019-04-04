@@ -1,12 +1,21 @@
-#! /usr/bin/env python3
-import sys, getopt, os, subprocess, git
+#!/usr/bin/env python3
+
+"""
+Dhall Code Generator
+"""
+
+import sys
+import os
+import subprocess
 from typing import List
+
+import git
 
 OUTPUT_FILE_TYPE = "yaml"
 INPUT_FILE = "values.dhall"
 DHALL_COMMENT = '--'
 
-RESOURCE_CREATION = """
+RESOURCE_CREATION = r"""
 let values = {}
 
 let createResource = ./dhall/k8s/{}/create.dhall
@@ -17,39 +26,46 @@ in createResource input
 """
 
 DEPENDENCIES = {
-  'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
-  'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
+    'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
+    'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
 }
 
-def handleService(path : str) -> bool:
-  items = getActionableResources(path)
+def handle_service(path: str) -> bool:
+  '''Takes a path to a directory that contains dhall configurations and generates yaml from them'''
+  items = get_actionable_resources(path)
 
-  if len(items) < 1:
+  if not items:
     print("{} has no actionable files. Skipping...".format(path))
     return False
-  
+
   print("Generating configs for {}...\n".format(path))
   for item in items:
-    
-    result = subprocess.run(["dhall-to-yaml", "--omitNull"], capture_output=True, text=True , input=RESOURCE_CREATION.format(f"./{path}/{INPUT_FILE}", item, item))
+    result = subprocess.run(
+      ["dhall-to-yaml", "--omitNull"],
+      capture_output=True,
+      text=True,
+      input=RESOURCE_CREATION.format(f"./{path}/{INPUT_FILE}", item, item)
+    )
+
     if result.returncode != 0:
       print("{}/{} ✗".format(path, item))
       print(result.stderr, file=sys.stderr)
       return False
-    outputFileName = f"{item}.{OUTPUT_FILE_TYPE}"
+    output_file_name = f"{item}.{OUTPUT_FILE_TYPE}"
 
     if not os.path.exists("{}/output".format(path)):
       os.makedirs("{}/output".format(path))
 
-    with open("{}/output/{}".format(path, outputFileName), 'w') as outputFile:
-      outputFile.write(result.stdout)
-    
+    with open("{}/output/{}".format(path, output_file_name), 'w') as output_file:
+      output_file.write(result.stdout)
+
     print("{}/{} ✓".format(path, item))
-  
+
   print("")
   return True
 
-def getActionableResources(path: str) -> List[str]:
+def get_actionable_resources(path: str) -> List[str]:
+  '''takes a path and gets a list of resources that can be generated'''
   items: List[str] = []
 
   try:
@@ -67,46 +83,52 @@ def getActionableResources(path: str) -> List[str]:
 
   return items
 
-def main(argv: List[str]) -> None:
-  if (shouldInit(argv)):
-    init()
-  else :
-    paths = getPaths(argv)
-
-    didError = False
-
-    for path in paths:
-      if not handleService(path):
-        didError = True
-
-    if didError:
-      sys.exit(1)
-
-def shouldInit(argv: List[str]) -> bool:
+def should_init(argv: List[str]) -> bool:
+  '''Determines whether initialization needs to occur'''
   return "--init" in argv
 
 def init():
+  '''Initializes the generator, by pulling all needed dependencies'''
+
   for key, value in DEPENDENCIES.items():
     path = "dhall/dependencies"
     if not os.path.exists(path):
       os.makedirs((path))
-    repo = git.cmd.Git(path)
+    repository = git.cmd.Git(path)
     try:
       print("Checking {}".format(key))
-      repo.clone(value)
+      repository.clone(value)
       print("Cloned {}".format(key))
-    except git.exc.GitCommandError:
-      repo.pull()
+    except git.GitCommandError:
+      repository.pull()
       print("Pulled {}".format(key))
   print("Dependencies pulled...")
 
-def getPaths(argv: List[str]) -> List[str]:
+def get_paths(argv: List[str]) -> List[str]:
+  '''from a list of arguments, obtains which directories should be generated'''
+
   if len(argv) < 2:
     print("usage: ./generator.py [service]")
     sys.exit(1)
 
   argv.pop(0)
   return argv
+
+def main(argv: List[str]) -> None:
+  '''entrypoint of the program'''
+  if should_init(argv):
+    init()
+  else:
+    paths = get_paths(argv)
+
+    did_error = False
+
+    for path in paths:
+      if not handle_service(path):
+        did_error = True
+
+    if did_error:
+      sys.exit(1)
 
 if __name__ == "__main__":
   main(sys.argv)
