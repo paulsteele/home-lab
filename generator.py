@@ -86,7 +86,24 @@ class Service:
 
   def _generate_helm(self) -> bool:
     print("Helm Resources:")
-    return True
+
+    status = True
+
+    result = subprocess.run(
+      ["helm", "install", self.helm['source'], '-n', self.helm['name'], '-f', f"./{self.path}/{self.helm['values']}"],
+      capture_output=True,
+      text=True
+    )
+
+    if result.returncode != 0:
+      print(f"{self.helm['name']} ✗")
+      print(result.stderr, file=sys.stderr)
+      status = False
+    else:
+      print(f"{self.helm['name']} ✓")
+      print(result.stdout)
+
+    return status
 
   def generate(self) -> bool:
     '''Generates all resources defined in the service'''

@@ -1,0 +1,13 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "clusterIssuer"
+    ]
+  },
+  "helm": {
+    "name": "cert-manager",
+    "source": "stable/cert-manager",
+    "values": "helm.yaml"
+  }
+}
