@@ -1,4 +1,3 @@
---  nodeportService, deployment
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
 let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall

@@ -8,7 +8,7 @@ import sys
 import os
 import subprocess
 import json
-from typing import List, Type
+from typing import List
 
 import git
 
@@ -31,9 +31,9 @@ DEPENDENCIES = {
 }
 
 class Service:
-  dhall = None
-  helm = None
-  path = None
+  '''Representation of generatable resources'''
+
+  path: str
 
   def __init__(self, path):
     try:
@@ -45,10 +45,8 @@ class Service:
 
     self.path = path
 
-    if 'dhall' in package:
-      self.dhall = package['dhall']
-    if 'helm' in package:
-      self.helm = package['helm']
+    self.dhall = package['dhall'] if 'dhall' in package else None
+    self.helm = package['helm'] if 'helm' in package else None
 
   def _generate_dhall(self) -> bool:
     print("Dhall Resources:")
