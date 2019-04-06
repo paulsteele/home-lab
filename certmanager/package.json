@@ -1,9 +1,14 @@
 {
   "dhall": {
     "source": "values.dhall",
-    "resources": [
-      "clusterIssuer"
-    ]
+    "resources": {
+      "singles": [
+        "clusterIssuer"
+      ],
+      "multiples": [
+        "certificate"
+      ]
+    }
   },
   "helm": {
     "name": "cert-manager",

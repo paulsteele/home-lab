@@ -8,7 +8,7 @@ import sys
 import os
 import subprocess
 import json
-from typing import List
+from typing import List, Dict
 
 import git
 
@@ -23,6 +23,27 @@ let createResource = ./dhall/k8s/{}/create.dhall
 let input = values.common /\ values.{}
 
 in createResource input
+"""
+
+MULTIPLE_RESOURCE_CREATION = r"""
+let map = ./dhall/dependencies/dhall-lang/Prelude/List/map
+
+let values = {}
+
+let commonType = ./dhall/k8s/common.dhall
+let inputType = ./dhall/k8s/{}/input.dhall
+let outputType = ./dhall/k8s/{}/output.dhall
+let hybridType = commonType //\\ inputType
+
+let createResource = ./dhall/k8s/{}/create.dhall
+let createHybrid = \(hybridInput: inputType) ->
+  values.common /\ hybridInput
+
+let input = values.{}
+
+let hybrid = map inputType hybridType createHybrid input
+
+in map hybridType outputType createResource hybrid
 """
 
 DEPENDENCIES = {
@@ -48,22 +69,55 @@ class Service:
     self.dhall = package['dhall'] if 'dhall' in package else None
     self.helm = package['helm'] if 'helm' in package else None
 
+  def _check_dhall_validity(self) -> bool:
+    if 'resources' not in self.dhall:
+      return False
+
+    if not self.dhall['resources']:
+      return False
+
+    if 'singles' in self.dhall['resources'] or 'multiples' in self.dhall['resources']:
+      if not self.dhall['resources']['singles'] and not self.dhall['resources']['multiples']:
+        return False
+
+    return True
+
   def _generate_dhall(self) -> bool:
     print("Dhall Resources:")
 
     status = True
 
-    if 'resources' not in self.dhall or not self.dhall['resources']:
+    if not self._check_dhall_validity():
       print(f"WARNING: no resources specified for {self.path}")
       return True
 
-    for resource in self.dhall['resources']:
-      result = subprocess.run(
-        ["dhall-to-yaml", "--omitNull"],
-        capture_output=True,
-        text=True,
-        input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource, resource)
-      )
+    resources = []
+
+    if 'singles' in self.dhall['resources']:
+      for single in self.dhall['resources']['singles']:
+        resources.append({'resource': single, 'multiple': False})
+    if 'multiples' in self.dhall['resources']:
+      for multiple in self.dhall['resources']['multiples']:
+        resources.append({'resource': multiple, 'multiple': True})
+
+    for resource_map in resources:
+      resource = resource_map['resource']
+      is_multiple = resource_map['multiple']
+
+      if is_multiple:
+        result = subprocess.run(
+          ["dhall-to-yaml", "--omitNull", "--documents"],
+          capture_output=True,
+          text=True,
+          input=MULTIPLE_RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource, resource, resource, resource)
+        )
+      else:
+        result = subprocess.run(
+          ["dhall-to-yaml", "--omitNull"],
+          capture_output=True,
+          text=True,
+          input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource, resource)
+        )
 
       if result.returncode != 0:
         print(f"{resource} ✗")

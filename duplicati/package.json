@@ -1,9 +1,11 @@
 {
   "dhall": {
     "source": "values.dhall",
-    "resources": [
-      "nodeportService",
-      "deployment"
-    ]
+    "resources": {
+      "singles": [
+        "nodeportService",
+        "deployment"
+      ]
+    }
   }
 }
