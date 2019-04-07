@@ -4,6 +4,7 @@
 Dhall Code Generator
 """
 
+import argparse
 import sys
 import os
 import subprocess
@@ -137,8 +138,26 @@ class Service:
 
     return status
 
+  def _apply_dhall(self) -> bool:
+    status = True
 
-  def _generate_helm(self) -> bool:
+    result = subprocess.run(
+      ["kubectl", "apply", "-f", f"{self.path}/output"],
+      capture_output=True,
+      text=True
+    )
+
+    if result.returncode != 0:
+      print(f"{self.path} ✗")
+      print(result.stderr, file=sys.stderr)
+      status = False
+    else:
+      print(f"{self.path} ✓")
+      print(result.stdout)
+
+    return status
+
+  def _apply_helm(self) -> bool:
     print("Helm Resources:")
 
     status = True
@@ -167,14 +186,20 @@ class Service:
 
     if self.dhall:
       status = self._generate_dhall() and status
-    if self.helm:
-      status = self._generate_helm() and status
 
     return status
 
-def should_init(argv: List[str]) -> bool:
-  '''Determines whether initialization needs to occur'''
-  return "--init" in argv
+  def apply(self) -> bool:
+    '''Applies all resources defined in the service'''
+    status = True
+
+    if self.dhall:
+      stats = self._apply_dhall() and status
+
+    if self.helm:
+      status = self._apply_helm() and status
+
+    return status
 
 def init():
   '''Initializes the generator, by pulling all needed dependencies'''
@@ -203,22 +228,44 @@ def get_paths(argv: List[str]) -> List[str]:
   argv.pop(0)
   return argv
 
+def parse_args(argv: List[str]):
+  parser = argparse.ArgumentParser(prog="Resource Generator")
+  subparsers = parser.add_subparsers(help="commands", dest='command')
+
+  gen = subparsers.add_parser('generate', help="Generate configurations")
+  app = subparsers.add_parser('apply', help="Applies configurations")
+  subparsers.add_parser('init', help="Initializes dependencies")
+
+  gen.add_argument("directories", nargs="*")
+  app.add_argument("directories", nargs="*")
+
+  return parser.parse_args()
+
 def main(argv: List[str]) -> None:
   '''entrypoint of the program'''
-  if should_init(argv):
+  args = parse_args(argv)
+
+  if args.command == 'init':
     init()
-  else:
-    paths = get_paths(argv)
+    sys.exit(0)
 
-    status = True
+  services = []
 
-    for path in paths:
-      service = Service(path)
+  for directory in args.directories:
+    services.append(Service(directory))
 
+  status = True
+
+  if args.command == 'generate':
+    for service in services:
       status = service.generate() and status
 
-    if not status:
-      sys.exit(1)
+  if args.command == 'apply':
+    for service in services:
+      status = service.apply() and status
+
+  if not status:
+    sys.exit(1)
 
 if __name__ == "__main__":
   main(sys.argv)
