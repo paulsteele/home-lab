@@ -1,13 +1,11 @@
 {
   "dhall": {
     "source": "values.dhall",
-    "resources": {
-      "singles": [
-        "configMap",
-        "ingress",
-        "service",
-        "deployment"
-      ]
-    }
+    "resources": [
+      "configMap",
+      "ingress",
+      "service",
+      "deployment"
+    ]
   }
 }

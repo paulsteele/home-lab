@@ -21,16 +21,16 @@ in {
   common = {
     name = mainName
   },
-  ingress = {
+  ingress = [{
     hostName = "passwords",
     domain = "paul-steele.com",
     ingressPort = ingressPort
-  },
-  service = {
+  }],
+  service = [{
     ingressPort = ingressPort,
     targetPort = targetPort
-  },
-  deployment = defaultDeployment // {
+  }],
+  deployment = [defaultDeployment // {
     containers = [
       defaultContainer {
         name = mainName
@@ -54,5 +54,5 @@ in {
     volumes = [
       dataVolumeMapping.volume
     ]
-  }
+  }]
 }
