@@ -39,16 +39,16 @@ in {
   common = {
     name = mainName
   },
-  ingress = [{
+  ingress = {
     hostName = "home",
     domain = "paul-steele.com",
     ingressPort = ingressPort
-  }],
-  service = [{
+  },
+  service = {
     ingressPort = ingressPort,
     targetPort = targetPort
-  }],
-  configMap = [{
+  },
+  configMap = {
     data = [
       {
         mapKey = zwaveVolumeMapping.volumeMount.name,
@@ -59,8 +59,8 @@ in {
         mapValue = ./resources/zha.sh as Text
       }
     ]
-  }],
-  deployment = [defaultDeployment // {
+  },
+  deployment = defaultDeployment // {
     containers = [
       defaultContainer {
         name = mainName
@@ -115,5 +115,5 @@ in {
       zwaveVolumeMapping.volume,
       zhaVolumeMapping.volume
     ]
-  }]
+  }
 }

@@ -9,6 +9,7 @@ import sys
 import os
 import subprocess
 import json
+import re
 from typing import List, Dict
 
 import git
@@ -17,24 +18,13 @@ OUTPUT_FILE_TYPE = "yaml"
 PACKAGE_FILE_NAME = "package.json"
 
 RESOURCE_CREATION = r"""
-let map = ./dhall/dependencies/dhall-lang/Prelude/List/map
-
 let values = {0}
 
-let commonType = ./dhall/k8s/common.dhall
-let inputType = ./dhall/k8s/{1}/input.dhall
-let outputType = ./dhall/k8s/{1}/output.dhall
-let hybridType = commonType //\\ inputType
-
 let createResource = ./dhall/k8s/{1}/create.dhall
-let createHybrid = \(hybridInput: inputType) ->
-  values.common /\ hybridInput
 
-let input = values.{1}
+let input = values.common /\ values.{2}
 
-let hybrid = map inputType hybridType createHybrid input
-
-in map hybridType outputType createResource hybrid
+in createResource input
 """
 
 DEPENDENCIES = {
@@ -60,12 +50,42 @@ class Service:
     self.dhall = package['dhall'] if 'dhall' in package else None
     self.helm = package['helm'] if 'helm' in package else None
 
-  def _check_dhall_validity(self) -> bool:
-    if 'resources' not in self.dhall:
+  def _check_dhall_validity(self, key) -> bool:
+    if key not in self.dhall:
       return False
 
-    if not self.dhall['resources']:
+    return bool(self.dhall[key])
+
+  def _run_dhall(self, resource: str, secret_text: str = "") -> bool:
+    matches = re.search(r'([^-\s]+)(-\d+)?', resource)
+
+    if not matches:
+      print(f"Could not determine resource type for {resource}")
+      print(f"{resource} ✗")
+    else:
+      resource_type = matches.group(1)
+
+    result = subprocess.run(
+      ["dhall-to-yaml", "--omitNull", "--documents"],
+      capture_output=True,
+      text=True,
+      input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource_type, resource)
+    )
+
+    if result.returncode != 0:
+      print(f"{resource} ✗")
+      print(result.stderr, file=sys.stderr)
       return False
+
+    output_file_name = f"{resource}.{OUTPUT_FILE_TYPE}"
+
+    if not os.path.exists(f"{self.path}/output"):
+      os.makedirs(f"{self.path}/output")
+
+    with open(f"{self.path}/output/{output_file_name}", 'w') as output_file:
+      output_file.write(result.stdout)
+
+    print(f"{resource} ✓")
 
     return True
 
@@ -74,33 +94,23 @@ class Service:
 
     status = True
 
-    if not self._check_dhall_validity():
+    if not self._check_dhall_validity('resources'):
       print(f"WARNING: no resources specified for {self.path}")
       return True
 
     for resource in self.dhall['resources']:
-      result = subprocess.run(
-        ["dhall-to-yaml", "--omitNull", "--documents"],
-        capture_output=True,
-        text=True,
-        input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource)
-      )
+      status = self._run_dhall(resource) and status
 
-      if result.returncode != 0:
-        print(f"{resource} ✗")
-        print(result.stderr, file=sys.stderr)
-        status = False
-        continue
+    return status
 
-      output_file_name = f"{resource}.{OUTPUT_FILE_TYPE}"
+  def _generate_secret(self) -> bool:
+    print("Dhall Secrets:")
 
-      if not os.path.exists(f"{self.path}/output"):
-        os.makedirs(f"{self.path}/output")
+    status = True
 
-      with open(f"{self.path}/output/{output_file_name}", 'w') as output_file:
-        output_file.write(result.stdout)
-
-      print(f"{resource} ✓")
+    if not self._check_dhall_validity('secrets'):
+      print(f"WARNING: no secrets specified for {self.path}")
+      return True
 
     return status
 
@@ -144,11 +154,14 @@ class Service:
 
     return status
 
-  def generate(self) -> bool:
+  def generate(self, generate_secrets=False) -> bool:
     '''Generates all resources defined in the service'''
     status = True
 
     print(f"Creating Resources for {self.path}:")
+
+    if generate_secrets:
+      status = self._generate_secret() and status
 
     if self.dhall:
       status = self._generate_dhall() and status
@@ -158,9 +171,8 @@ class Service:
   def apply(self) -> bool:
     '''Applies all resources defined in the service'''
     status = True
-
     if self.dhall:
-      stats = self._apply_dhall() and status
+      status = self._apply_dhall() and status
 
     if self.helm:
       status = self._apply_helm() and status
@@ -202,6 +214,7 @@ def parse_args(argv: List[str]):
   app = subparsers.add_parser('apply', help="Applies configurations")
   subparsers.add_parser('init', help="Initializes dependencies")
 
+  gen.add_argument("--secrets", action='store_true', help="generates secrets")
   gen.add_argument("directories", nargs="*")
   app.add_argument("directories", nargs="*")
 
@@ -224,7 +237,7 @@ def main(argv: List[str]) -> None:
 
   if args.command == 'generate':
     for service in services:
-      status = service.generate() and status
+      status = service.generate(args.secrets) and status
 
   if args.command == 'apply':
     for service in services:

@@ -6,6 +6,9 @@
       "ingress",
       "service",
       "deployment"
+    ],
+    "secrets": [
+      "APP_KEY"
     ]
   }
 }

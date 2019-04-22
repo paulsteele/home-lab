@@ -28,11 +28,11 @@ in {
   common = {
     name = mainName
   },
-  nodeportService = [{
+  nodeportService = {
     nodePort = nodePort,
     port = targetPort
-  }],
-  deployment = [defaultDeployment // {
+  },
+  deployment = defaultDeployment // {
     containers = [
       defaultContainer {
         name = mainName
@@ -51,5 +51,5 @@ in {
       configVolumeMapping.volume,
       sourceVolumeMapping.volume
     ]
-  }]
+  }
 }

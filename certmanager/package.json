@@ -3,7 +3,9 @@
     "source": "values.dhall",
     "resources": [
       "clusterIssuer",
-      "certificate"
+      "certificate-1",
+      "certificate-2",
+      "certificate-3"
     ]
   },
   "helm": {
