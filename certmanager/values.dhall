@@ -38,5 +38,8 @@ in {
       "www.bullmoose-party.com"
     ],
     issuer = issuerName
+  },
+  secret-1 = {
+    name = "route53-key"
   }
 }

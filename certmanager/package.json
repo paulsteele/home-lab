@@ -6,7 +6,12 @@
       "certificate-1",
       "certificate-2",
       "certificate-3"
-    ]
+    ],
+    "secrets": {
+      "secret-1": [
+        "key"
+      ]
+    }
   },
   "helm": {
     "name": "cert-manager",
