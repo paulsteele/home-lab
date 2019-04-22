@@ -1,0 +1,18 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "volume"
+    ],
+    "secrets": {
+      "secret-1": [
+        ".dockerconfigjson"
+      ]
+    }
+  },
+  "helm": {
+    "name": "containers",
+    "source": "stable/docker-registry",
+    "values": "helm.yaml"
+  }
+}

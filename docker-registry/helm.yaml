@@ -49,7 +49,7 @@ persistence:
   enabled: true
   size: 4Gi
   # storageClass: '-
-  existingClaim: docker-registry 
+  existingClaim: docker-registry
 
 # set the type of filesystem to use: filesystem, s3
 storage: filesystem

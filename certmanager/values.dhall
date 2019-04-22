@@ -40,6 +40,7 @@ in {
     issuer = issuerName
   },
   secret-1 = {
-    name = "route53-key"
+    name = "route53-key",
+    namespaces = ["default"]
   }
 }
