@@ -4,11 +4,11 @@
   apiVersion = "certmanager.k8s.io/v1alpha1",
   kind = "Certificate",
   metadata = {
-    name = values.certName,
+    name = values.name,
     namespace = values.namespace
   },
   spec = {
-    secretName = values.certName,
+    secretName = values.name,
     dnsNames = values.dnsNames,
     acme = {
       config = [

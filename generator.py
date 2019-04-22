@@ -22,7 +22,7 @@ let values = {0}
 
 let createResource = ./dhall/k8s/{1}/create.dhall
 
-let input = values.common /\ values.{2}
+let input = values.common // values.{2}
 
 in createResource input
 """

@@ -2,10 +2,9 @@ let defaultCommon = ../dhall/k8s/defaultCommon.dhall
 let issuerName    = "letsencrypt"
 
 in {
-  common = defaultCommon // {
-    name = issuerName
-  },
+  common = defaultCommon,
   clusterIssuer = {
+    name = issuerName,
     server = "https://acme-v02.api.letsencrypt.org/directory",
     email = "paul-steele@live.com",
     certmanagerSecret = "letsencrypt-cert-manager",
@@ -14,7 +13,7 @@ in {
     dnsSecretKey = "key"
   },
   certificate-1 = {
-    certName = "paul-steele.com",
+    name = "paul-steele.com",
     namespace = "default",
     dnsNames = [
       "*.paul-steele.com"
@@ -22,7 +21,7 @@ in {
     issuer = issuerName
   },
   certificate-2 = {
-    certName = "hell-yeah.org",
+    name = "hell-yeah.org",
     namespace = "deployments",
     dnsNames = [
       "hell-yeah.org",
@@ -31,7 +30,7 @@ in {
     issuer = issuerName
   },
   certificate-3 = {
-    certName = "bullmoose-party.com",
+    name = "bullmoose-party.com",
     namespace = "deployments",
     dnsNames = [
       "bullmoose-party.com",
