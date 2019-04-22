@@ -1,0 +1,4 @@
+{
+  storageClassName: Text,
+  capacity: Text
+}

@@ -2,7 +2,8 @@
   "dhall": {
     "source": "values.dhall",
     "resources": [
-      "volume"
+      "hostPersistentVolume",
+      "persistentVolumeClaim"
     ],
     "secrets": {
       "secret-1": [
