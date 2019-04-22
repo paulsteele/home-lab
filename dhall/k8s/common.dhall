@@ -1,3 +1,4 @@
 {
-  name: Text
+  name: Text,
+  secretText: Text
 }

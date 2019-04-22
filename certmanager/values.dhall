@@ -1,7 +1,8 @@
-let issuerName = "letsencrypt"
+let defaultCommon = ../dhall/k8s/defaultCommon.dhall
+let issuerName    = "letsencrypt"
 
 in {
-  common = {
+  common = defaultCommon // {
     name = issuerName
   },
   clusterIssuer = {

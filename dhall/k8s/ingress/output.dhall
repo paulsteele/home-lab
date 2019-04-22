@@ -1,1 +1,0 @@
-../../../dhall/dependencies/dhall-kubernetes/types/io.k8s.api.extensions.v1beta1.Ingress.dhall

@@ -57,13 +57,15 @@ class Service:
     return bool(self.dhall[key])
 
   def _run_dhall(self, resource: str, secret_text: str = "") -> bool:
+    # for strings that look like "resource_type-03", extract "resource_type"
     matches = re.search(r'([^-\s]+)(-\d+)?', resource)
 
     if not matches:
       print(f"Could not determine resource type for {resource}")
       print(f"{resource} ✗")
-    else:
-      resource_type = matches.group(1)
+      return False
+
+    resource_type = matches.group(1)
 
     result = subprocess.run(
       ["dhall-to-yaml", "--omitNull", "--documents"],
