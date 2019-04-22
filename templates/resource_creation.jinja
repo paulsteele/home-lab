@@ -1,0 +1,19 @@
+let values = {{ values }}
+
+let createResource = ./dhall/k8s/{{ resource_type }}/create.dhall
+
+let input = values.common // values.{{ resource }}
+  {% if secrets is not none %} // {
+    secrets = [
+      {% for secret in secrets %}
+        {
+          mapKey = "{{ secret[0] }}",
+          mapValue = "{{ secret[1] }}"
+        }
+        {{ "," if not loop.last }}
+      {% endfor %}
+    ]
+    }
+  {% endif %}
+
+in createResource input

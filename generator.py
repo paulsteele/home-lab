@@ -10,22 +10,13 @@ import os
 import subprocess
 import json
 import re
-from typing import List, Dict
+from typing import List, Tuple
+from jinja2 import FileSystemLoader, Environment
 
 import git
 
 OUTPUT_FILE_TYPE = "yaml"
 PACKAGE_FILE_NAME = "package.json"
-
-RESOURCE_CREATION = r"""
-let values = {0}
-
-let createResource = ./dhall/k8s/{1}/create.dhall
-
-let input = values.common // values.{2}
-
-in createResource input
-"""
 
 DEPENDENCIES = {
     'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
@@ -56,22 +47,27 @@ class Service:
 
     return bool(self.dhall[key])
 
-  def _run_dhall(self, resource: str, secret_text: str = "") -> bool:
-    # for strings that look like "resource_type-03", extract "resource_type"
-    matches = re.search(r'([^-\s]+)(-\d+)?', resource)
+  def _run_dhall(self, resource: str, secrets: List[Tuple[str, str]] = None) -> bool:
+    resource_type = self._get_resource_type(resource)
 
-    if not matches:
-      print(f"Could not determine resource type for {resource}")
-      print(f"{resource} ✗")
+    if not resource_type:
       return False
 
-    resource_type = matches.group(1)
+    template_loader = FileSystemLoader(searchpath="./templates")
+    template_env = Environment(loader=template_loader)
+    dhall_input = template_env.get_template('resource_creation.jinja')
+    rendered_dhall_input = dhall_input.render(
+      values=f"./{self.path}/{self.dhall['source']}",
+      resource_type=resource_type,
+      resource=resource,
+      secrets=secrets
+    )
 
     result = subprocess.run(
       ["dhall-to-yaml", "--omitNull", "--documents"],
       capture_output=True,
       text=True,
-      input=RESOURCE_CREATION.format(f"./{self.path}/{self.dhall['source']}", resource_type, resource)
+      input=rendered_dhall_input
     )
 
     if result.returncode != 0:
@@ -90,6 +86,17 @@ class Service:
     print(f"{resource} ✓")
 
     return True
+
+  def _get_resource_type(self, resource) -> str:
+    # for strings that look like "resource_type-03", extract "resource_type"
+    matches = re.search(r'([^-\s]+)(-\d+)?', resource)
+
+    if not matches:
+      print(f"Could not determine resource type for {resource}")
+      print(f"{resource} ✗")
+      return ""
+
+    return matches.group(1)
 
   def _generate_dhall(self) -> bool:
     print("Dhall Resources:")
@@ -113,6 +120,16 @@ class Service:
     if not self._check_dhall_validity('secrets'):
       print(f"WARNING: no secrets specified for {self.path}")
       return True
+
+    for resource in self.dhall['secrets']:
+      secret_keys = self.dhall['secrets'][resource]
+
+
+      secrets = []
+      for secret_key in secret_keys:
+        secret_value = input(f"Enter value for {secret_key}:\n")
+        secrets.append((secret_key, secret_value))
+      status = self._run_dhall(resource, secrets)
 
     return status
 

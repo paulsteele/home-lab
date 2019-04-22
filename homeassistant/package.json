@@ -7,8 +7,10 @@
       "service",
       "deployment"
     ],
-    "secrets": [
-      "APP_KEY"
-    ]
+    "secrets": {
+      "secret-1" : [
+        "APP_KEY"
+      ]
+    }
   }
 }

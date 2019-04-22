@@ -1,8 +1,9 @@
-let defaultCommon = ../dhall/k8s/defaultCommon.dhall
 let issuerName    = "letsencrypt"
 
 in {
-  common = defaultCommon,
+  common = {
+    name = issuerName
+  },
   clusterIssuer = {
     name = issuerName,
     server = "https://acme-v02.api.letsencrypt.org/directory",
