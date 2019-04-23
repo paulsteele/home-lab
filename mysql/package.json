@@ -1,0 +1,21 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "hostPersistentVolume",
+      "persistentVolumeClaim",
+      "cronJob"
+    ],
+    "secrets": {
+      "secret-1": [
+        "mysql-password",
+        "mysql-root-password"
+      ]
+    }
+  },
+  "helm": {
+    "name": "database",
+    "source": "stable/mysql",
+    "values": "helm.yaml"
+  }
+}

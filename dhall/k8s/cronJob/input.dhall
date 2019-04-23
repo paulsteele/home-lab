@@ -2,5 +2,6 @@ let Container = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.Con
 let Volume    = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.Volume.dhall
 in {
   containers: List Container,
-  volumes: List Volume
+  volumes: List Volume,
+  schedule: Text
 }
