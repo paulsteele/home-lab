@@ -4,6 +4,7 @@ let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
 let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
 let createSecretEnvMapping    = ../dhall/k8s/secretEnvMapping/create.dhall
 let createConfigVolumeMapping = ../dhall/k8s/configVolumeMapping/create.dhall
 
@@ -90,17 +91,14 @@ in {
             targetKey = "API_KEY",
             sourceKey = "APP_KEY",
             sourceSecret = mainName
-          }
-          ,
-          defaultEnvVar {
-            name = "API_URI"
-          } // {
-            value = Some "http://localhost:8123/api/events/custom_scene"
           },
-          defaultEnvVar {
-            name = "MASTER_NODE"
-          } // {
-            value = Some "Node009"
+          createStaticEnvMapping {
+            key = "API_URI",
+            value = "http://localhost:8123/api/events/custom_scene"
+          },
+          createStaticEnvMapping {
+            key = "MASTER_NODE",
+            value = "Node009"
           }
         ],
         volumeMounts = Some [

@@ -1,0 +1,15 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+        "ingress",
+        "service",
+        "deployment"
+    ],
+    "secrets": {
+      "secret-1": [
+        "FF_APP_KEY"
+      ]
+    }
+  }
+}

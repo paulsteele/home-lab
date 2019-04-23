@@ -1,0 +1,4 @@
+{
+  key: Text,
+  value: Text
+}
