@@ -41,7 +41,7 @@ in {
       defaultContainer {
         name = mainName
       } // {
-        image = Some "jc5x/firefly-iii:4.7.15",
+        image = Some "jc5x/firefly-iii:release-4.7.15",
         ports = Some [
           defaultContainerPort {containerPort = targetPort}
         ],

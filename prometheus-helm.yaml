@@ -285,7 +285,7 @@ grafana:
     ## TLS configuration for prometheus Ingress
     ## Secret must be manually created in the namespace
     ##
-    tls: 
+    tls:
       - hosts:
          - metrics.paul-steele.com
 
@@ -765,7 +765,10 @@ prometheus:
     ## The scrape configuraiton example below will find master nodes, provided they have the name .*mst.*, relabel the
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
-    additionalScrapeConfigs: []
+    additionalScrapeConfigs:
+      - job_name: 'node-exporter'
+        static_configs:
+          - targets: ['192.168.0.105:9100']
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
