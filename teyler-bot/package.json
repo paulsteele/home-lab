@@ -1,0 +1,10 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "secrets": {
+      "secret-1": [
+        "discordToken"
+      ]
+    }
+  }
+}
