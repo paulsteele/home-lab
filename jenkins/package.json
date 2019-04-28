@@ -1,0 +1,20 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "hostPersistentVolume",
+      "persistentVolumeClaim",
+      "serviceAccount-1",
+      "serviceAccount-2",
+      "clusterRole-1",
+      "clusterRole-2",
+      "clusterRoleBinding-1",
+      "clusterRoleBinding-2"
+    ]
+  },
+  "helm": {
+    "name": "ci",
+    "source": "stable/jenkins",
+    "values": "helm.yaml"
+  }
+}

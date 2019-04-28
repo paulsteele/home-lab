@@ -1,0 +1,3 @@
+{
+  automountServiceAccountToken: Bool
+}
