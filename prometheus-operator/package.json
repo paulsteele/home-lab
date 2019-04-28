@@ -1,0 +1,8 @@
+{
+  "helm": {
+    "name": "metrics",
+    "source": "stable/prometheus-operator",
+    "values": "helm.yaml",
+    "namespace": "metrics"
+  }
+}

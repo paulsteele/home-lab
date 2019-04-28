@@ -157,8 +157,10 @@ class Service:
 
     status = True
 
+    namespace = self.helm['namespace'] if self.helm['namespace'] else 'default'
+
     result = subprocess.run(
-      ["helm", "install", self.helm['source'], '-n', self.helm['name'], '-f', f"./{self.path}/{self.helm['values']}"],
+      ["helm", "install", self.helm['source'], '-n', self.helm['name'], '--namespace', namespace, '-f', f"./{self.path}/{self.helm['values']}"],
       capture_output=True,
       text=True
     )
