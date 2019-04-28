@@ -1,0 +1,9 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "namespace-1",
+      "namespace-2"
+    ]
+  }
+}

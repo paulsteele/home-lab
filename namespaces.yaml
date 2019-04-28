@@ -1,9 +1,0 @@
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: deployments
----
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: metrics
