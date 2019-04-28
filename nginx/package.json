@@ -1,0 +1,7 @@
+{
+  "helm": {
+    "name": "ingress",
+    "source": "stable/nginx-ingress",
+    "values": "helm.yaml"
+  }
+}

@@ -157,7 +157,7 @@ class Service:
 
     status = True
 
-    namespace = self.helm['namespace'] if self.helm['namespace'] else 'default'
+    namespace = self.helm['namespace'] if 'namespace' in self.helm and self.helm['namespace'] else 'default'
 
     result = subprocess.run(
       ["helm", "install", self.helm['source'], '-n', self.helm['name'], '--namespace', namespace, '-f', f"./{self.path}/{self.helm['values']}"],
