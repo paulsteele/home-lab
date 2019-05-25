@@ -1,0 +1,10 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+        "ingress",
+        "service",
+        "deployment"
+    ]
+  }
+}
