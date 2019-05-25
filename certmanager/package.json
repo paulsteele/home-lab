@@ -15,7 +15,7 @@
   },
   "helm": {
     "name": "cert-manager",
-    "source": "stable/cert-manager",
+    "source": "jetstack/cert-manager",
     "values": "helm.yaml"
   }
 }
