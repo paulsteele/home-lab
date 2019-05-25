@@ -1,3 +1,4 @@
+let defaultCronJob            = ../dhall/k8s/cronJob/default.dhall
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
 let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
@@ -12,6 +13,13 @@ let dataVolumeMapping = createHostVolumeMapping {
   mountPath = "/data",
   type = "Directory",
   sourcePath = "/home/paul/bitwarden-rs/data"
+}
+
+let backupMapping = createHostVolumeMapping {
+  name = "backup",
+  mountPath = "/backup",
+  type = "Directory",
+  sourcePath = "/home/paul/database-backup/sqlite"
 }
 
 let ingressPort = 80
@@ -53,6 +61,30 @@ in {
     ],
     volumes = [
       dataVolumeMapping.volume
+    ]
+  },
+  cronJob = defaultCronJob // {
+    name = "passworddump",
+    schedule = "0 1 * * 4",
+    containers = [
+      defaultContainer {
+        name = "passworddump"
+      } // {
+        image = Some "nouchka/sqlite3",
+        command = Some [ "sqlite3" ],
+        args = Some [
+          "/data/db.sqlite3",
+          ".backup '/backup/bitwarden.sq3'"
+        ],
+        volumeMounts = Some [
+          dataVolumeMapping.volumeMount,
+          backupMapping.volumeMount
+        ]
+      }
+    ],
+    volumes = [
+      dataVolumeMapping.volume,
+      backupMapping.volume
     ]
   }
 }
