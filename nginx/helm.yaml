@@ -5,10 +5,21 @@ controller:
   name: controller
   image:
     repository: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
-    tag: "0.11.0"
+    tag: "0.24.1"
     pullPolicy: IfNotPresent
 
-  config: {}
+  config: {
+    'access-log-path': '/etc/nginx/logs/access-log.txt'
+  }
+
+  extraVolumeMounts:
+    - name: 'logs'
+      mountPath: '/etc/nginx/logs'
+  extraVolumes:
+    - name: 'logs'
+      hostPath:
+        path: '/home/paul/nginx/logs'
+
   # Will add custom header to Nginx https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/customization/custom-headers
   headers: {}
 
