@@ -5,8 +5,10 @@ let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/i
 
 let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
 let createConfigVolumeMapping = ../dhall/k8s/configVolumeMapping/create.dhall
+let createEmptyDirVolumeMapping = ../dhall/k8s/emptyDirVolumeMapping/create.dhall
 
 let mainName = "goaccess"
+let nginxName = "goaccess-nginx"
 
 let configVolumeMapping = createConfigVolumeMapping {
   name = "config",
@@ -30,16 +32,23 @@ let dataVolumeMapping = createHostVolumeMapping {
   sourcePath = "/home/paul/nginx/goaccess"
 }
 
-let nodePort = 30100
-let targetPort = 7890
+let outputVolumeMapping = createEmptyDirVolumeMapping {
+  name = "output",
+  mountPath = "/usr/share/nginx/html"
+}
+
+let goaccessNodePort = 30101
+let goaccessTargetPort = 7890
+let nginxNodePort = 30100
+let nginxTargetPort = 80
 
 in {
   common = {
     name = mainName
   },
   nodeportService = {
-    nodePort = nodePort,
-    port = targetPort
+    nodePort = goaccessNodePort,
+    port = goaccessTargetPort
   },
   configMap = {
     data = [
@@ -56,7 +65,7 @@ in {
       } // {
         image = Some "allinurl/goaccess",
         ports = Some [
-          defaultContainerPort {containerPort = targetPort}
+          defaultContainerPort {containerPort = goaccessTargetPort}
         ],
         command = Some ["goaccess"],
         args = Some [
@@ -66,14 +75,27 @@ in {
         volumeMounts = Some [
           logVolumeMapping.volumeMount,
           dataVolumeMapping.volumeMount,
-          configVolumeMapping.volumeMount
+          configVolumeMapping.volumeMount,
+          outputVolumeMapping.volumeMount
+        ]
+      },
+      defaultContainer {
+        name = nginxName
+      } // {
+        image = Some "nginx",
+        ports = Some [
+          defaultContainerPort {containerPort = nginxTargetPort}
+        ],
+        volumeMounts = Some [
+          outputVolumeMapping.volumeMount
         ]
       }
     ],
     volumes = [
       logVolumeMapping.volume,
       dataVolumeMapping.volume,
-      configVolumeMapping.volume
+      configVolumeMapping.volume,
+      outputVolumeMapping.volume
     ]
   }
 }
