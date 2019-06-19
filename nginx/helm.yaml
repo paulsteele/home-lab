@@ -192,7 +192,7 @@ controller:
       https: ""
 
   stats:
-    enabled: false
+    enabled: true
 
     service:
       annotations: {}
@@ -211,8 +211,12 @@ controller:
   ## If controller.stats.enabled = true and controller.metrics.enabled = true, Prometheus metrics will be exported
   ##
   metrics:
-    enabled: false
+    enabled: true
 
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: metrics
     service:
       annotations: {}
       # prometheus.io/scrape: "true"
