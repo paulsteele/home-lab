@@ -29,8 +29,13 @@ in {
     name = mainName
   },
   nodeportService = {
-    nodePort = nodePort,
-    port = targetPort
+    ports = [
+      {
+        name = mainName,
+        nodePort = nodePort,
+        port = targetPort
+      }
+    ]
   },
   deployment = defaultDeployment // {
     containers = [

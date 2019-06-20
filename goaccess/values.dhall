@@ -47,8 +47,18 @@ in {
     name = mainName
   },
   nodeportService = {
-    nodePort = goaccessNodePort,
-    port = goaccessTargetPort
+    ports = [
+      {
+        name = mainName,
+        nodePort = goaccessNodePort,
+        port = goaccessTargetPort
+      },
+      {
+        name = nginxName,
+        nodePort = nginxNodePort,
+        port = nginxTargetPort
+      }
+    ]
   },
   configMap = {
     data = [

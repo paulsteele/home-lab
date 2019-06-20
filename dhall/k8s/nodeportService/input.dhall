@@ -1,4 +1,3 @@
 {
-  nodePort: Natural,
-  port: Natural
+  ports: List ./singleInput.dhall
 }
