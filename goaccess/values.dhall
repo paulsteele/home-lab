@@ -1,4 +1,5 @@
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
+let defaultCronJob            = ../dhall/k8s/cronJob/default.dhall
 let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
@@ -9,6 +10,7 @@ let createEmptyDirVolumeMapping = ../dhall/k8s/emptyDirVolumeMapping/create.dhal
 
 let mainName = "goaccess"
 let nginxName = "goaccess-nginx"
+let cronName = "goaccess-cron"
 
 let configVolumeMapping = createConfigVolumeMapping {
   name = "config",
@@ -73,7 +75,7 @@ in {
       defaultContainer {
         name = mainName
       } // {
-        image = Some "allinurl/goaccess",
+        image = Some "hectormolinero/goaccess",
         ports = Some [
           defaultContainerPort {containerPort = goaccessTargetPort}
         ],
@@ -106,6 +108,28 @@ in {
       dataVolumeMapping.volume,
       configVolumeMapping.volume,
       outputVolumeMapping.volume
+    ]
+  },
+  cronJob = defaultCronJob // {
+    name = cronName,
+    schedule = "0 0 * * *",
+    containers = [
+      defaultContainer {
+        name = cronName
+      } // {
+        image = Some "alpine",
+        command = Some [ "/bin/sh" ],
+        args = Some [
+          "-c",
+          "echo '' > /logs/access-log.txt"
+        ],
+        volumeMounts = Some [
+          logVolumeMapping.volumeMount
+        ]
+      }
+    ],
+    volumes = [
+      logVolumeMapping.volume
     ]
   }
 }

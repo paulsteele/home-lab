@@ -4,7 +4,8 @@
     "resources": [
       "nodeportService",
       "configMap",
-      "deployment"
+      "deployment",
+      "cronJob"
     ]
   }
 }
