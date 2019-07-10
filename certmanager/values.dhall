@@ -9,7 +9,7 @@ in {
     server = "https://acme-v02.api.letsencrypt.org/directory",
     email = "paul-steele@live.com",
     certmanagerSecret = "letsencrypt-cert-manager",
-    accessKeyID = "AKIAJNXZNXS67W52RKTA",
+    accessKeyID = "AKIA5IJM3JBT4OHKN63G",
     dnsSecretName = "route53-key",
     dnsSecretKey = "key"
   },
