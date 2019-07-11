@@ -12,6 +12,7 @@ imageTag: "5.7.14"
 ## Create a database user
 
 mysqlUser: eos
+existingSecret: database-mysql
 
 ## Allow unauthenticated access, uncomment to enable
 ##

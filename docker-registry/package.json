@@ -4,12 +4,7 @@
     "resources": [
       "hostPersistentVolume",
       "persistentVolumeClaim"
-    ],
-    "secrets": {
-      "secret-1": [
-        ".dockerconfigjson"
-      ]
-    }
+    ]
   },
   "helm": {
     "name": "containers",
