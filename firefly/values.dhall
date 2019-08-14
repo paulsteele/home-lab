@@ -41,35 +41,35 @@ in {
       defaultContainer {
         name = mainName
       } // {
-        image = Some "jc5x/firefly-iii:release-4.7.15",
+        image = Some "jc5x/firefly-iii:latest",
         ports = Some [
           defaultContainerPort {containerPort = targetPort}
         ],
         env = Some [
             createStaticEnvMapping {
-              key = "FF_DB_HOST",
+              key = "DB_HOST",
               value = "database-mysql:3306"
             },
             createStaticEnvMapping {
-              key = "FF_DB_USER",
+              key = "DB_USERNAME",
               value = "eos"
             },
             createStaticEnvMapping {
-              key = "FF_DB_NAME",
+              key = "DB_DATABASE",
               value = "firefly_db"
             },
             createSecretEnvMapping {
-              targetKey = "FF_DB_PASSWORD",
+              targetKey = "DB_PASSWORD",
               sourceKey = "mysql-password",
               sourceSecret = "database-mysql"
             },
             createSecretEnvMapping {
-              targetKey = "FF_APP_KEY",
+              targetKey = "APP_KEY",
               sourceKey = "FF_APP_KEY",
               sourceSecret = "firefly-token"
             },
             createStaticEnvMapping {
-              key = "FF_APP_ENV",
+              key = "APP_ENV",
               value = "local"
             },
             createStaticEnvMapping {
