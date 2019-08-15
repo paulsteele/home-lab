@@ -9,16 +9,7 @@ controller:
     pullPolicy: IfNotPresent
 
   config: {
-    'access-log-path': '/etc/nginx/logs/access-log.txt'
   }
-
-  extraVolumeMounts:
-    - name: 'logs'
-      mountPath: '/etc/nginx/logs'
-  extraVolumes:
-    - name: 'logs'
-      hostPath:
-        path: '/home/paul/nginx/logs'
 
   # Will add custom header to Nginx https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/customization/custom-headers
   headers: {}
