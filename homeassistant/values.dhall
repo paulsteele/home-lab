@@ -74,7 +74,7 @@ in {
         command = Some ["sh" ],
         args = Some [
           "-c",
-          "apt-get update && apt-get install socat && service zwave start && service zha start && python -m homeassistant --config /config"
+          "service zwave start && service zha start && python -m homeassistant --config /config"
         ],
         volumeMounts = Some [
           configVolumeMapping.volumeMount,
