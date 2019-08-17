@@ -13,14 +13,14 @@ import re
 from typing import List, Tuple
 from jinja2 import FileSystemLoader, Environment
 
-import git
+import git # type:ignore
 
 OUTPUT_FILE_TYPE = "yaml"
 PACKAGE_FILE_NAME = "package.json"
 
 DEPENDENCIES = {
-    'dhall-kubernetes' : 'https://github.com/dhall-lang/dhall-kubernetes.git',
-    'prelude' : 'https://github.com/dhall-lang/dhall-lang.git'
+    'dhall-kubernetes': 'https://github.com/dhall-lang/dhall-kubernetes.git',
+    'prelude': 'https://github.com/dhall-lang/dhall-lang.git'
 }
 
 class Service:
@@ -152,6 +152,25 @@ class Service:
 
     return status
 
+  def _delete_dhall(self) -> bool:
+    status = True
+
+    result = subprocess.run(
+      ["kubectl", "delete", "-f", f"{self.path}/output"],
+      capture_output=True,
+      text=True
+    )
+
+    if result.returncode != 0:
+      print(f"{self.path} ✗")
+      print(result.stderr, file=sys.stderr)
+      status = False
+    else:
+      print(f"{self.path} ✓")
+      print(result.stdout)
+
+    return status
+
   def _apply_helm(self) -> bool:
     print("Helm Resources:")
 
@@ -161,6 +180,27 @@ class Service:
 
     result = subprocess.run(
       ["helm", "install", self.helm['source'], '-n', self.helm['name'], '--namespace', namespace, '-f', f"./{self.path}/{self.helm['values']}"],
+      capture_output=True,
+      text=True
+    )
+
+    if result.returncode != 0:
+      print(f"{self.helm['name']} ✗")
+      print(result.stderr, file=sys.stderr)
+      status = False
+    else:
+      print(f"{self.helm['name']} ✓")
+      print(result.stdout)
+
+    return status
+
+  def _delete_helm(self) -> bool:
+    print("Helm Resources:")
+
+    status = True
+
+    result = subprocess.run(
+      ["helm", "delete", self.helm['name'], '--purge'],
       capture_output=True,
       text=True
     )
@@ -200,6 +240,17 @@ class Service:
 
     return status
 
+  def delete(self) -> bool:
+    '''Deletes resources defined in the service'''
+    status = True
+    if self.helm:
+      status = self._delete_helm() and status
+
+    if self.dhall:
+      status = self._delete_dhall() and status
+
+    return status
+
 def init():
   '''Initializes the generator, by pulling all needed dependencies'''
 
@@ -233,11 +284,14 @@ def parse_args(argv: List[str]):
 
   gen = subparsers.add_parser('generate', help="Generate configurations")
   app = subparsers.add_parser('apply', help="Applies configurations")
+  rem = subparsers.add_parser('delete', help="Deletes configurations")
+
   subparsers.add_parser('init', help="Initializes dependencies")
 
   gen.add_argument("--secrets", action='store_true', help="generates secrets")
   gen.add_argument("directories", nargs="*")
   app.add_argument("directories", nargs="*")
+  rem.add_argument("directories", nargs="*")
 
   return parser.parse_args()
 
@@ -263,6 +317,10 @@ def main(argv: List[str]) -> None:
   if args.command == 'apply':
     for service in services:
       status = service.apply() and status
+
+  if args.command == 'delete':
+    for service in services:
+      status = service.delete() and status
 
   if not status:
     sys.exit(1)
