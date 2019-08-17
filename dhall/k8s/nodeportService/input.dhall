@@ -1,3 +1,0 @@
-{
-  ports: List ./singleInput.dhall
-}
