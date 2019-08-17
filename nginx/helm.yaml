@@ -158,7 +158,7 @@ controller:
     ##
     externalIPs: []
 
-    loadBalancerIP: ""
+    loadBalancerIP: "192.168.0.200"
     loadBalancerSourceRanges: []
 
     ## Set external traffic policy to: "Local" to preserve source IP on

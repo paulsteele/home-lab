@@ -1,0 +1,7 @@
+{
+  "helm": {
+    "name": "loadbalancer",
+    "source": "stable/metallb",
+    "values": "helm.yaml"
+  }
+}
