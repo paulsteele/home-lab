@@ -21,21 +21,22 @@ let sourceVolumeMapping = createHostVolumeMapping {
   sourcePath = "/home/paul"
 }
 
-let nodePort = 30000
+let port = 80
 let targetPort = 8200
 
 in {
   common = {
     name = mainName
   },
-  nodeportService = {
+  loadbalancerService = {
     ports = [
       {
         name = mainName,
-        nodePort = nodePort,
-        port = targetPort
+        port = port,
+        targetPort = targetPort
       }
-    ]
+    ],
+    loadBalancerIP = "192.168.0.201"
   },
   deployment = defaultDeployment // {
     containers = [
