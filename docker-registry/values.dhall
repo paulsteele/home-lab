@@ -6,7 +6,7 @@ in {
   common = {
     name = "docker-registry"
   },
-  hostPersistentVolume = {
+  nfsPersistentVolume = {
     hostPath = "/home/paul/docker-registry",
     storageClassName = storageClassName,
     capacity = capacity
