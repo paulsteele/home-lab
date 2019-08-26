@@ -4,22 +4,22 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 
 let mainName = "bitwarden"
 
-let dataVolumeMapping = createHostVolumeMapping {
+let dataVolumeMapping = createNFSVolumeMapping {
   name = "data",
   mountPath = "/data",
-  type = "Directory",
-  sourcePath = "/home/paul/bitwarden-rs/data"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/bitwarden"
 }
 
-let backupMapping = createHostVolumeMapping {
+let backupMapping = createNFSVolumeMapping {
   name = "backup",
   mountPath = "/backup",
-  type = "Directory",
-  sourcePath = "/home/paul/database-backup/sqlite"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/database-backup/sqlite"
 }
 
 let ingressPort = 80
