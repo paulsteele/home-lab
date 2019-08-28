@@ -7,7 +7,8 @@ in {
     name = "docker-registry"
   },
   nfsPersistentVolume = {
-    hostPath = "/home/paul/docker-registry",
+    server = "192.168.0.105",
+    path = "/srv/nfs/docker-registry",
     storageClassName = storageClassName,
     capacity = capacity
   },

@@ -30,7 +30,7 @@ in defaultPV {
         mapValue = values.capacity
       }
     ],
-    nfs = Some (defaultHostPathVolumeSource {
+    nfs = Some (defaultNFSVolumeSource {
       server = values.server,
       path = values.path
     })
