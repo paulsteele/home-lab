@@ -2,7 +2,7 @@
   "dhall": {
     "source": "values.dhall",
     "resources": [
-      "hostPersistentVolume",
+      "nfsPersistentVolume",
       "persistentVolumeClaim",
       "cronJob"
     ],

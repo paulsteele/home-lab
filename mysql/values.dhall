@@ -3,26 +3,27 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
 let createSecretEnvMapping    = ../dhall/k8s/secretEnvMapping/create.dhall
 
 let mainName    = "mysql"
 let capacity    = "8Gi"
 
-let storageMapping = createHostVolumeMapping {
+let storageMapping = createNFSVolumeMapping {
   name = "mysqldmp",
   mountPath = "/mysqldump",
-  type = "Directory",
-  sourcePath = "/home/paul/database-backup/mysql"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/database-backup/mysql"
 }
 
 in {
   common = {
     name = mainName
   },
-  hostPersistentVolume = {
-    hostPath = "/home/paul/mysql",
+  nfsPersistentVolume = {
+    server = "192.168.0.105",
+    path = "/srv/nfs/mysql",
     storageClassName = mainName,
     capacity = capacity
   },

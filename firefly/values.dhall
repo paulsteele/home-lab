@@ -3,17 +3,17 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
 let createSecretEnvMapping    = ../dhall/k8s/secretEnvMapping/create.dhall
 
 let mainName = "firefly"
 
-let storageMapping = createHostVolumeMapping {
+let storageMapping = createNFSVolumeMapping {
   name = "storage",
   mountPath = "/var/www/firefly-iii/storage",
-  type = "Directory",
-  sourcePath = "/home/paul/firefly/volumes/app"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/firefly"
 }
 
 let ingressPort = 80
