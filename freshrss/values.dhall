@@ -3,15 +3,15 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 
 let mainName = "freshrss"
 
-let configVolumeMapping = createHostVolumeMapping {
+let configVolumeMapping = createNFSVolumeMapping {
   name = "config",
   mountPath = "/config",
-  type = "Directory",
-  sourcePath = "/home/paul/freshrss/config"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/freshrss/config"
 }
 
 let ingressPort = 80
