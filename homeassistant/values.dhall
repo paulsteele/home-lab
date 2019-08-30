@@ -20,7 +20,7 @@ let configVolumeMapping = createNFSVolumeMapping {
 let zwaveVolumeMapping = createConfigVolumeMapping {
   name = "zwave-config",
   configName = mainName,
-  mountPath = "/etc/init.d/zwave",
+  mountPath = "/usr/bin/zwave",
   defaultMode = 0O755,
   item = "zwave"
 }
@@ -28,7 +28,7 @@ let zwaveVolumeMapping = createConfigVolumeMapping {
 let zhaVolumeMapping = createConfigVolumeMapping {
   name = "zha-config",
   configName = mainName,
-  mountPath = "/etc/init.d/zha",
+  mountPath = "/usr/bin/zha",
   defaultMode = 0O775,
   item = "zha"
 }
@@ -74,7 +74,7 @@ in {
         command = Some ["sh" ],
         args = Some [
           "-c",
-          "service zwave start && service zha start && python -m homeassistant --config /config"
+          "zwave && zha && python -m homeassistant --config /config"
         ],
         volumeMounts = Some [
           configVolumeMapping.volumeMount,
