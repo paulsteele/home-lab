@@ -1,0 +1,7 @@
+{
+  "helm": {
+    "name": "metrics-server",
+    "source": "stable/metrics-server",
+    "values": "helm.yaml"
+  }
+}
