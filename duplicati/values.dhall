@@ -3,22 +3,22 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 
 let mainName = "duplicati"
 
-let configVolumeMapping = createHostVolumeMapping {
+let configVolumeMapping = createNFSVolumeMapping {
   name = "config",
   mountPath = "/config",
-  type = "Directory",
-  sourcePath = "/home/paul/duplicati/config"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/duplicati"
 }
 
-let sourceVolumeMapping = createHostVolumeMapping {
+let sourceVolumeMapping = createNFSVolumeMapping {
   name = "source",
   mountPath = "/source",
-  type = "Directory",
-  sourcePath = "/home/paul"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs"
 }
 
 let port = 80
