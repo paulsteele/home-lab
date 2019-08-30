@@ -3,37 +3,37 @@ let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/i
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
 
-let createHostVolumeMapping   = ../dhall/k8s/hostVolumeMapping/create.dhall
+let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
 
 let mainName = "subsonic"
 
-let configVolumeMapping = createHostVolumeMapping {
+let configVolumeMapping = createNFSVolumeMapping {
   name = "config",
   mountPath = "/subsonic",
-  type = "Directory",
-  sourcePath = "/home/paul/subsonic/config"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/subsonic/config"
 }
 
-let dataVolumeMapping = createHostVolumeMapping {
+let dataVolumeMapping = createNFSVolumeMapping {
   name = "data",
   mountPath = "/data",
-  type = "Directory",
-  sourcePath = "/home/paul/subsonic/data"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/subsonic/data"
 }
 
-let musicVolumeMapping = createHostVolumeMapping {
+let musicVolumeMapping = createNFSVolumeMapping {
   name = "music",
   mountPath = "/music",
-  type = "Directory",
-  sourcePath = "/home/paul/plex/volumes/media/music/Music"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/media/music"
 }
 
-let videoVolumeMapping = createHostVolumeMapping {
+let videoVolumeMapping = createNFSVolumeMapping {
   name = "video",
   mountPath = "/video",
-  type = "Directory",
-  sourcePath = "/home/paul/plex/volumes/media/video"
+  server = "192.168.0.105",
+  sourcePath = "/srv/nfs/media/video"
 }
 
 let ingressPort = 8080

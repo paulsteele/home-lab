@@ -9,8 +9,9 @@ in {
   common = {
     name = "jenkins"
   },
-  hostPersistentVolume = {
-    hostPath = "/home/paul/jenkins/volumes/jenkins",
+  nfsPersistentVolume = {
+    server = "192.168.0.105",
+    path = "/srv/nfs/jenkins",
     storageClassName = storageClassName,
     capacity = capacity
   },
