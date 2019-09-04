@@ -322,7 +322,7 @@ kubelet:
     ## Enable scraping the kubelet over https. For requirements to enable this see
     ## https://github.com/coreos/prometheus-operator/issues/926
     ##
-    https: false
+    https: true
 
 ## Component scraping the kube controller manager
 ##
@@ -765,10 +765,7 @@ prometheus:
     ## The scrape configuraiton example below will find master nodes, provided they have the name .*mst.*, relabel the
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
-    additionalScrapeConfigs:
-      - job_name: 'node-exporter'
-        static_configs:
-          - targets: ['192.168.0.105:9100']
+    additionalScrapeConfigs: []
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node

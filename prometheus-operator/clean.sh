@@ -1,4 +1,6 @@
-kubectl delete crd prometheuses.monitoring.coreos.com
-kubectl delete crd prometheusrules.monitoring.coreos.com
-kubectl delete crd servicemonitors.monitoring.coreos.com
-kubectl delete crd alertmanagers.monitoring.coreos.com
+kubectl delete --ignore-not-found customresourcedefinitions \
+  prometheuses.monitoring.coreos.com \
+  servicemonitors.monitoring.coreos.com \
+  podmonitors.monitoring.coreos.com \
+  alertmanagers.monitoring.coreos.com \
+  prometheusrules.monitoring.coreos.com
