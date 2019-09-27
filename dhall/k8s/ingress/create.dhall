@@ -13,6 +13,10 @@ let annotations = Some [
   {
     mapKey = "kubernetes.io/ingress.class",
     mapValue = "nginx"
+  },
+  { 
+    mapKey = "nginx.ingress.kubernetes.io/proxy-body-size",
+    mapValue = "0"
   }
 ]
 
