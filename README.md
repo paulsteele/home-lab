@@ -3,11 +3,5 @@
 Dependencies
 * [dhall-lang](https://github.com/dhall-lang/dhall-lang)
 * dhall-to-yaml
-* python3
+* [homectl](https://github.com/paulsteele/home-ctl)
 
-## Generator Setup
-`pip install -r requirements.txt --user`
-`./generator.py init`
-
-## Generator Usage
-`./generator.py [folders to generate]`
