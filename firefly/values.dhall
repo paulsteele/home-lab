@@ -25,7 +25,13 @@ in {
   },
   secret-1 = {
     name = "firefly-token",
-    namespaces = [ "default" ]
+    namespaces = [ "default" ],
+    secrets = [
+      {
+        mapKey = "FF_APP_KEY",
+        mapValue = ./secrets/ff_app_key.txt as Text
+      }
+    ]
   },
   ingress = {
     hostName = "finance",

@@ -74,6 +74,16 @@ in {
   },
   secret-1 = {
     name = "database-mysql",
-    namespaces = ["default"]
+    namespaces = ["default"],
+    secrets = [
+      {
+        mapKey = "mysql-password",
+        mapValue = ./secrets/mysql-password.txt as Text
+      },
+      {
+        mapKey = "mysql-root-password",
+        mapValue = ./secrets/mysql-root-password.txt as Text
+      }
+    ]
   }
 }

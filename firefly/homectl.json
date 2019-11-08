@@ -4,12 +4,8 @@
     "resources": [
         "ingress",
         "service",
-        "deployment"
-    ],
-    "secrets": {
-      "secret-1": [
-        "FF_APP_KEY"
-      ]
-    }
+        "deployment",
+        "secret-1"
+    ]
   }
 }

@@ -25,7 +25,13 @@ in {
   },
   secret-1 = {
     name = "nextcloud-admin-pass",
-    namespaces = [ "default" ]
+    namespaces = [ "default" ],
+    secrets = [
+      {
+        mapKey = "NEXTCLOUD_ADMIN_PASSWORD",
+        mapValue = ./secrets/nextcloud_admin_password.txt as Text
+      }
+    ]
   },
   ingress = {
     hostName = "files",

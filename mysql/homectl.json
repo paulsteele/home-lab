@@ -4,14 +4,9 @@
     "resources": [
       "nfsPersistentVolume",
       "persistentVolumeClaim",
-      "cronJob"
-    ],
-    "secrets": {
-      "secret-1": [
-        "mysql-password",
-        "mysql-root-password"
-      ]
-    }
+      "cronJob",
+      "secret-1"
+    ]
   },
   "helm": {
     "name": "database",

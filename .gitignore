@@ -1,6 +1,7 @@
 secrets.txt
 htpasswd
 **/output/**
+**/secrets/**
 .mypy_cache
 .vscode
 dhall/dependencies**
