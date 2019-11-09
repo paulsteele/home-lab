@@ -1,7 +1,7 @@
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.EnvVar.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
@@ -44,14 +44,14 @@ in {
   },
   deployment = defaultDeployment // {
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = mainName
       } // {
         image = Some "jc5x/firefly-iii:latest",
-        ports = Some [
-          defaultContainerPort {containerPort = targetPort}
+        ports = [
+          defaultContainerPort // {containerPort = targetPort}
         ],
-        env = Some [
+        env = [
             createStaticEnvMapping {
               key = "DB_HOST",
               value = "database-mysql:3306"
@@ -84,10 +84,10 @@ in {
             },
             createStaticEnvMapping {
               key = "TRUSTED_PROXIES",
-              value = "**"
+              value = "'**'"
             }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           storageMapping.volumeMount
         ]
       }

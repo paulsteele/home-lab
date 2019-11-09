@@ -2,43 +2,43 @@
 
 let Deployment             = ../../dependencies/dhall-kubernetes/types/io.k8s.api.apps.v1.Deployment.dhall
 
-let defaultDeployment      = ../../dependencies/dhall-kubernetes/default/io.k8s.api.apps.v1.Deployment.dhall
-let defaultDeploymentSpec  = ../../dependencies/dhall-kubernetes/default/io.k8s.api.apps.v1.DeploymentSpec.dhall
-let defaultSelector        = ../../dependencies/dhall-kubernetes/default/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector.dhall
-let defaultMeta            = ../../dependencies/dhall-kubernetes/default/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
-let defaultPodTemplateSpec = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PodTemplateSpec.dhall
-let defaultPodSpec         = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PodSpec.dhall
+let defaultDeployment      = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.apps.v1.Deployment.dhall
+let defaultDeploymentSpec  = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.apps.v1.DeploymentSpec.dhall
+let defaultSelector        = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector.dhall
+let defaultMeta            = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultPodTemplateSpec = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PodTemplateSpec.dhall
+let defaultPodSpec         = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PodSpec.dhall
 
-let labels = Some [
+let labels = [
   {
     mapKey   = "app",
     mapValue = values.name
   }
 ]
 
-in defaultDeployment {
-  metadata = defaultMeta {
+in defaultDeployment // {
+  metadata = defaultMeta // {
     name = values.name
   } // {
     labels = labels
   }
 } // {
-  spec = Some (defaultDeploymentSpec {
+  spec = Some (defaultDeploymentSpec // {
     selector = defaultSelector // {
       matchLabels = labels
     },
-    template = defaultPodTemplateSpec {
-      metadata = defaultMeta {
+    template = defaultPodTemplateSpec // {
+      metadata = defaultMeta // {
         name = values.name
       } // {
         labels = labels 
       }
     } // {
-      spec = Some (defaultPodSpec {
+      spec = Some (defaultPodSpec // {
         containers = values.containers
       } // {
-        volumes = Some values.volumes,
-        imagePullSecrets = Some [
+        volumes = values.volumes,
+        imagePullSecrets = [
           {
             name = Some "registry.paul-steele.com"
           }

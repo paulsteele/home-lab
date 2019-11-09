@@ -2,23 +2,23 @@
 
 let PVC                         = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
 
-let defaultPVC                  = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
-let defaultPVCSpec              = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PersistentVolumeClaimSpec.dhall
-let defaultResourceRequirements = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ResourceRequirements.dhall
-let defaultMeta                 = ../../dependencies/dhall-kubernetes/default/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultPVC                  = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
+let defaultPVCSpec              = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolumeClaimSpec.dhall
+let defaultResourceRequirements = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ResourceRequirements.dhall
+let defaultMeta                 = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
-in defaultPVC {
-  metadata = defaultMeta {
+in defaultPVC // {
+  metadata = defaultMeta // {
     name = values.name
   }
 } // {
   spec = Some (defaultPVCSpec // {
-    accessModes = Some [
+    accessModes = [
       "ReadWriteOnce"
     ],
     storageClassName = Some values.storageClassName,
     resources = Some (defaultResourceRequirements // {
-      requests = Some ([
+      requests = ([
         {
           mapKey = "storage",
           mapValue = values.capacity

@@ -42,7 +42,7 @@ in {
       "configmaps"
     ],
     verbs = [
-      "*"
+      "'*'"
     ]
   },
   clusterRole-2 = {
@@ -51,10 +51,10 @@ in {
       ""
     ],
     resources = [
-      "*"
+      "'*'"
     ],
     verbs = [
-      "*"
+      "'*'"
     ]
   },
   clusterRoleBinding-1 = {

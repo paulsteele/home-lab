@@ -1,7 +1,7 @@
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.EnvVar.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
@@ -21,7 +21,7 @@ let zwaveVolumeMapping = createConfigVolumeMapping {
   name = "zwave-config",
   configName = mainName,
   mountPath = "/usr/bin/zwave",
-  defaultMode = 0O755,
+  defaultMode = 493,
   item = "zwave"
 }
 
@@ -29,7 +29,7 @@ let zhaVolumeMapping = createConfigVolumeMapping {
   name = "zha-config",
   configName = mainName,
   mountPath = "/usr/bin/zha",
-  defaultMode = 0O775,
+  defaultMode = 493,
   item = "zha"
 }
 
@@ -63,30 +63,30 @@ in {
   },
   deployment = defaultDeployment // {
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = mainName
       } // {
         image = Some "homeassistant/home-assistant",
-        ports = Some [
-          defaultContainerPort {containerPort = targetPort},
-          defaultContainerPort {containerPort = 8300}
+        ports = [
+          defaultContainerPort // {containerPort = targetPort},
+          defaultContainerPort // {containerPort = 8300}
         ],
-        command = Some ["sh" ],
-        args = Some [
+        command = ["sh" ],
+        args = [
           "-c",
           "zwave && zha && python -m homeassistant --config /config"
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           configVolumeMapping.volumeMount,
           zwaveVolumeMapping.volumeMount,
           zhaVolumeMapping.volumeMount
         ]
       },
-      defaultContainer {
+      defaultContainer // {
         name = "zrc-90-listener"
       } // {
         image = Some "registry.paul-steele.com/zrc-90:latest",
-        env = Some [
+        env = [
           createSecretEnvMapping {
             targetKey = "API_KEY",
             sourceKey = "APP_KEY",
@@ -101,7 +101,7 @@ in {
             value = "Node009"
           }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           configVolumeMapping.volumeMount // {
             mountPath = "/home/hass/hass"
           }

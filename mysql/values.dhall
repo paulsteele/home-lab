@@ -1,7 +1,7 @@
 let defaultCronJob            = ../dhall/k8s/cronJob/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.EnvVar.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
@@ -35,16 +35,16 @@ in {
     name = "mysqldump",
     schedule = "0 1 * * 4",
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = "mysqldump"
       } // {
         image = Some "camil/mysqldump",
-        command = Some [ "/bin/bash" ],
-        args = Some [
+        command = [ "/bin/bash" ],
+        args = [
           "-c",
           "chmod +x dump.sh && ./dump.sh"
         ],
-        env = Some [
+        env = [
             createStaticEnvMapping {
               key = "ALL_DATABASES",
               value = "true"
@@ -63,7 +63,7 @@ in {
               sourceSecret = "database-mysql"
             }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           storageMapping.volumeMount
         ]
       }

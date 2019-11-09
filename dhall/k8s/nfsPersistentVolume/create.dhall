@@ -2,16 +2,16 @@
 
 let PV                          = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.PersistentVolume.dhall
 
-let defaultPV                   = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PersistentVolume.dhall
-let defaultPVSpec               = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.PersistentVolumeSpec.dhall
-let defaultNFSVolumeSource      = ../../dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.NFSVolumeSource.dhall
-let defaultMeta                 = ../../dependencies/dhall-kubernetes/default/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultPV                   = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolume.dhall
+let defaultPVSpec               = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolumeSpec.dhall
+let defaultNFSVolumeSource      = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.NFSVolumeSource.dhall
+let defaultMeta                 = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
-in defaultPV {
-  metadata = defaultMeta {
+in defaultPV // {
+  metadata = defaultMeta // {
     name = values.name
   } // {
-    labels = Some [
+    labels = [
       {
         mapKey = "type",
         mapValue = "local"
@@ -20,17 +20,17 @@ in defaultPV {
   }
 } // {
   spec = Some (defaultPVSpec // {
-    accessModes = Some [
+    accessModes = [
       "ReadWriteOnce"
     ],
     storageClassName = Some values.storageClassName,
-    capacity = Some [
+    capacity = [
       {
         mapKey = "storage",
         mapValue = values.capacity
       }
     ],
-    nfs = Some (defaultNFSVolumeSource {
+    nfs = Some (defaultNFSVolumeSource // {
       server = values.server,
       path = values.path
     })

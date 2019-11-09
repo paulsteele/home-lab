@@ -1,8 +1,8 @@
 let defaultCronJob            = ../dhall/k8s/cronJob/default.dhall
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.EnvVar.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 
@@ -40,21 +40,21 @@ in {
   },
   deployment = defaultDeployment // {
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = mainName
       } // {
         image = Some "mprasil/bitwarden:latest",
-        ports = Some [
-          defaultContainerPort {containerPort = targetPort}
+        ports = [
+          defaultContainerPort // {containerPort = targetPort}
         ],
-        env = Some [
-            defaultEnvVar {
+        env = [
+            defaultEnvVar // {
             name = "SIGNUPS_ALLOWED"
           } // {
             value = Some "false"
           }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           dataVolumeMapping.volumeMount
         ]
       }
@@ -67,16 +67,16 @@ in {
     name = "passworddump",
     schedule = "0 1 * * 4",
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = "passworddump"
       } // {
         image = Some "nouchka/sqlite3",
-        command = Some [ "sqlite3" ],
-        args = Some [
+        command = [ "sqlite3" ],
+        args = [
           "/data/db.sqlite3",
           ".backup '/backup/bitwarden.sq3'"
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           dataVolumeMapping.volumeMount,
           backupMapping.volumeMount
         ]

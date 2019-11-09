@@ -1,6 +1,6 @@
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
 
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
@@ -32,20 +32,20 @@ in {
   },
   deployment = defaultDeployment // {
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = mainName
       } // {
         image = Some "linuxserver/freshrss",
-        ports = Some [
-          defaultContainerPort {containerPort = targetPort}
+        ports = [
+          defaultContainerPort // {containerPort = targetPort}
         ],
-        env = Some [
+        env = [
           createStaticEnvMapping {
             key = "CRON_MIN",
             value = "5, 35"
           }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           configVolumeMapping.volumeMount
         ]
       }

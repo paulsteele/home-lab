@@ -1,7 +1,7 @@
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
-let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.Container.dhall
-let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.ContainerPort.dhall
-let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/default/io.k8s.api.core.v1.EnvVar.dhall
+let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Container.dhall
+let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ContainerPort.dhall
+let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.EnvVar.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 let createStaticEnvMapping    = ../dhall/k8s/staticEnvMapping/create.dhall
@@ -54,14 +54,14 @@ in {
   },
   deployment = defaultDeployment // {
     containers = [
-      defaultContainer {
+      defaultContainer // {
         name = mainName
       } // {
         image = Some "mbirth/subsonic",
-        ports = Some [
-          defaultContainerPort {containerPort = targetPort}
+        ports = [
+          defaultContainerPort // {containerPort = targetPort}
         ],
-        env = Some [
+        env = [
           createStaticEnvMapping {
             key = "TZ",
             value = "America/Indiana/Indianapolis"
@@ -71,7 +71,7 @@ in {
             value = "en_US.UTF-8"
           }
         ],
-        volumeMounts = Some [
+        volumeMounts = [
           configVolumeMapping.volumeMount,
           musicVolumeMapping.volumeMount,
           videoVolumeMapping.volumeMount,

@@ -17,7 +17,7 @@ in {
     name = "paul-steele.com",
     namespace = "default",
     dnsNames = [
-      "*.paul-steele.com"
+      "'*.paul-steele.com'"
     ],
     issuer = issuerName
   },
