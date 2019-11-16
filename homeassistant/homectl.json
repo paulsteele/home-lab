@@ -5,12 +5,8 @@
       "configMap",
       "ingress",
       "service",
-      "deployment"
-    ],
-    "secrets": {
-      "secret-1" : [
-        "APP_KEY"
-      ]
-    }
+      "deployment",
+      "secret-1"
+    ]
   }
 }

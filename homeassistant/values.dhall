@@ -115,6 +115,13 @@ in {
     ]
   },
   secret-1 = {
-    name = mainName
+    name = mainName,
+    namespaces = ["default"],
+    secrets = [
+      {
+        mapKey = "APP_KEY",
+        mapValue = ./secrets/app-key.txt as Text
+      }
+    ]
   }
 }

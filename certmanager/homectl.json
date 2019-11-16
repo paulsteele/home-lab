@@ -5,13 +5,9 @@
       "clusterIssuer",
       "certificate-1",
       "certificate-2",
-      "certificate-3"
-    ],
-    "secrets": {
-      "secret-1": [
-        "key"
-      ]
-    }
+      "certificate-3",
+      "secret-1"
+    ]
   },
   "helm": {
     "name": "cert-manager",

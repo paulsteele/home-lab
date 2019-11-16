@@ -41,6 +41,12 @@ in {
   },
   secret-1 = {
     name = "route53-key",
-    namespaces = ["default"]
+    namespaces = ["default"],
+    secrets = [
+      {
+        mapKey = "key",
+        mapValue = ./secrets/key.txt as Text
+      }
+    ]
   }
 }
