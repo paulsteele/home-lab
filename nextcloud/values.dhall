@@ -47,7 +47,7 @@ in {
       defaultContainer // {
         name = mainName
       } // {
-        image = Some "nextcloud:17-rc",
+        image = Some "nextcloud:17.0.1",
         ports = [
           defaultContainerPort // {containerPort = targetPort}
         ],
