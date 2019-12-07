@@ -7,11 +7,10 @@ let defaultPVSpec               = ../../dependencies/dhall-kubernetes/defaults/i
 let defaultHostPathVolumeSource = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.HostPathVolumeSource.dhall
 let defaultMeta                 = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
-in defaultPV {
-  metadata = defaultMeta {
-    name = values.name
-  } // {
-    labels = Some [
+in defaultPV // {
+  metadata = defaultMeta // {
+    name = values.name,
+    labels = [
       {
         mapKey = "type",
         mapValue = "local"
@@ -20,17 +19,17 @@ in defaultPV {
   }
 } // {
   spec = Some (defaultPVSpec // {
-    accessModes = Some [
+    accessModes = [
       "ReadWriteOnce"
     ],
     storageClassName = Some values.storageClassName,
-    capacity = Some [
+    capacity = [
       {
         mapKey = "storage",
         mapValue = values.capacity
       }
     ],
-    hostPath = Some (defaultHostPathVolumeSource {
+    hostPath = Some (defaultHostPathVolumeSource // {
       path = values.hostPath
     })
   })

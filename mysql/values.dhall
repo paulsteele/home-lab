@@ -21,9 +21,8 @@ in {
   common = {
     name = mainName
   },
-  nfsPersistentVolume = {
-    server = "192.168.0.105",
-    path = "/srv/nfs/mysql",
+  hostPersistentVolume = {
+    hostPath = "/srv/nfs/mysql",
     storageClassName = mainName,
     capacity = capacity
   },
