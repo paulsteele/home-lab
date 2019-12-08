@@ -1,0 +1,14 @@
+{
+  "dhall": {
+    "source": "values.dhall",
+    "resources": [
+      "ingress-keycloak",
+      "service-keycloak",
+      "deployment-keycloak",
+      "ingress-pomerium",
+      "service-pomerium",
+      "deployment-pomerium",
+      "secret-1"
+    ]
+  }
+}
