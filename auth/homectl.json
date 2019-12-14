@@ -5,7 +5,8 @@
       "ingress-keycloak",
       "service-keycloak",
       "deployment-keycloak",
-      "ingress-pomerium",
+      "ingress-auth",
+      "ingress-fwd",
       "service-pomerium",
       "deployment-pomerium",
       "secret-1"

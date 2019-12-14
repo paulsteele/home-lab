@@ -21,12 +21,37 @@ let cliVolumeMapping = createSecretVolumeMapping {
   item = "cli"
 }
 
+let policyVolumeMapping = createSecretVolumeMapping {
+  name = "policy",
+  secretName = mainName,
+  mountPath = "/pomerium/config.yaml",
+  defaultMode = 320,
+  item = "policy"
+}
+
+let certVolumeMapping = createSecretVolumeMapping {
+  name = "cert",
+  secretName = mainName,
+  mountPath = "/certs/pomerium.cert",
+  defaultMode = 320,
+  item = "cert"
+}
+
+let keyVolumeMapping = createSecretVolumeMapping {
+  name = "certkey",
+  secretName = mainName,
+  mountPath = "/certs/pomerium.key",
+  defaultMode = 320,
+  item = "certkey"
+}
+
 in {
   common = {
     name = mainName
   },
   ingress-keycloak = {
     name = "keycloak",
+    serviceName = "keycloak",
     hostName = "keycloak",
     domain = "paul-steele.com",
     ingressPort = 8080
@@ -44,10 +69,6 @@ in {
       } // {
         image = Some "jboss/keycloak:8.0.1",
         env = [
---          createStaticEnvMapping {
---            key = "KEYCLOAK_FRONTEND_URL",
---            value = "https://keycloak.paul-steele.com"
---          },
           createStaticEnvMapping {
             key = "PROXY_ADDRESS_FORWARDING",
             value = "true"
@@ -121,16 +142,20 @@ in {
             value = ":8080"
           },
           createStaticEnvMapping {
-            key = "INSECURE_SERVER",
-            value = "true"
-          },
-          createStaticEnvMapping {
             key = "IDP_CLIENT_ID",
-            value = "account"
+            value = "test-account"
           },
           createStaticEnvMapping {
             key = "IDP_PROVIDER",
             value = "oidc"
+          },
+          createStaticEnvMapping {
+            key = "CERTIFICATE_FILE",
+            value = "/certs/pomerium.cert"
+          },
+          createStaticEnvMapping {
+            key = "CERTIFICATE_KEY_FILE",
+            value = "/certs/pomerium.key"
           },
           createStaticEnvMapping {
             key = "IDP_PROVIDER_URL",
@@ -151,12 +176,30 @@ in {
             sourceKey = "client-secret",
             sourceSecret = mainName
           }
+        ],
+        volumeMounts = [
+          policyVolumeMapping.volumeMount,
+          certVolumeMapping.volumeMount,
+          keyVolumeMapping.volumeMount
         ]
       }
+    ],
+    volumes = [
+      policyVolumeMapping.volume,
+      certVolumeMapping.volume,
+      keyVolumeMapping.volume
     ]
   },
-  ingress-pomerium = {
-    name = "pomerium",
+  ingress-fwd = {
+    name = "pomerium-fwd",
+    serviceName = "pomerium",
+    hostName = "fwd",
+    domain = "paul-steele.com",
+    ingressPort = 8080
+  },
+  ingress-auth = {
+    name = "pomerium-auth",
+    serviceName = "pomerium",
     hostName = "auth",
     domain = "paul-steele.com",
     ingressPort = 8080
@@ -189,6 +232,18 @@ in {
       {
         mapKey = "client-secret",
         mapValue = ./secrets/client_secret.txt as Text
+      },
+      {
+        mapKey = "policy",
+        mapValue = ./resources/policy.yaml as Text
+      },
+      {
+        mapKey = "cert",
+        mapValue = ./secrets/pomerium.cert as Text
+      },
+      {
+        mapKey = "certkey",
+        mapValue = ./secrets/pomerium.key as Text
       }
     ]
   }

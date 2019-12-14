@@ -1,15 +1,9 @@
-# This file contains only policy and route configuration details. Other
-# configuration settings required by pomerium are excluded for clarity.
-# See: https://www.pomerium.io/docs/reference/reference/
-#
-# For a complete self contained configuration see : config.example.yaml.
-# Or, mix and match a policy file (this) with env vars : config.example.env
+# config.yaml
+forward_auth_url: https://fwd.paul-steele.com
 
-# Proxied routes and per-route policies are defined in a policy block
-# NOTA BENE: You must uncomment the bellow 'policy' key if you are loading policy as a file.
-# policy:
-- from: https://blog.paul-steele.com
-  to: http://localhost:8000
-  allowed_domains:
-    - pomerium.io
-  timeout: 30s
+policy:
+  # this route is indirectly checked for access using forward-auth
+  - from: "https://*"
+    to: "https://*"
+    allowed_users:
+      - paul
