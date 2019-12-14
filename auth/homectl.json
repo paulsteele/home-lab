@@ -7,8 +7,8 @@
       "deployment-keycloak",
       "ingress-auth",
       "ingress-fwd",
-      "service-pomerium",
-      "deployment-pomerium",
+      "service-gatekeeper",
+      "deployment-gatekeeper",
       "secret-1"
     ]
   }

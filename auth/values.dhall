@@ -45,6 +45,14 @@ let keyVolumeMapping = createSecretVolumeMapping {
   item = "certkey"
 }
 
+let gatekeeperVolumeMapping = createSecretVolumeMapping {
+  name = "gatekeeperconf",
+  secretName = mainName,
+  mountPath = "/gatekeeper.yaml",
+  defaultMode = 320,
+  item = "gatekeeperconf"
+}
+
 in {
   common = {
     name = mainName
@@ -117,95 +125,48 @@ in {
       cliVolumeMapping.volume
     ]
   },
-  deployment-pomerium = defaultDeployment // {
-    name = "pomerium",
+  deployment-gatekeeper = defaultDeployment // {
+    name = "gatekeeper",
     containers = [
       defaultContainer // {
-        name = "pomerium"
+        name = "gatekeeper"
       } // {
-        image = Some "pomerium/pomerium:v0.5.2",
-        env = [
-          createStaticEnvMapping {
-            key = "ADMINISTRATORS",
-            value = "paul_steele@live.com"
-          },
-          createStaticEnvMapping {
-            key = "FORWARD_AUTH_URL",
-            value = "https://fwd.paul-steele.com"
-          },
-          createStaticEnvMapping {
-            key = "AUTHENTICATE_SERVICE_URL",
-            value = "https://auth.paul-steele.com"
-          },
-          createStaticEnvMapping {
-            key = "ADDRESS",
-            value = ":8080"
-          },
-          createStaticEnvMapping {
-            key = "IDP_CLIENT_ID",
-            value = "test-account"
-          },
-          createStaticEnvMapping {
-            key = "IDP_PROVIDER",
-            value = "oidc"
-          },
-          createStaticEnvMapping {
-            key = "CERTIFICATE_FILE",
-            value = "/certs/pomerium.cert"
-          },
-          createStaticEnvMapping {
-            key = "CERTIFICATE_KEY_FILE",
-            value = "/certs/pomerium.key"
-          },
-          createStaticEnvMapping {
-            key = "IDP_PROVIDER_URL",
-            value = "https://keycloak.paul-steele.com/auth/realms/master"
-          },
-          createSecretEnvMapping {
-            targetKey = "SHARED_SECRET",
-            sourceKey = "shared_secret",
-            sourceSecret = mainName
-          },
-          createSecretEnvMapping {
-            targetKey = "COOKIE_SECRET",
-            sourceKey = "cookie_secret",
-            sourceSecret = mainName
-          },
-          createSecretEnvMapping {
-            targetKey = "IDP_CLIENT_SECRET",
-            sourceKey = "client-secret",
-            sourceSecret = mainName
-          }
+        image = Some "keycloak/keycloak-gatekeeper:7.0.0",
+        args = [
+          "--config",
+          "/gatekeeper.yaml"
         ],
         volumeMounts = [
           policyVolumeMapping.volumeMount,
           certVolumeMapping.volumeMount,
-          keyVolumeMapping.volumeMount
+          keyVolumeMapping.volumeMount,
+          gatekeeperVolumeMapping.volumeMount
         ]
       }
     ],
     volumes = [
       policyVolumeMapping.volume,
       certVolumeMapping.volume,
-      keyVolumeMapping.volume
+      keyVolumeMapping.volume,
+      gatekeeperVolumeMapping.volume
     ]
   },
   ingress-fwd = {
-    name = "pomerium-fwd",
-    serviceName = "pomerium",
+    name = "gatekeeper-fwd",
+    serviceName = "gatekeeper",
     hostName = "fwd",
     domain = "paul-steele.com",
     ingressPort = 8080
   },
   ingress-auth = {
-    name = "pomerium-auth",
-    serviceName = "pomerium",
+    name = "gatekeeper-auth",
+    serviceName = "gatekeeper",
     hostName = "auth",
     domain = "paul-steele.com",
     ingressPort = 8080
   },
-  service-pomerium = {
-    name = "pomerium",
+  service-gatekeeper = {
+    name = "gatekeeper",
     ingressPort = 8080,
     targetPort = 8080
   },
@@ -244,6 +205,10 @@ in {
       {
         mapKey = "certkey",
         mapValue = ./secrets/pomerium.key as Text
+      },
+      {
+        mapKey = "gatekeeperconf",
+        mapValue = ./secrets/gatekeeper_conf.yaml as Text
       }
     ]
   }
