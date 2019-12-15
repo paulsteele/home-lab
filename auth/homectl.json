@@ -2,13 +2,9 @@
   "dhall": {
     "source": "values.dhall",
     "resources": [
-      "ingress-keycloak",
-      "service-keycloak",
-      "deployment-keycloak",
-      "ingress-auth",
-      "ingress-fwd",
-      "service-gatekeeper",
-      "deployment-gatekeeper",
+      "ingress",
+      "service",
+      "deployment",
       "secret-1"
     ]
   }

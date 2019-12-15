@@ -44,7 +44,7 @@ in defaultIngress // {
           paths = [
             {
               backend = {
-                serviceName = values.serviceName,
+                serviceName = values.name,
                 servicePort = IntOrString.Int values.ingressPort
               },
               path = Some "/"
