@@ -6,7 +6,10 @@
       "ingress",
       "service",
       "deployment",
-      "secret-1"
+      "secret-1",
+      "ingress-nodered",
+      "service-nodered",
+      "deployment-nodered"
     ]
   }
 }

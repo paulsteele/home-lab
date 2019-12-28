@@ -114,6 +114,27 @@ in {
       zhaVolumeMapping.volume
     ]
   },
+  ingress-nodered = {
+    name = "nodered",
+    hostName = "nodered",
+    domain = "paul-steele.com",
+    ingressPort = 1880
+  },
+  service-nodered = {
+    name = "nodered",
+    ingressPort = 1880,
+    targetPort = 1880
+  },
+  deployment-nodered = defaultDeployment // {
+    name = "nodered",
+    containers = [
+      defaultContainer // {
+        name = "nodered"
+      } // {
+        image = Some "nodered/node-red:1.0.3"
+      }
+    ]
+  },
   secret-1 = {
     name = mainName,
     namespaces = ["default"],
