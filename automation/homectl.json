@@ -5,8 +5,7 @@
       "configMap",
       "ingress",
       "service",
-      "deployment",
-      "secret-1"
+      "deployment"
     ]
   }
 }
