@@ -81,47 +81,12 @@ in {
           zwaveVolumeMapping.volumeMount,
           zhaVolumeMapping.volumeMount
         ]
-      },
-      defaultContainer // {
-        name = "zrc-90-listener"
-      } // {
-        image = Some "registry.paul-steele.com/zrc-90:latest",
-        env = [
-          createSecretEnvMapping {
-            targetKey = "API_KEY",
-            sourceKey = "APP_KEY",
-            sourceSecret = mainName
-          },
-          createStaticEnvMapping {
-            key = "API_URI",
-            value = "http://localhost:8123/api/events/custom_scene"
-          },
-          createStaticEnvMapping {
-            key = "MASTER_NODE",
-            value = "Node009"
-          }
-        ],
-        volumeMounts = [
-          configVolumeMapping.volumeMount // {
-            mountPath = "/home/hass/hass"
-          }
-        ]
       }
     ],
     volumes = [
       configVolumeMapping.volume,
       zwaveVolumeMapping.volume,
       zhaVolumeMapping.volume
-    ]
-  },
-  secret-1 = {
-    name = mainName,
-    namespaces = ["default"],
-    secrets = [
-      {
-        mapKey = "APP_KEY",
-        mapValue = ./secrets/app-key.txt as Text
-      }
     ]
   }
 }
