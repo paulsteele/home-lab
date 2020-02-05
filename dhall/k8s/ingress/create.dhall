@@ -17,6 +17,10 @@ let annotations = [
   { 
     mapKey = "nginx.ingress.kubernetes.io/proxy-body-size",
     mapValue = "0"
+  },
+  {
+    mapKey = "nginx.ingress.kubernetes.io/force-ssl-redirect",
+    mapValue = "true"
   }
 ]
 
