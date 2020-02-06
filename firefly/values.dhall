@@ -47,18 +47,26 @@ in {
       defaultContainer // {
         name = mainName
       } // {
-        image = Some "jc5x/firefly-iii:latest",
+        image = Some "jc5x/firefly-iii:release-5.0.4",
         ports = [
           defaultContainerPort // {containerPort = targetPort}
         ],
         env = [
             createStaticEnvMapping {
               key = "DB_HOST",
-              value = "database-mysql:3306"
+              value = "database-mysql"
             },
             createStaticEnvMapping {
               key = "DB_USERNAME",
               value = "eos"
+            },
+            createStaticEnvMapping {
+              key = "DB_PORT",
+              value = "3306"
+            },
+            createStaticEnvMapping {
+              key = "DB_CONNECTION",
+              value = "mysql"
             },
             createStaticEnvMapping {
               key = "DB_DATABASE",
