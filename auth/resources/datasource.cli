@@ -1,5 +1,0 @@
-embed-server --server-config=standalone.xml --std-out=discard
-echo ** Updating DB Timeout **
-/subsystem=datasources/data-source=KeycloakDS/:write-attribute(name=query-timeout,value=600)
-/system-property=jboss.as.management.blocking.timeout:add(value=600)
-stop-embedded-server

@@ -1,9 +1,0 @@
-# config.yaml
-forward_auth_url: https://fwd.paul-steele.com
-
-policy:
-  # this route is indirectly checked for access using forward-auth
-  - from: "https://*"
-    to: "https://*"
-    allowed_users:
-      - paul
