@@ -1,13 +1,13 @@
 \(values: ./input.dhall) ->
 
-let Ingress            = ../../dependencies/dhall-kubernetes/types/io.k8s.api.extensions.v1beta1.Ingress.dhall
+let Ingress            = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.extensions.v1beta1.Ingress.dhall
 
-let defaultIngress     = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.extensions.v1beta1.Ingress.dhall
-let defaultIngressTLS  = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.extensions.v1beta1.IngressTLS.dhall
-let defaultIngressSpec = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.extensions.v1beta1.IngressSpec.dhall
-let defaultMeta        = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultIngress     = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.extensions.v1beta1.Ingress.dhall
+let defaultIngressTLS  = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.extensions.v1beta1.IngressTLS.dhall
+let defaultIngressSpec = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.extensions.v1beta1.IngressSpec.dhall
+let defaultMeta        = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
-let IntOrString        = ../../dependencies/dhall-kubernetes/types/io.k8s.apimachinery.pkg.util.intstr.IntOrString.dhall
+let IntOrString        = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.apimachinery.pkg.util.intstr.IntOrString.dhall
 
 let annotations = [
   {

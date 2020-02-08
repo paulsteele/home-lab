@@ -1,14 +1,14 @@
 \(values: ./input.dhall) ->
 
-let CronJob         = ../../dependencies/dhall-kubernetes/types/io.k8s.api.batch.v1beta1.CronJob.dhall
+let CronJob         = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.batch.v1beta1.CronJob.dhall
 
-let defaultCronJob                = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.batch.v1beta1.CronJob.dhall
-let defaultCronJobSpec            = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.batch.v1beta1.CronJobSpec.dhall
-let defaultMeta                   = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
-let defaultJobTemplateSpec        = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.batch.v1beta1.JobTemplateSpec.dhall
-let defaultJobSpec                = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.batch.v1.JobSpec.dhall
-let defaultPodTemplateSpec        = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PodTemplateSpec.dhall
-let defaultPodSpec                = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PodSpec.dhall
+let defaultCronJob                = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.batch.v1beta1.CronJob.dhall
+let defaultCronJobSpec            = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.batch.v1beta1.CronJobSpec.dhall
+let defaultMeta                   = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultJobTemplateSpec        = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.batch.v1beta1.JobTemplateSpec.dhall
+let defaultJobSpec                = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.batch.v1.JobSpec.dhall
+let defaultPodTemplateSpec        = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.PodTemplateSpec.dhall
+let defaultPodSpec                = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.PodSpec.dhall
 
 
 in defaultCronJob // {

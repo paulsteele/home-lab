@@ -1,11 +1,11 @@
 \(values: ./input.dhall) ->
 
-let VolumeMount                 = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.VolumeMount.dhall
-let Volume                      = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.Volume.dhall
+let VolumeMount                 = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.core.v1.VolumeMount.dhall
+let Volume                      = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.core.v1.Volume.dhall
 
-let defaultVolumeMount          = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.VolumeMount.dhall
-let defaultVolume               = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.Volume.dhall
-let defaultHostPathVolumeSource = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.HostPathVolumeSource.dhall
+let defaultVolumeMount          = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.VolumeMount.dhall
+let defaultVolume               = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.Volume.dhall
+let defaultHostPathVolumeSource = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.HostPathVolumeSource.dhall
 
 in {
   volumeMount = (defaultVolumeMount {

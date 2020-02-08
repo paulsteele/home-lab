@@ -1,9 +1,9 @@
 \(values: ./input.dhall) ->
 
-let ServiceAccount = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.ServiceAccount.dhall
+let ServiceAccount = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.core.v1.ServiceAccount.dhall
 
-let defaultServiceAccount = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ServiceAccount.dhall
-let defaultMeta           = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultServiceAccount = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.ServiceAccount.dhall
+let defaultMeta           = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
 in defaultServiceAccount // {
   metadata = defaultMeta // {

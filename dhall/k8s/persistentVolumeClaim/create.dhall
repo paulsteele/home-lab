@@ -1,11 +1,11 @@
 \(values: ./input.dhall) ->
 
-let PVC                         = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
+let PVC                         = ../../dependencies/dhall-kubernetes/1.15/types/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
 
-let defaultPVC                  = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
-let defaultPVCSpec              = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.PersistentVolumeClaimSpec.dhall
-let defaultResourceRequirements = ../../dependencies/dhall-kubernetes/defaults/io.k8s.api.core.v1.ResourceRequirements.dhall
-let defaultMeta                 = ../../dependencies/dhall-kubernetes/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
+let defaultPVC                  = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.PersistentVolumeClaim.dhall
+let defaultPVCSpec              = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.PersistentVolumeClaimSpec.dhall
+let defaultResourceRequirements = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.ResourceRequirements.dhall
+let defaultMeta                 = ../../dependencies/dhall-kubernetes/1.15/defaults/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.dhall
 
 in defaultPVC // {
   metadata = defaultMeta // {
