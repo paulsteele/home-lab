@@ -1,3 +1,4 @@
 {
+  name: Text,
   automountServiceAccountToken: Bool
 }

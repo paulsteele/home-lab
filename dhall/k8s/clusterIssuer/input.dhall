@@ -1,4 +1,5 @@
 {
+  name: Text,
   server: Text,
   email: Text,
   certmanagerSecret: Text,
