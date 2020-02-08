@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let map = ../../dependencies/dhall-lang/Prelude/List/map
 let Secret = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.Secret.dhall

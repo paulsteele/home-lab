@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let ClusterRole            = ../../dependencies/dhall-kubernetes/types/io.k8s.api.rbac.v1.ClusterRole.dhall
 

@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let CronJob         = ../../dependencies/dhall-kubernetes/types/io.k8s.api.batch.v1beta1.CronJob.dhall
 

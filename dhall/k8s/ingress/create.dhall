@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let Ingress            = ../../dependencies/dhall-kubernetes/types/io.k8s.api.extensions.v1beta1.Ingress.dhall
 

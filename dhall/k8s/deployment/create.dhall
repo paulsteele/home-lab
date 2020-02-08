@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let Deployment             = ../../dependencies/dhall-kubernetes/types/io.k8s.api.apps.v1.Deployment.dhall
 

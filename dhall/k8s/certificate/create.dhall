@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 {
   apiVersion = "certmanager.k8s.io/v1alpha1",

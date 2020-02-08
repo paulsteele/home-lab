@@ -1,4 +1,4 @@
-\(values: ../common.dhall //\\ ./input.dhall) ->
+\(values: ./input.dhall) ->
 
 let ServiceAccount = ../../dependencies/dhall-kubernetes/types/io.k8s.api.core.v1.ServiceAccount.dhall
 
