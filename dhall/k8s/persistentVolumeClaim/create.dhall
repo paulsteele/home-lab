@@ -13,12 +13,12 @@ in defaultPVC // {
   }
 } // {
   spec = Some (defaultPVCSpec // {
-    accessModes = [
+    accessModes = Some [
       "ReadWriteOnce"
     ],
     storageClassName = Some values.storageClassName,
     resources = Some (defaultResourceRequirements // {
-      requests = ([
+      requests = Some ([
         {
           mapKey = "storage",
           mapValue = values.capacity

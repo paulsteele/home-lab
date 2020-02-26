@@ -11,7 +11,7 @@ in defaultPV // {
   metadata = defaultMeta // {
     name = values.name
   } // {
-    labels = [
+    labels = Some [
       {
         mapKey = "type",
         mapValue = "local"
@@ -20,11 +20,11 @@ in defaultPV // {
   }
 } // {
   spec = Some (defaultPVSpec // {
-    accessModes = [
+    accessModes = Some [
       "ReadWriteOnce"
     ],
     storageClassName = Some values.storageClassName,
-    capacity = [
+    capacity = Some [
       {
         mapKey = "storage",
         mapValue = values.capacity
