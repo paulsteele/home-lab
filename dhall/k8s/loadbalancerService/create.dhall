@@ -27,14 +27,14 @@ in defaultService // {
     name = "${values.name}"
   },
   spec = Some ( defaultServiceSpec // {
-    selector = [
+    selector = Some [
       {
         mapKey   = "app",
         mapValue = values.name
       }
     ],
     type = Some "LoadBalancer",
-    ports = (map singleInput ServicePort createPorts values.ports),
+    ports = Some (map singleInput ServicePort createPorts values.ports),
     loadBalancerIP = Some values.loadBalancerIP
   })
 } : Service
