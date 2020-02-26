@@ -20,25 +20,25 @@ in defaultDeployment // {
   metadata = defaultMeta // {
     name = values.name
   } // {
-    labels = labels
+    labels = Some labels
   }
 } // {
   spec = Some (defaultDeploymentSpec // {
     selector = defaultSelector // {
-      matchLabels = labels
+      matchLabels = Some labels
     },
     template = defaultPodTemplateSpec // {
       metadata = defaultMeta // {
         name = values.name
       } // {
-        labels = labels 
+        labels = Some labels
       }
     } // {
       spec = Some (defaultPodSpec // {
         containers = values.containers
       } // {
-        volumes = values.volumes,
-        imagePullSecrets = [
+        volumes = Some values.volumes,
+        imagePullSecrets = Some [
           {
             name = Some "registry.paul-steele.com"
           }

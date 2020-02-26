@@ -1,6 +1,7 @@
 secrets.txt
 htpasswd
 **/output/**
+output.yaml
 **/secrets/**
 .mypy_cache
 .vscode

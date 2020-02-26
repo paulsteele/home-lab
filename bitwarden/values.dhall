@@ -1,8 +1,14 @@
+let k8s = ../dhall/dependencies/dhall-kubernetes/1.15/typesUnion.dhall
 let defaultCronJob            = ../dhall/k8s/cronJob/default.dhall
 let defaultDeployment         = ../dhall/k8s/deployment/default.dhall
 let defaultContainer          = ../dhall/dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.Container.dhall
 let defaultContainerPort      = ../dhall/dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.ContainerPort.dhall
 let defaultEnvVar             = ../dhall/dependencies/dhall-kubernetes/1.15/defaults/io.k8s.api.core.v1.EnvVar.dhall
+
+let createIngress = ../dhall/k8s/ingress/create.dhall
+let createService = ../dhall/k8s/service/create.dhall
+let createDeployment = ../dhall/k8s/deployment/create.dhall
+let createCronJob = ../dhall/k8s/cronJob/create.dhall
 
 let createNFSVolumeMapping    = ../dhall/k8s/nfsVolumeMapping/create.dhall
 
@@ -26,65 +32,68 @@ let ingressPort = 80
 let targetPort = 80
 
 in {
-  common = {
-    name = mainName
-  },
-  ingress = {
-    hostName = "passwords",
-    domain = "paul-steele.com",
-    ingressPort = ingressPort
-  },
-  service = {
-    ingressPort = ingressPort,
-    targetPort = targetPort
-  },
-  deployment = defaultDeployment // {
-    containers = [
-      defaultContainer // {
-        name = mainName
-      } // {
-        image = Some "mprasil/bitwarden:latest",
-        ports = [
-          defaultContainerPort // {containerPort = targetPort}
-        ],
-        env = [
-            defaultEnvVar // {
-            name = "SIGNUPS_ALLOWED"
-          } // {
-            value = Some "false"
-          }
-        ],
-        volumeMounts = [
-          dataVolumeMapping.volumeMount
-        ]
-      }
-    ],
-    volumes = [
-      dataVolumeMapping.volume
-    ]
-  },
-  cronJob = defaultCronJob // {
-    name = "passworddump",
-    schedule = "0 1 * * 4",
-    containers = [
-      defaultContainer // {
-        name = "passworddump"
-      } // {
-        image = Some "nouchka/sqlite3",
-        command = [ "sqlite3" ],
-        args = [
-          "/data/db.sqlite3",
-          ".backup '/backup/bitwarden.sq3'"
-        ],
-        volumeMounts = [
-          dataVolumeMapping.volumeMount,
-          backupMapping.volumeMount
-        ]
-      }
-    ],
-    volumes = [
-      dataVolumeMapping.volume,
-      backupMapping.volume
-    ]
-  }
+  apiVersion = "v1",
+  kind = "List",
+  items = [
+    k8s.Ingress (createIngress {
+      name = mainName,
+      hostName = "passwords",
+      domain = "paul-steele.com",
+      ingressPort = ingressPort
+    }),
+    k8s.Service (createService {
+      name = mainName,
+      ingressPort = ingressPort,
+      targetPort = targetPort
+    }),
+    k8s.Deployment (createDeployment( defaultDeployment // {
+      name = mainName,
+      containers = [
+        defaultContainer // {
+          name = mainName,
+          image = Some "mprasil/bitwarden:latest",
+          ports = Some [
+            defaultContainerPort // {containerPort = targetPort}
+          ],
+          env = Some [
+              defaultEnvVar // {
+              name = "SIGNUPS_ALLOWED"
+            } // {
+              value = Some "false"
+            }
+          ],
+          volumeMounts = Some [
+            dataVolumeMapping.volumeMount
+          ]
+        }
+      ],
+      volumes = [
+        dataVolumeMapping.volume
+      ]
+    })),
+    k8s.CronJob (createCronJob (defaultCronJob // {
+      name = "passworddump",
+      schedule = "0 1 * * 4",
+      containers = [
+        defaultContainer // {
+          name = "passworddump"
+        } // {
+          image = Some "nouchka/sqlite3",
+          command = Some [ "sqlite3" ],
+          args = Some [
+            "/data/db.sqlite3",
+            ".backup '/backup/bitwarden.sq3'"
+          ],
+          volumeMounts = Some [
+            dataVolumeMapping.volumeMount,
+            backupMapping.volumeMount
+          ]
+        }
+      ],
+      volumes = [
+        dataVolumeMapping.volume,
+        backupMapping.volume
+      ]
+    }))
+  ]
 }

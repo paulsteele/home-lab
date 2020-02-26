@@ -30,18 +30,18 @@ in defaultIngress // {
   metadata = defaultMeta // {
     name = values.name
   } //
-  { annotations = annotations }
+  { annotations = Some (annotations) }
 } //
 {
   spec = Some (defaultIngressSpec // {
-    tls = [
+    tls = Some [
       defaultIngressTLS // {
-        hosts = [
+        hosts = Some [
           host
         ]
       }
     ],
-    rules = [
+    rules = Some [
       {
         host = Some host,
         http = Some {

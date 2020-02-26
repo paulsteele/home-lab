@@ -32,7 +32,7 @@ in defaultCronJob // {
           spec = Some (defaultPodSpec // {
             containers = values.containers
           } // {
-            volumes = values.volumes,
+            volumes = Some values.volumes,
             restartPolicy = Some "Never"
           })
         }

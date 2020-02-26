@@ -15,13 +15,13 @@ in defaultService // {
   }
 } // {
   spec = Some ( defaultServiceSpec // {
-    selector = [
+    selector = Some [
       {
         mapKey   = "app",
         mapValue = values.name
       }
     ],
-    ports = [
+    ports = Some [
       defaultServicePort // {
         port = values.ingressPort
       } // {
