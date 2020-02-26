@@ -7,7 +7,7 @@ let defaultSecretKeySelector  = ../../dependencies/dhall-kubernetes/1.15/default
 in defaultEnvVar // {
   name = values.targetKey
 } // {
-  valueFrom = (defaultEnvVarSource // {
+  valueFrom = Some (defaultEnvVarSource // {
     secretKeyRef = Some (defaultSecretKeySelector // {
       key = values.sourceKey
     } // {
