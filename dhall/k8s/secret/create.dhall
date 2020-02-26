@@ -12,7 +12,7 @@ let base = defaultSecret // {
     name = values.name
   }
 } // {
-  stringData = values.secrets
+  stringData = Some values.secrets
 }: Secret
 
 let addNamespaces = \(namespace: Text) ->
