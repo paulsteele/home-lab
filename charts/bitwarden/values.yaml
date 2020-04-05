@@ -1,0 +1,15 @@
+containers:
+- image: mprasil/bitwarden:latest
+  name: bitwarden
+  staticEnvs:
+  - name: SIGNUPS_ALLOWED
+    value: 'false'
+  ports:
+  - 80
+  volumeMounts:
+  - data
+volumes:
+- name: data
+  source:
+    nfs: /srv/nfs/bitwarden
+  mountPath: /data
