@@ -1,0 +1,55 @@
+{{- define "base.deploymentSpec" -}}
+{{- $volumeDict := dict -}}
+{{- range $index, $volume := get . "volumes" -}}
+{{- $_ := set $volumeDict $volume.name $volume -}}
+{{- end -}}
+containers:
+{{- range $index, $container := (get . "resource").containers }}
+- image: {{ $container.image }}
+  name: {{ $container.name }}
+  {{- if $container.staticEnvs }}
+  env:
+  {{- range $index, $staticEnv := $container.staticEnvs }}
+  - name: {{ $staticEnv.name }}
+    value: {{ $staticEnv.value }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.ports }}
+  ports:
+  {{- range $index, $port := $container.ports }}
+  - containerPort: {{ $port }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.volumeMounts }}
+  volumeMounts:
+  {{- range $volumeName := $container.volumeMounts }}
+  {{ $volume := get $volumeDict $volumeName -}}
+  - name: {{ $volume.name }}
+    mountPath: {{ $volume.mountPath }}
+  {{- end }}
+  {{- end -}}
+{{- end }}
+imagePullSecrets:
+- name: registry.paul-steele.com
+{{- if get . "volumes" }}
+volumes:
+{{- range $index, $volume := get . "volumes" }}
+  {{- $found := false -}}
+  {{- range $index, $container := (get $ "resource").containers -}}
+    {{- if $container.volumeMounts -}}
+      {{- range $volumeName := $container.volumeMounts -}}
+        {{- if $volumeName | eq $volume.name -}}
+          {{- $found = true -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $found }}
+  - name: {{ $volume.name }}
+    nfs:
+      path: {{ $volume.source.nfs }}
+      server: 192.168.0.105
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

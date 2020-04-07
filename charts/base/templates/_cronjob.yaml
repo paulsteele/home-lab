@@ -1,0 +1,19 @@
+{{- define "base.cronjob" -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "base.name" . }}
+spec:
+  jobTemplate:
+    metadata:
+      name: {{ include "base.name" . }}
+    spec:
+      template:
+        metadata:
+          name: {{ include "base.name" . }}
+        spec:
+        {{- $data := dict -}}
+        {{- $_ := set $data "resource" .Values.baseResources.cronjob -}}
+        {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
+        {{- include "base.deploymentSpec" $data | nindent 8 }}
+{{- end -}}
