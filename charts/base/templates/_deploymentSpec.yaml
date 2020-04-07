@@ -7,11 +7,23 @@ containers:
 {{- range $index, $container := (get . "resource").containers }}
 - image: {{ $container.image }}
   name: {{ $container.name }}
+  {{- if $container.command }}
+  command:
+  {{- range $command := $container.command }}
+  - {{ $command }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.args }}
+  args:
+  {{- range $arg := $container.args }}
+  - {{ $arg }}
+  {{- end }}
+  {{- end -}}
   {{- if $container.staticEnvs }}
   env:
   {{- range $index, $staticEnv := $container.staticEnvs }}
   - name: {{ $staticEnv.name }}
-    value: {{ $staticEnv.value }}
+    value: '{{ $staticEnv.value }}'
   {{- end }}
   {{- end -}}
   {{- if $container.ports }}

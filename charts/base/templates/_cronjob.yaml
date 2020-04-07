@@ -15,5 +15,8 @@ spec:
         {{- $data := dict -}}
         {{- $_ := set $data "resource" .Values.baseResources.cronjob -}}
         {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
-        {{- include "base.deploymentSpec" $data | nindent 8 }}
+        {{- include "base.deploymentSpec" $data | nindent 10 }}
+          restartPolicy: Never
+  schedule: {{ .Values.baseResources.cronjob.schedule }}
+  successfulJobsHistoryLimit: 0
 {{- end -}}

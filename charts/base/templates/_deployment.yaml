@@ -13,5 +13,5 @@ spec:
     {{- $data := dict -}}
     {{- $_ := set $data "resource" .Values.baseResources.deployment -}}
     {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
-    {{- include "base.deploymentSpec" $data | nindent 4 }}
+    {{- include "base.deploymentSpec" $data | nindent 6 }}
 {{- end -}}

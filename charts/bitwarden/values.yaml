@@ -6,7 +6,7 @@ baseResources:
     port: 80
   deployment:
     containers:
-    - image: mprasil/bitwarden:latest
+    - image: bitwardenrs/server:1.14.1-alpine
       name: bitwarden
       staticEnvs:
       - name: SIGNUPS_ALLOWED
@@ -27,6 +27,7 @@ baseResources:
       volumeMounts:
       - data
       - backup
+    schedule: "0 1 * * 4"
   volumes:
   - name: data
     source:
