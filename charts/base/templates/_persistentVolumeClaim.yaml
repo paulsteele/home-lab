@@ -1,0 +1,13 @@
+{{- define "base.persistentVolumeClaim" -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "base.name" . }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.baseResources.persistentVolumeClaim.capacity }}
+  storageClassName: {{ include "base.name" . }}
+{{- end -}}

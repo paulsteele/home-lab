@@ -1,0 +1,19 @@
+{{- define "base.persistentVolume" -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    type: local
+  name: {{ include "base.name" . }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: {{ .Values.baseResources.persistentVolume.capacity }}
+  {{- if .Values.baseResources.persistentVolume.nfs }}
+  nfs:
+    path: {{ .Values.baseResources.persistentVolume.nfs.path }}
+    server: 192.168.0.105
+  {{- end }}
+  storageClassName: {{ include "base.name" . }}
+{{- end -}}
