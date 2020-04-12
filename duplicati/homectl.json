@@ -1,9 +1,0 @@
-{
-  "dhall": {
-    "source": "values.dhall",
-    "resources": [
-      "loadbalancerService",
-      "deployment"
-    ]
-  }
-}

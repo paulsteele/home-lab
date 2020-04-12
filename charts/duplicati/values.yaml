@@ -1,0 +1,23 @@
+baseResources:
+  service:
+    port: 80
+    targetPort: 8200
+    loadBalancerIP: 192.168.0.201
+  deployment:
+    containers:
+    - image: linuxserver/duplicati
+      name: duplicati
+      ports:
+      - 8200
+      volumeMounts:
+      - config
+      - source
+  volumes:
+  - name: config
+    source:
+      nfs: /srv/nfs/duplicati
+    mountPath: /config
+  - name: source
+    source:
+      nfs: /srv/nfs
+    mountPath: /source

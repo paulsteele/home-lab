@@ -7,7 +7,11 @@ spec:
   ports:
   - port: {{ .Values.baseResources.service.port }}
     protocol: TCP
-    targetPort: {{ .Values.baseResources.service.port }}
+    targetPort: {{ default .Values.baseResources.service.port .Values.baseResources.service.targetPort }}
   selector:
     app: {{ include "base.name" . }}
+  {{- if .Values.baseResources.service.loadBalancerIP }}
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.baseResources.service.loadBalancerIP }}
+  {{- end }}
 {{- end -}}
