@@ -7,3 +7,4 @@ output.yaml
 .vscode
 dhall/dependencies**
 *.tgz
+secrets.yaml.dec

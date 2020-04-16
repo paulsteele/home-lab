@@ -1,0 +1,28 @@
+baseResources:
+  clusterIssuer:
+    accessKeyID: AKIA5IJM3JBT4OHKN63G
+    secretName: route53-key
+  certificates:
+  - name: paul-steele.com
+    namespace: default
+    domains:
+    - '*.paul-steele.com'
+  - name: hell-yeah.org
+    namespace: deployments
+    domains:
+    - 'hell-yeah.org'
+    - 'www.hell-yeah.org'
+  - name: bullmoose-party.com
+    namespace: deployments
+    domains:
+    - 'bullmoose-party.com'
+    - 'www.bullmoose-party.com'
+cert-manager:
+  image:
+    tag: v0.8.1
+  podDnsPolicy: "None"
+  podDnsConfig:
+    nameservers:
+      - "1.1.1.1"
+  webhook:
+    enabled: false
