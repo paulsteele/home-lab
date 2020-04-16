@@ -1,0 +1,6 @@
+dependencies:
+- name: metallb
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 0.11.2
+digest: sha256:cb7330ea1f48e1e9837de3c08ded7f5c5a03e082ad563d709830ba9786747ebe
+generated: "2020-04-15T21:18:48.047868588-04:00"
