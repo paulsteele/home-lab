@@ -19,11 +19,18 @@ containers:
   - {{ $arg }}
   {{- end }}
   {{- end -}}
-  {{- if $container.staticEnvs }}
+  {{- if $container.staticEnvs | or $container.secretEnvs }}
   env:
   {{- range $index, $staticEnv := $container.staticEnvs }}
   - name: {{ $staticEnv.name }}
     value: '{{ $staticEnv.value }}'
+  {{- end }}
+  {{- range $index, $secretEnv := $container.secretEnvs }}
+  - name: {{ $secretEnv.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ $secretEnv.secretName }}
+        key: {{ $secretEnv.secretKey }}
   {{- end }}
   {{- end -}}
   {{- if $container.ports }}

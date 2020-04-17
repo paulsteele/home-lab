@@ -1,0 +1,41 @@
+baseResources:
+  ingress:
+    host: finance.paul-steele.com
+    port: 80
+  service:
+    port: 80
+  deployment:
+    containers:
+    - image: jc5x/firefly-iii:release-5.0.4
+      name: firefly
+      staticEnvs:
+      - name: DB_HOST
+        value: database-mysql
+      - name: DB_USERNAME
+        value: eos
+      - name: DB_PORT
+        value: 3306
+      - name: DB_DATABASE
+        value: firefly_db
+      - name: DB_CONNECTION
+        value: mysql
+      - name: APP_ENV
+        value: local
+      - name: APP_URL
+        value: https://finance.paul-steele.com
+      - name: TRUSTED_PROXIES
+        value: '**'
+      secretEnvs:
+      - name: DB_PASSWORD
+        secretName: database-mysql
+        secretKey: mysql-password
+      - name: APP_KEY
+        secretName: firefly-token
+        secretKey: FF_APP_KEY
+      volumeMounts:
+      - storage
+  volumes:
+  - name: storage
+    source:
+      nfs: /srv/nfs/firefly
+    mountPath: /var/www/firefly-iii/storage
