@@ -8,7 +8,7 @@ baseResources:
     containers:
     - image: bitwardenrs/server:1.14.1-alpine
       name: bitwarden
-      staticEnvs:
+      envs:
       - name: SIGNUPS_ALLOWED
         value: 'false'
       ports:

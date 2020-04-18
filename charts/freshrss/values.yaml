@@ -10,7 +10,7 @@ baseResources:
       name: freshrss
       ports:
       - 80
-      staticEnvs:
+      envs:
       - name: CRON_MIN
         value: "5, 35"
       volumeMounts:
