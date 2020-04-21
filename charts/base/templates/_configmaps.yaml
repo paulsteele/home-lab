@@ -1,0 +1,14 @@
+{{- define "base.configmaps" -}}
+{{- range $index, $configmap := .Values.baseResources.configmaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $configmap.name }}
+data:
+{{- range $index, $data := $configmap.data }}
+  {{ $data.name }}: |-
+    {{- $.Files.Get $data.file | nindent 6 }}
+{{- end }}
+---
+{{- end }}
+{{- end -}}

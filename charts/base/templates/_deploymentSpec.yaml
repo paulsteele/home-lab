@@ -46,6 +46,9 @@ containers:
   {{ $volume := get $volumeDict $volumeName -}}
   - name: {{ $volume.name }}
     mountPath: {{ $volume.mountPath }}
+    {{- if $volume.subPath }}
+    subPath: {{ $volume.subPath }}
+    {{- end -}}
   {{- end }}
   {{- end -}}
 {{- end }}
@@ -66,9 +69,19 @@ volumes:
   {{- end -}}
   {{- if $found }}
   - name: {{ $volume.name }}
+    {{- if $volume.source.nfs }}
     nfs:
       path: {{ $volume.source.nfs }}
       server: 192.168.0.105
+    {{- end -}}
+    {{- if $volume.source.configmap }}
+    configMap:
+      defaultMode: {{ $volume.source.configmap.defaultMode }}
+      name: {{ $volume.source.configmap.name }}
+      items:
+      - key: {{ $volume.source.configmap.items.key }}
+        path: {{ $volume.source.configmap.items.path }}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
