@@ -1,0 +1,47 @@
+baseResources:
+  persistentVolume:
+    hostPath:
+      path: /srv/nfs/mysql
+    capacity: 8Gi
+  persistentVolumeClaim:
+    capacity: 8Gi
+  cronjob:
+    containers:
+    - image: camil/mysqldump
+      command:
+      - /bin/bash
+      args:
+      - -c
+      - chmod +x dump.sh && ./dump.sh
+      name: mysqldump
+      envs:
+      - name: ALL_DATABASES
+        value: 'true'
+      - name: DB_HOST
+        value: database-mysql
+      - name: DB_USER
+        value: eos
+      - name: DB_PASS
+        secretName: database-mysql
+        secretKey: mysql-password
+      volumeMounts:
+      - mysqldump
+    schedule: "0 1 * * 4"
+  volumes:
+  - name: mysqldump
+    source:
+      nfs: /srv/nfs/database-backup/mysql
+    mountPath: /mysqldump
+mysql:
+  image: "mysql"
+  imageTag: "5.7.14"
+  mysqlUser: eos
+  existingSecret: database-mysql
+  persistence:
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    existingClaim: mysql-database
+  configurationFiles:
+    mysql.cnf: |-
+      [mysqld]
+      skip-name-resolve

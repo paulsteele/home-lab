@@ -15,5 +15,9 @@ spec:
     path: {{ .Values.baseResources.persistentVolume.nfs.path }}
     server: 192.168.0.105
   {{- end }}
+  {{- if .Values.baseResources.persistentVolume.hostPath }}
+  hostPath:
+    path: {{ .Values.baseResources.persistentVolume.hostPath.path }}
+  {{- end }}
   storageClassName: {{ include "base.name" . }}
 {{- end -}}
