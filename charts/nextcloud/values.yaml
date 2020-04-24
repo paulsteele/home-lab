@@ -1,0 +1,38 @@
+baseResources:
+  ingress:
+    host: files.paul-steele.com
+    port: 80
+  service:
+    port: 80
+  deployment:
+    containers:
+    - image: nextcloud:17.0.1
+      name: nextcloud
+      envs:
+      - name: MYSQL_HOST
+        value: database-mysql:3306
+      - name: MYSQL_USER
+        value: eos
+      - name: MYSQL_DATABASE
+        value: nextcloud
+      - name: MYSQL_PASSWORD
+        secretName: database-mysql
+        secretKey: mysql-password
+      - name: NEXTCLOUD_ADMIN_PASSWORD
+        secretName: nextcloud-admin-pass
+        secretKey: NEXTCLOUD_ADMIN_PASS
+      - name: NEXTCLOUD_ADMIN_USER
+        value: paul
+      - name: NEXTCLOUD_TRUSTED_DOMAINS
+        value: files.paul-steele.com
+      - name: NEXTCLOUD_UPDATE
+        value: '1'
+      ports:
+      - 80
+      volumeMounts:
+      - storage
+  volumes:
+  - name: storage
+    source:
+      nfs: /srv/nfs/nextcloud
+    mountPath: /var/www/html
