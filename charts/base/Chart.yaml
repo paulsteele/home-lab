@@ -1,0 +1,6 @@
+apiVersion: v2
+name: base
+description: Set of base resources with common configurations for the home-lab
+type: library
+version: 0.1.0
+appVersion: 1.15.0

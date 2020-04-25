@@ -1,8 +1,0 @@
-{
-  "dhall": {
-    "source": "values.dhall",
-    "resources": [
-      "secret-1"
-    ]
-  }
-}

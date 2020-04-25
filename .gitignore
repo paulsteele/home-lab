@@ -6,3 +6,5 @@ output.yaml
 .mypy_cache
 .vscode
 dhall/dependencies**
+*.tgz
+secrets.yaml.dec

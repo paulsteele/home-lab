@@ -1,0 +1,17 @@
+{{- define "base.deployment" -}}
+apiVersion: apps/v1
+kind: Deployment
+{{ include "base.metadata" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "base.name" . }}
+  template:
+    {{- include "base.metadata" . | nindent 4 }}
+    spec:
+    {{- $data := dict -}}
+    {{- $_ := set $data "resource" .Values.baseResources.deployment -}}
+    {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
+    {{- include "base.deploymentSpec" $data | nindent 6 }}
+{{- end -}}

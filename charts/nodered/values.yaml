@@ -1,0 +1,40 @@
+baseResources:
+  configmaps:
+  - name: nodered
+    data:
+    - name: nodered-config
+      file: resources/nodered-config.js
+  ingress:
+    host: automation.paul-steele.com
+    port: 80
+  service:
+    port: 80
+    targetPort: 1880
+  deployment:
+    containers:
+    - image: nodered/node-red:1.0.3
+      name: nodered
+      args:
+      - "--settings"
+      - "/nodered-config.js"
+      envs:
+      - name: TZ
+        value: "America/Indiana/Indianapolis"
+      volumeMounts:
+      - data
+      - config
+  volumes:
+  - name: data
+    source:
+      nfs: /srv/nfs/automation
+    mountPath: /data
+  - name: config
+    source:
+      configmap:
+        defaultMode: 0444
+        name: nodered
+        items:
+          key: nodered-config
+          path: nodered-config.js
+    mountPath: /nodered-config.js
+    subPath: nodered-config.js

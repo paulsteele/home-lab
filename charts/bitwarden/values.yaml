@@ -1,0 +1,39 @@
+baseResources:
+  ingress:
+    host: passwords.paul-steele.com
+    port: 80
+  service:
+    port: 80
+  deployment:
+    containers:
+    - image: bitwardenrs/server:1.14.1-alpine
+      name: bitwarden
+      envs:
+      - name: SIGNUPS_ALLOWED
+        value: 'false'
+      ports:
+      - 80
+      volumeMounts:
+      - data
+  cronjob:
+    containers:
+    - image: nouchka/sqlite3
+      name: passworddump
+      command:
+      - sqlite3
+      args:
+      - /data/db.sqlite3
+      - .backup '/backup/bitwarden.sq3'
+      volumeMounts:
+      - data
+      - backup
+    schedule: "0 1 * * 4"
+  volumes:
+  - name: data
+    source:
+      nfs: /srv/nfs/bitwarden
+    mountPath: /data
+  - name: backup
+    source:
+      nfs: /srv/nfs/database-backup/sqlite
+    mountPath: /backup

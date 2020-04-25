@@ -1,4 +1,0 @@
-{
-  key: Text,
-  value: Text
-}

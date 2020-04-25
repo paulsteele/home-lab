@@ -1,0 +1,22 @@
+baseResources:
+  ingress:
+    host: reader.paul-steele.com
+    port: 80
+  service:
+    port: 80
+  deployment:
+    containers:
+    - image: linuxserver/freshrss
+      name: freshrss
+      ports:
+      - 80
+      envs:
+      - name: CRON_MIN
+        value: "5, 35"
+      volumeMounts:
+      - config
+  volumes:
+  - name: config
+    source:
+      nfs: /srv/nfs/freshrss/config
+    mountPath: /config

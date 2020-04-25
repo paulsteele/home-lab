@@ -1,0 +1,54 @@
+baseResources:
+  configmaps:
+  - name: homeassistant
+    data:
+    - name: zha-config
+      file: resources/zha.sh
+    - name: zwave-config
+      file: resources/zwave.sh
+  ingress:
+    host: home.paul-steele.com
+    port: 80
+  service:
+    port: 80
+    targetPort: 8123
+  deployment:
+    containers:
+    - image: homeassistant/home-assistant:0.108.6
+      command:
+      - sh
+      args:
+      - "-c"
+      - "zha && zwave && python -m homeassistant --config /config"
+      name: homeassistant
+      ports:
+      - 8123
+      volumeMounts:
+      - config
+      - zha
+      - zwave
+  volumes:
+  - name: config
+    source:
+      nfs: /srv/nfs/homeassistant
+    mountPath: /config
+  - name: zha
+    source:
+      configmap:
+        defaultMode: 0555
+        name: homeassistant
+        items:
+          key: zha-config
+          path: zha
+    mountPath: /usr/bin/zha
+    subPath: zha
+  - name: zwave
+    source:
+      configmap:
+        defaultMode: 0555
+        name: homeassistant
+        items:
+          key: zwave-config
+          path: zwave
+    mountPath: /usr/bin/zwave
+    subPath: zwave

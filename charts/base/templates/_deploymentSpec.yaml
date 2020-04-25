@@ -1,0 +1,88 @@
+{{- define "base.deploymentSpec" -}}
+{{- $volumeDict := dict -}}
+{{- range $index, $volume := get . "volumes" -}}
+{{- $_ := set $volumeDict $volume.name $volume -}}
+{{- end -}}
+containers:
+{{- range $index, $container := (get . "resource").containers }}
+- image: {{ $container.image }}
+  name: {{ $container.name }}
+  {{- if $container.command }}
+  command:
+  {{- range $command := $container.command }}
+  - {{ $command }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.args }}
+  args:
+  {{- range $arg := $container.args }}
+  - {{ $arg }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.envs }}
+  env:
+  {{- range $index, $env := $container.envs }}
+  - name: {{ $env.name }}
+    {{- if $env.value }}
+    value: '{{ $env.value }}'
+    {{- end }}
+    {{- if $env.secretName }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ $env.secretName }}
+        key: {{ $env.secretKey }}
+    {{- end }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.ports }}
+  ports:
+  {{- range $index, $port := $container.ports }}
+  - containerPort: {{ $port }}
+  {{- end }}
+  {{- end -}}
+  {{- if $container.volumeMounts }}
+  volumeMounts:
+  {{- range $volumeName := $container.volumeMounts }}
+  {{ $volume := get $volumeDict $volumeName -}}
+  - name: {{ $volume.name }}
+    mountPath: {{ $volume.mountPath }}
+    {{- if $volume.subPath }}
+    subPath: {{ $volume.subPath }}
+    {{- end -}}
+  {{- end }}
+  {{- end -}}
+{{- end }}
+imagePullSecrets:
+- name: registry.paul-steele.com
+{{- if get . "volumes" }}
+volumes:
+{{- range $index, $volume := get . "volumes" }}
+  {{- $found := false -}}
+  {{- range $index, $container := (get $ "resource").containers -}}
+    {{- if $container.volumeMounts -}}
+      {{- range $volumeName := $container.volumeMounts -}}
+        {{- if $volumeName | eq $volume.name -}}
+          {{- $found = true -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $found }}
+  - name: {{ $volume.name }}
+    {{- if $volume.source.nfs }}
+    nfs:
+      path: {{ $volume.source.nfs }}
+      server: 192.168.0.105
+    {{- end -}}
+    {{- if $volume.source.configmap }}
+    configMap:
+      defaultMode: {{ $volume.source.configmap.defaultMode }}
+      name: {{ $volume.source.configmap.name }}
+      items:
+      - key: {{ $volume.source.configmap.items.key }}
+        path: {{ $volume.source.configmap.items.path }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

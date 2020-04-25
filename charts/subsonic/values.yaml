@@ -1,0 +1,35 @@
+baseResources:
+  ingress:
+    host: media.paul-steele.com
+    port: 80
+  service:
+    port: 80
+    targetPort: 8080
+  deployment:
+   containers:
+    - image: mbirth/subsonic:6.1.6
+      name: subsonic
+      envs:
+      - name: TZ
+        value: America/Indiana/Indianapolis
+      - name: LANG
+        value: en_US.UTF-8
+      ports:
+      - 8080
+      volumeMounts:
+      - config
+      - music
+      - data
+  volumes:
+  - name: config
+    source:
+      nfs: /srv/nfs/subsonic/config
+    mountPath: /subsonic
+  - name: data
+    source:
+      nfs: /srv/nfs/subsonic/data
+    mountPath: /data
+  - name: music
+    source:
+      nfs: /srv/nfs/media/music
+    mountPath: /music

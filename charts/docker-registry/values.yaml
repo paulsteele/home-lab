@@ -1,0 +1,44 @@
+baseResources:
+  persistentVolume:
+    nfs:
+      path: /srv/nfs/docker-registry
+    capacity: 4Gi
+  persistentVolumeClaim:
+    capacity: 4Gi
+
+docker-registry:
+  ingress:
+    enabled: true
+    hosts:
+      - registry.paul-steele.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: 0
+    tls:
+      - hosts:
+          - registry.paul-steele.com
+  persistence:
+    accessMode: 'ReadWriteOnce'
+    enabled: true
+    size: 4Gi
+    existingClaim: docker-registry-containers
+  secrets:
+    htpasswd: "paulsteele:$2y$05$2qE/5MQY4JlTAKqyb6uPdeZ5mavmZXSs1Q3dGbAFTgCxBm8/360UK"
+  configData:
+    version: 0.1
+    log:
+      fields:
+        service: registry
+    storage:
+      cache:
+        blobdescriptor: inmemory
+    http:
+      addr: :5000
+      headers:
+        X-Content-Type-Options: [nosniff]
+    health:
+      storagedriver:
+        enabled: true
+        interval: 10s
+        threshold: 3
