@@ -1,0 +1,38 @@
+prometheus-operator:
+  alertmanager:
+    serviceAccount:
+      create: true
+      name: ""
+    ingress:
+      enabled: false
+    service:
+      type: ClusterIP
+  grafana:
+    enabled: true
+    adminPassword:
+    defaultDashboardsEnabled: true
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      hosts:
+        - metrics.paul-steele.com
+      tls:
+        - hosts:
+           - metrics.paul-steele.com
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+      datasources:
+        enabled: true
+        label: grafana_datasource
+  coreDns:
+    enabled: true
+    service:
+      port: 9153
+      targetPort: 9153
+      selector:
+        k8s-app: kube-dns
+  kubeDns:
+    enabled: false
