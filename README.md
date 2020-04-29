@@ -9,7 +9,7 @@
 ## Helm Plugins
 * [helm secrets](https://github.com/zendesk/helm-secrets)
   * `helm plugin install https://github.com/futuresimple/helm-secrets`
-* [helm diff] (https://github.com/databus23/helm-diff)
+* [helm diff](https://github.com/databus23/helm-diff)
   * `helm plugin install https://github.com/databus23/helm-diff --version master`
 
 ## Updating Cluster
