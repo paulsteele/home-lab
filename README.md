@@ -1,15 +1,24 @@
 # Home-Lab Setup
 
-Dependencies
-* Helm3
-* sops
-* helm sops
+## Dependencies
+* [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+* [Helm 3](https://helm.sh/)
+* [sops](https://github.com/mozilla/sops)
+* [helmfile](https://github.com/roboll/helmfile)
 
-# Cluster Setup
+## Helm Plugins
+* [helm secrets](https://github.com/zendesk/helm-secrets)
+  * `helm plugin install https://github.com/futuresimple/helm-secrets`
+* [helm diff] (https://github.com/databus23/helm-diff)
+  * `helm plugin install https://github.com/databus23/helm-diff --version master`
+
+## Updating Cluster
+`helmfile diff` to preview changes
+`helmfile apply` to apply changes
+
+## Cluster Setup
 ```
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
-#sysctl net.bridge.bridge-nf-call-iptables=1
-#kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
 rm $HOME/.kube/config
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config

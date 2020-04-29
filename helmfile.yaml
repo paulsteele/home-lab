@@ -1,0 +1,56 @@
+repositories:
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+- name: jetstack
+  url: https://charts.jetstack.io
+releases:
+- name: automation
+  namespace: default
+  chart: ./charts/nodered
+- name: backup
+  namespace: default
+  chart: ./charts/duplicati
+- name: certificates
+  namespace: default
+  chart: ./charts/certmanager
+  secrets:
+  - ./charts/certmanager/secrets.yaml
+- name: containers
+  namespace: default
+  chart: ./charts/docker-registry
+- name: database
+  namespace: default
+  chart: ./charts/mysql
+  secrets:
+  - ./charts/mysql/secrets.yaml
+- name: files
+  namespace: default
+  chart: ./charts/nextcloud
+  secrets:
+  - ./charts/nextcloud/secrets.yaml
+- name: finance
+  namespace: default
+  chart: ./charts/firefly
+  secrets:
+  - ./charts/firefly/secrets.yaml
+- name: home
+  namespace: default
+  chart: ./charts/homeassistant
+- name: ingress
+  namespace: default
+  chart: ./charts/nginx
+- name: loadbalancer
+  namespace: default
+  chart: ./charts/metallb
+- name: monitoring
+  namespace: default
+  chart: ./charts/prometheus
+- name: music
+  namespace: default
+  chart: ./charts/subsonic
+- name: passwords
+  namespace: default
+  chart: ./charts/bitwarden
+- name: reader
+  namespace: default
+  chart: ./charts/freshrss
