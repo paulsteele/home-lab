@@ -3,6 +3,7 @@ baseResources:
     host: ci.paul-steele.com
     serviceName: ci-dashboard
     port: 9097
+    auth: true
 dashboard:
   dashboard:
     readOnly: true
@@ -13,4 +14,4 @@ pipeline:
     create: false
 triggers:
   customResourceDefinitions:
-    create: true
+    create: false

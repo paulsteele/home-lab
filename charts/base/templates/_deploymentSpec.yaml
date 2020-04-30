@@ -82,6 +82,14 @@ volumes:
       - key: {{ $volume.source.configmap.items.key }}
         path: {{ $volume.source.configmap.items.path }}
     {{- end -}}
+    {{- if $volume.source.secret }}
+    secret:
+      defaultMode: {{ $volume.source.secret.defaultMode }}
+      secretName: {{ $volume.source.secret.name }}
+      items:
+      - key: {{ $volume.source.secret.items.key }}
+        path: {{ $volume.source.secret.items.path }}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}

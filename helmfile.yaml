@@ -63,3 +63,8 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
+- name: sso
+  namespace: default
+  chart: ./charts/authelia
+  secrets:
+  - ./charts/authelia/secrets.yaml
