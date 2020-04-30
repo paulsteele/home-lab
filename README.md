@@ -11,6 +11,8 @@
   * `helm plugin install https://github.com/futuresimple/helm-secrets`
 * [helm diff](https://github.com/databus23/helm-diff)
   * `helm plugin install https://github.com/databus23/helm-diff --version master`
+* [helm git](https://github.com/aslafy-z/helm-git)
+  * `helm plugin install https://github.com/aslafy-z/helm-git`
 
 ## Updating Cluster
 `helmfile diff` to preview changes

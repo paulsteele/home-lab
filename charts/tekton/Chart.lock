@@ -1,0 +1,15 @@
+dependencies:
+- name: base
+  repository: file://../base
+  version: 0.1.0
+- name: dashboard
+  repository: git+https://github.com/tektoncd/experimental.git@helm/dashboard?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+  version: 0.6.1
+- name: pipeline
+  repository: git+https://github.com/tektoncd/experimental.git@helm/pipeline?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+  version: 0.11.3
+- name: triggers
+  repository: git+https://github.com/tektoncd/experimental.git@helm/triggers?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+  version: 0.4.0
+digest: sha256:ddb034d5df1b50806e8864df06e82def2a812d69e938ac4b1607eb8f7dd98080
+generated: "2020-04-29T21:25:03.068172554-04:00"

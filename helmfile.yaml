@@ -3,6 +3,12 @@ repositories:
   url: https://kubernetes-charts.storage.googleapis.com
 - name: jetstack
   url: https://charts.jetstack.io
+- name: tekton-dashboard
+  url: git+https://github.com/tektoncd/experimental.git@helm/dashboard?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+- name: tekton-pipeline
+  url: git+https://github.com/tektoncd/experimental.git@helm/pipeline?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+- name: tekton-triggers
+  url: git+https://github.com/tektoncd/experimental.git@helm/triggers?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
 releases:
 - name: automation
   namespace: default
@@ -10,6 +16,9 @@ releases:
 - name: backup
   namespace: default
   chart: ./charts/duplicati
+- name: ci
+  namespace: default
+  chart: ./charts/tekton
 - name: certificates
   namespace: default
   chart: ./charts/certmanager

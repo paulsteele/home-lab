@@ -12,7 +12,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: {{ include "base.name" . }}
+          serviceName: {{ default ( include "base.name" . ) .Values.baseResources.ingress.serviceName }}
           servicePort: {{ .Values.baseResources.ingress.port }}
         path: /
   tls:
