@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: '0'
     {{- if .Values.baseResources.ingress.auth }}
     nginx.ingress.kubernetes.io/auth-url: "https://sso.paul-steele.com/api/verify"
-    nginx.ingress.kubernetes.io/auth-signin: "https://sso.paul-steele.com/#/"
+    nginx.ingress.kubernetes.io/auth-signin: "https://sso.paul-steele.com/"
     {{- end }}
   name: {{ include "base.name" . }}
 spec:
