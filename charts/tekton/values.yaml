@@ -6,7 +6,7 @@ baseResources:
     auth: true
 dashboard:
   dashboard:
-    readOnly: true
+    readOnly: false
   customResourceDefinitions:
     create: false
 pipeline:
