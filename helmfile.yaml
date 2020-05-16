@@ -68,3 +68,8 @@ releases:
   chart: ./charts/authelia
   secrets:
   - ./charts/authelia/secrets.yaml
+- name: deployments
+  namespace: deployments
+  chart: ./charts/deployments
+  secrets:
+  - ./charts/deployments/secrets.yaml
