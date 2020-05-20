@@ -4,14 +4,3 @@ baseResources:
     serviceName: ci-dashboard
     port: 9097
     auth: true
-dashboard:
-  dashboard:
-    readOnly: false
-  customResourceDefinitions:
-    create: false
-pipeline:
-  customResourceDefinitions:
-    create: false
-triggers:
-  customResourceDefinitions:
-    create: false

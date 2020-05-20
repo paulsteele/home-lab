@@ -3,13 +3,13 @@ dependencies:
   repository: file://../base
   version: 0.1.0
 - name: dashboard
-  repository: git+https://github.com/tektoncd/experimental.git@helm/dashboard?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
-  version: 0.6.1
-- name: pipeline
-  repository: git+https://github.com/tektoncd/experimental.git@helm/pipeline?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
-  version: 0.11.3
+  repository: https://eddycharly.github.io/tekton-helm
+  version: 0.6.4
+- name: pipelines
+  repository: https://eddycharly.github.io/tekton-helm
+  version: 0.11.5
 - name: triggers
-  repository: git+https://github.com/tektoncd/experimental.git@helm/triggers?ref=aa3d3db13e0ac9d1c3a8a3524a82a95be2761b7d&sparse=0
+  repository: https://eddycharly.github.io/tekton-helm
   version: 0.4.0
-digest: sha256:ddb034d5df1b50806e8864df06e82def2a812d69e938ac4b1607eb8f7dd98080
-generated: "2020-04-29T21:25:03.068172554-04:00"
+digest: sha256:f0e5c9779f6528641354f03e28115ecfac933bc0e3f179937a6a48e4415d53bd
+generated: "2020-05-20T17:45:36.881759-04:00"
