@@ -8,3 +8,4 @@ output.yaml
 dhall/dependencies**
 *.tgz
 secrets.yaml.dec
+.DS_Store

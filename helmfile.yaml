@@ -15,6 +15,11 @@ releases:
 - name: ci
   namespace: default
   chart: ./charts/tekton
+  hooks:
+  - events: ["prepare"]
+    showlogs: true
+    command: sh
+    args: ["-c", "./tools/filter-crds.sh ./charts/tekton/charts/*"]
 - name: certificates
   namespace: default
   chart: ./charts/certmanager
