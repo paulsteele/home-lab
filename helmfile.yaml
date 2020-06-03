@@ -69,6 +69,9 @@ releases:
   chart: ./charts/authelia
   secrets:
   - ./charts/authelia/secrets.yaml
+- name: storage
+  namespace: default
+  chart: ./charts/nfs-client-provisioner
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments
