@@ -12,4 +12,4 @@ dependencies:
   repository: https://eddycharly.github.io/tekton-helm
   version: 0.4.0
 digest: sha256:f0e5c9779f6528641354f03e28115ecfac933bc0e3f179937a6a48e4415d53bd
-generated: "2020-05-20T17:45:36.881759-04:00"
+generated: "2020-06-03T21:10:49.515309-04:00"

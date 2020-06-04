@@ -4,3 +4,19 @@ baseResources:
     serviceName: ci-dashboard
     port: 9097
     auth: true
+  tasks:
+  - name: checkout
+    params:
+    - name: url
+      type: string
+    steps:
+    - name: clone
+      image: alpine/git
+      command:
+      - git
+      args:
+      - clone
+      - "$(params.url)"
+    - name: pause
+      image: docker
+      args: ["sleep", "'6000'"] 

@@ -3,7 +3,7 @@
 git clone https://github.com/eddycharly/tekton-helm
 
 cd tekton-helm
-git checkout a6fba8e0c783c31fa92df17e3de0a6d0015a6880
+git checkout b4f130eba03a3126b55c7b615dbc77f1ac347169
 cd -
 
 kubectl apply -f tekton-helm/charts/dashboard/crds

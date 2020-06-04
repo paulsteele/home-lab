@@ -1,0 +1,37 @@
+{{- define "base.tasks" -}}
+{{- range $index, $task:= .Values.baseResources.tasks }}
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: {{ $task.name }}
+spec:
+  {{- if $task.params }}
+  params:
+  {{- range $index, $param:= $task.params }}
+  - name: {{ $param.name }}
+    type: {{ $param.type }}
+  {{- end }}
+  {{- end -}}
+  {{- if $task.steps }}
+  steps:
+  {{- range $index, $step:= $task.steps }}
+  - name: {{ $step.name }}
+    image: {{ $step.image }}
+    workingDir: /workspace/project
+    command:
+    {{- range $index, $command:= $step.command }}
+    - {{ $command }}
+    {{- end }}
+    args:
+    {{- range $index, $arg:= $step.args }}
+    - {{ $arg }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  workspaces:
+  - name: project
+    description: The folder that contains project files
+    mountPath: /workspace/project
+---
+{{- end }}
+{{- end -}}
