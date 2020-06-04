@@ -4,7 +4,7 @@ baseResources:
     serviceName: ci-dashboard
     port: 9097
     auth: true
-  tasks:
+  clusterTasks:
   - name: checkout
     params:
     - name: url
@@ -17,6 +17,3 @@ baseResources:
       args:
       - clone
       - "$(params.url)"
-    - name: pause
-      image: docker
-      args: ["sleep", "'6000'"] 

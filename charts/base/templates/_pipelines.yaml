@@ -1,0 +1,33 @@
+{{- define "base.pipelines" -}}
+{{- range $index, $pipeline:= .Values.baseResources.pipelines }}
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: {{ $pipeline.name }}
+spec:
+  tasks:
+  {{- range $index, $task:= $pipeline.tasks }}
+  - name: {{ $task.name }}
+    taskRef:
+      name: {{ $task.taskRef }}
+      kind: ClusterTask
+    {{- if $task.params }}
+    params:
+    {{- range $index, $param:= $task.params }}
+    - name: {{ $param.name }}
+      value: '{{ $param.value }}'
+    {{- end }}
+    {{- end }}
+    {{- if gt $index 0 }}
+    runAfter:
+      - {{ (index $pipeline.tasks (sub $index 1)).name }}
+    {{- end }}
+    workspaces:
+    - name: project
+      workspace: project
+  {{- end }}
+  workspaces:
+  - name: project
+---
+{{- end }}
+{{- end -}}

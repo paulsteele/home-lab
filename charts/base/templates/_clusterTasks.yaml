@@ -1,7 +1,7 @@
-{{- define "base.tasks" -}}
-{{- range $index, $task:= .Values.baseResources.tasks }}
+{{- define "base.clusterTasks" -}}
+{{- range $index, $task:= .Values.baseResources.clusterTasks }}
 apiVersion: tekton.dev/v1beta1
-kind: Task
+kind: ClusterTask
 metadata:
   name: {{ $task.name }}
 spec:

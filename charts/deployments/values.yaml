@@ -1,0 +1,14 @@
+baseResources:
+  pipelines:
+  - name: blog
+    tasks:
+    - name: checkout1
+      taskRef: checkout
+      params:
+      - name: url
+        value: https://github.com/paulsteele/blog.git
+    - name: checkout2
+      taskRef: checkout
+      params:
+      - name: url
+        value: https://github.com/paulsteele/hyaas.git
