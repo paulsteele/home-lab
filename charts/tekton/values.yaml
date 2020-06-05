@@ -17,3 +17,5 @@ baseResources:
       args:
       - clone
       - "$(params.url)"
+  clusterTriggerBindings:
+  - name: github

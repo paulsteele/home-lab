@@ -7,9 +7,9 @@ dependencies:
   version: 0.6.4
 - name: pipelines
   repository: https://eddycharly.github.io/tekton-helm
-  version: 0.11.5
+  version: 0.12.0
 - name: triggers
   repository: https://eddycharly.github.io/tekton-helm
   version: 0.4.0
-digest: sha256:f0e5c9779f6528641354f03e28115ecfac933bc0e3f179937a6a48e4415d53bd
-generated: "2020-06-03T21:10:49.515309-04:00"
+digest: sha256:05aad71088852759d62f3b2d7c27dd9bd6c6b1a820184a3e408126b8813d170f
+generated: "2020-06-04T20:50:04.480305-04:00"

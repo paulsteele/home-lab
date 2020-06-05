@@ -1,0 +1,9 @@
+{{- define "base.clusterTriggerBindings" -}}
+{{- range $index, $clusterTriggerBinding:= .Values.baseResources.clusterTriggerBindings }}
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: ClusterTriggerBinding
+metadata:
+  name: {{ $clusterTriggerBinding.name }}
+---
+{{- end }}
+{{- end -}}

@@ -12,3 +12,6 @@ baseResources:
       params:
       - name: url
         value: https://github.com/paulsteele/hyaas.git
+  triggerTemplates:
+  - name: blog
+    pipeline: blog

@@ -1,0 +1,27 @@
+{{- define "base.triggerTemplates" -}}
+{{- range $index, $triggerTemplate:= .Values.baseResources.triggerTemplates }}
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: {{ $triggerTemplate.name }}
+spec:
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: {{ $triggerTemplate.pipeline }}-run-
+    spec:
+      pipelineRef:
+        name: {{ $triggerTemplate.pipeline }}
+      workspaces:
+      - name: project
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+---
+{{- end }}
+{{- end -}}
