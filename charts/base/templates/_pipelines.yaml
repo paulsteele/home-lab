@@ -5,18 +5,29 @@ kind: Pipeline
 metadata:
   name: {{ $pipeline.name }}
 spec:
+  params:
+  - name: git_url
+    type: string
+  {{- range $index, $param:= $pipeline.params}}
+  - name: {{ $param }}
+    type: string
+  {{- end }}
   tasks:
   {{- range $index, $task:= $pipeline.tasks }}
   - name: {{ $task.name }}
     taskRef:
       name: {{ $task.taskRef }}
       kind: ClusterTask
-    {{- if $task.params }}
     params:
+    - name: git_url
+      value: "$(params.git_url)"
+    {{- range $index, $param:= $pipeline.params}}
+    - name: {{ $param.name }}
+      value: "$(params.{{ $param.name}})"
+    {{- end }}
     {{- range $index, $param:= $task.params }}
     - name: {{ $param.name }}
       value: '{{ $param.value }}'
-    {{- end }}
     {{- end }}
     {{- if gt $index 0 }}
     runAfter:

@@ -5,6 +5,11 @@ kind: TriggerTemplate
 metadata:
   name: {{ $triggerTemplate.name }}
 spec:
+  params:
+  - name: git_url
+  {{- range $index, $param:= $triggerTemplate.params}}
+  - name: {{ $param }}
+  {{- end }}
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -13,6 +18,13 @@ spec:
     spec:
       pipelineRef:
         name: {{ $triggerTemplate.pipeline }}
+      params:
+      - name: git_url
+        value: "$(params.git_url)"
+      {{- range $index, $param:= $triggerTemplate.params}}
+      - name: {{ $param }}
+        value: "$(params.{{ $param.name}})"
+      {{- end }}
       workspaces:
       - name: project
         volumeClaimTemplate:

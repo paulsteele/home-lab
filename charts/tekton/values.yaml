@@ -7,7 +7,7 @@ baseResources:
   clusterTasks:
   - name: checkout
     params:
-    - name: url
+    - name: git_url
       type: string
     steps:
     - name: clone
@@ -19,3 +19,6 @@ baseResources:
       - "$(params.url)"
   clusterTriggerBindings:
   - name: github
+    params:
+    - name: git_url
+      value: $(body.repository.clone_url)
