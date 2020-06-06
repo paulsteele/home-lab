@@ -1,11 +1,2 @@
 baseResources:
-  pipelines:
-  - name: blog
-    tasks:
-    - name: checkout1
-      taskRef: checkout
-    - name: checkout2
-      taskRef: checkout
-  triggerTemplates:
-  - name: blog
-    pipeline: blog
+

@@ -20,6 +20,8 @@ releases:
     showlogs: true
     command: sh
     args: ["-c", "./tools/filter-crds.sh ./charts/tekton/charts/*"]
+  secrets:
+  - ./charts/tekton/secrets.yaml
 - name: certificates
   namespace: default
   chart: ./charts/certmanager

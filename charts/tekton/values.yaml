@@ -22,3 +22,19 @@ baseResources:
     params:
     - name: git_url
       value: $(body.repository.clone_url)
+  pipelines:
+  - name: blog
+    tasks:
+    - name: checkout1
+      taskRef: checkout
+    - name: checkout2
+      taskRef: checkout
+  triggerTemplates:
+  - name: blog
+    pipeline: blog
+  eventListeners:
+  - name: ci-listener
+    triggers:
+    - name: blog
+      template: blog
+      url: 'https://github.com/paulsteele/blog'
