@@ -19,7 +19,8 @@ spec:
         - cel:
             filter: "body.repository.html_url == '{{ $trigger.url }}'"
       bindings:
-        - ref: github
+        - name: github
+          ref: github
           kind: ClusterTriggerBinding
       template:
         name: {{ $trigger.template }}

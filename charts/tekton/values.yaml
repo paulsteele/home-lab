@@ -1,9 +1,14 @@
 baseResources:
-  ingress:
+  ingresses:
+  - name: tekton-ci
     host: ci.paul-steele.com
     serviceName: ci-dashboard
     port: 9097
     auth: true
+  - name: tekton-triggers
+    host: triggers.paul-steele.com
+    serviceName: el-ci-listener
+    port: 8080
   clusterTasks:
   - name: checkout
     params:
