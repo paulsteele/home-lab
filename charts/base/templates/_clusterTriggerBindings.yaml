@@ -5,7 +5,8 @@ kind: ClusterTriggerBinding
 metadata:
   name: {{ $clusterTriggerBinding.name }}
   {{- if $clusterTriggerBinding.params }}
-  param:
+spec:
+  params:
   {{- range $index, $param:= $clusterTriggerBinding.params }}
   - name: {{ $param.name }}
     value: '{{ $param.value }}'
