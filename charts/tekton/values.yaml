@@ -56,7 +56,7 @@ baseResources:
       - git
       args:
       - clone
-      - "$(params.url)"
+      - "$(params.git_url)"
   clusterTriggerBindings:
   - name: github
     params:
