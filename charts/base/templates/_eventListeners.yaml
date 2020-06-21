@@ -5,7 +5,7 @@ kind: EventListener
 metadata:
   name: {{ $eventListener.name }}
 spec:
-  serviceAccountName: ci-triggers
+  serviceAccountName: {{ $eventListener.serviceAccountName }}
   triggers:
   {{- range $index, $trigger:= $eventListener.triggers }}
     - name: {{ $trigger.name }}

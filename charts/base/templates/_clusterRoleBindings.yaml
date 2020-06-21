@@ -1,0 +1,18 @@
+{{- define "base.clusterRoleBindings" -}}
+{{- range $index, $clusterRoleBinding:= .Values.baseResources.clusterRoleBindings }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $clusterRoleBinding.name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ $clusterRoleBinding.serviceAccountName }}
+  namespace: {{ $clusterRoleBinding.serviceAccountNamespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ $clusterRoleBinding.clusterRoleName }}
+  apiGroup: rbac.authorization.k8s.io
+
+---
+{{- end }}
+{{- end -}}

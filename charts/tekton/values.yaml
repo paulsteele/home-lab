@@ -9,6 +9,41 @@ baseResources:
     host: triggers.paul-steele.com
     serviceName: el-ci-listener
     port: 8080
+  serviceAccounts:
+  - name: triggers
+  clusterRoles:
+  - name: triggers
+    rules:
+    - apiGroups:
+      - triggers.tekton.dev
+      resources:
+      - eventlisteners
+      - triggerbindings
+      - clustertriggerbindings
+      - triggertemplates
+      verbs:
+      - get
+    - apiGroups:
+      - tekton.dev
+      resources:
+      - pipelineruns
+      - pipelineresources
+      verbs:
+      - create
+    - apiGroups:
+      - '""'
+      resources:
+      - configmaps
+      - secrets
+      verbs:
+      - get
+      - list
+      - watch
+  clusterRoleBindings:
+  - name: triggers
+    serviceAccountName: triggers
+    serviceAccountNamespace: default
+    clusterRoleName: triggers
   clusterTasks:
   - name: checkout
     params:
@@ -39,6 +74,7 @@ baseResources:
     pipeline: blog
   eventListeners:
   - name: ci-listener
+    serviceAccountName: triggers
     triggers:
     - name: blog
       template: blog

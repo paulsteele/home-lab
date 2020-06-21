@@ -1,0 +1,24 @@
+{{- define "base.clusterRoles" -}}
+{{- range $index, $clusterRole:= .Values.baseResources.clusterRoles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $clusterRole.name }}
+rules:
+{{- range $index, $rule:= $clusterRole.rules }}
+- apiGroups:
+  {{- range $index, $group:= $rule.apiGroups }}
+  - {{ $group }}
+  {{- end }}
+  resources:
+  {{- range $index, $resource:= $rule.resources }}
+  - {{ $resource }}
+  {{- end }}
+  verbs:
+  {{- range $index, $verb:= $rule.verbs }}
+  - {{ $verb }}
+  {{- end }}
+{{- end }}
+---
+{{- end }}
+{{- end -}}
