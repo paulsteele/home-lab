@@ -5,8 +5,10 @@ kind: TriggerTemplate
 metadata:
   name: {{ $triggerTemplate.name }}
 spec:
+  serviceAccountName: ci-builder
   params:
   - name: git_url
+  - name: repo_name
   {{- range $index, $param:= $triggerTemplate.params}}
   - name: {{ $param }}
   {{- end }}
@@ -21,6 +23,8 @@ spec:
       params:
       - name: git_url
         value: "$(params.git_url)"
+      - name: repo_name
+        value: "$(params.repo_name)"
       {{- range $index, $param:= $triggerTemplate.params}}
       - name: {{ $param }}
         value: "$(params.{{ $param.name}})"

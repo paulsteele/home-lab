@@ -26,8 +26,21 @@ spec:
     {{- range $index, $arg:= $step.args }}
     - {{ $arg }}
     {{- end }}
+    {{- if $step.registryAccess }}
+    volumeMounts:
+    - name: docker-registry
+      mountPath: /kaniko/.docker/config.json
+      subPath: config.json
+    {{- end }}
   {{- end }}
   {{- end }}
+  volumes:
+  - name: docker-registry
+    secret:
+      secretName: registry.paul-steele.com
+      items:
+      - key: .dockerconfigjson
+        path: config.json
   workspaces:
   - name: project
     description: The folder that contains project files

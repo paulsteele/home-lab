@@ -11,6 +11,7 @@ baseResources:
     port: 8080
   serviceAccounts:
   - name: triggers
+  - name: ci-builder
   clusterRoles:
   - name: triggers
     rules:
@@ -45,9 +46,13 @@ baseResources:
     serviceAccountNamespace: default
     clusterRoleName: triggers
   clusterTasks:
-  - name: checkout
+  - name: container-build
     params:
     - name: git_url
+      type: string
+    - name: repo_name
+      type: string
+    - name: docker_registry
       type: string
     steps:
     - name: clone
@@ -57,18 +62,27 @@ baseResources:
       args:
       - clone
       - "$(params.git_url)"
+    - name: build
+      registryAccess: true
+      image: gcr.io/kaniko-project/executor
+      args:
+      - "--dockerfile=/workspace/project/$(params.repo_name)/Dockerfile"
+      - "--destination=registry.paul-steele.com/$(params.docker_registry):test-tag"
   clusterTriggerBindings:
   - name: github
     params:
     - name: git_url
       value: $(body.repository.clone_url)
+    - name: repo_name
+      value: $(body.repository.name)
   pipelines:
   - name: blog
     tasks:
-    - name: checkout1
-      taskRef: checkout
-    - name: checkout2
-      taskRef: checkout
+    - name: build
+      taskRef: container-build
+      params:
+      - name: docker_registry
+        value: blog
   triggerTemplates:
   - name: blog
     pipeline: blog
