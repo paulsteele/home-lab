@@ -20,6 +20,9 @@ releases:
     showlogs: true
     command: sh
     args: ["-c", "./tools/filter-crds.sh ./charts/tekton/charts/*"]
+  values:
+  - ./charts/tekton/rbac.yaml
+  - ./charts/tekton/pipeline.yaml
   secrets:
   - ./charts/tekton/secrets.yaml
 - name: certificates

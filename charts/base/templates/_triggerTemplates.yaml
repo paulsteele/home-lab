@@ -5,7 +5,6 @@ kind: TriggerTemplate
 metadata:
   name: {{ $triggerTemplate.name }}
 spec:
-  serviceAccountName: ci-builder
   params:
   - name: git_url
   - name: repo_name
@@ -19,6 +18,7 @@ spec:
     metadata:
       generateName: {{ $triggerTemplate.pipeline }}-run-
     spec:
+      serviceAccountName: ci-builder
       pipelineRef:
         name: {{ $triggerTemplate.pipeline }}
       params:
