@@ -52,6 +52,8 @@ baseResources:
       type: string
     - name: repo_name
       type: string
+    - name: sha
+      type: string
     - name: docker_registry
       type: string
     steps:
@@ -67,7 +69,26 @@ baseResources:
       image: gcr.io/kaniko-project/executor
       args:
       - "--dockerfile=/workspace/project/$(params.repo_name)/Dockerfile"
-      - "--destination=registry.paul-steele.com/$(params.docker_registry):test-tag"
+      - "--context=dir:///workspace/project/$(params.repo_name)"
+      - "--destination=registry.paul-steele.com/$(params.docker_registry):$(params.sha)"
+    - name: prepare-manifest
+      image: loicmahieu/alpine-envsubst
+      env:
+      - name: BUILD_TAG
+        value: "$(params.sha)"
+      command:
+      - sh
+      args:
+      - "-c"
+      - "envsubst < /workspace/project/$(params.repo_name)/k8s.template.yaml > /workspace/project/$(params.repo_name)/k8s.yaml"
+    - name: deploy
+      image: lachlanevenson/k8s-kubectl:v1.15.0
+      command:
+      - kubectl
+      args:
+      - "apply"
+      - "-f"
+      - "/workspace/project/$(params.repo_name)/k8s.yaml"
   clusterTriggerBindings:
   - name: github
     params:
@@ -75,6 +96,8 @@ baseResources:
       value: $(body.repository.clone_url)
     - name: repo_name
       value: $(body.repository.name)
+    - name: sha
+      value: $(body.head_commit.id)
   pipelines:
   - name: blog
     tasks:

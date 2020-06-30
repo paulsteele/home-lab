@@ -10,6 +10,8 @@ spec:
     type: string
   - name: repo_name
     type: string
+  - name: sha
+    type: string
   {{- range $index, $param:= $pipeline.params}}
   - name: {{ $param }}
     type: string
@@ -25,6 +27,8 @@ spec:
       value: "$(params.git_url)"
     - name: repo_name
       value: "$(params.repo_name)"
+    - name: sha
+      value: "$(params.sha)"
     {{- range $index, $param:= $pipeline.params}}
     - name: {{ $param.name }}
       value: "$(params.{{ $param.name}})"

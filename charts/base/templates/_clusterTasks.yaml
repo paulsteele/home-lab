@@ -26,6 +26,13 @@ spec:
     {{- range $index, $arg:= $step.args }}
     - {{ $arg }}
     {{- end }}
+    {{- if $step.env }}
+    env:
+    {{- range $index, $env:= $step.env }}
+    - name: {{ $env.name }}
+      value: {{ $env.value }}
+    {{- end }}
+    {{- end }}
     {{- if $step.registryAccess }}
     volumeMounts:
     - name: docker-registry

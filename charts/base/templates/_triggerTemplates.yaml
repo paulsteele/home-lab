@@ -9,6 +9,7 @@ spec:
   params:
   - name: git_url
   - name: repo_name
+  - name: sha
   {{- range $index, $param:= $triggerTemplate.params}}
   - name: {{ $param }}
   {{- end }}
@@ -25,6 +26,8 @@ spec:
         value: "$(params.git_url)"
       - name: repo_name
         value: "$(params.repo_name)"
+      - name: sha
+        value: "$(params.sha)"
       {{- range $index, $param:= $triggerTemplate.params}}
       - name: {{ $param }}
         value: "$(params.{{ $param.name}})"
