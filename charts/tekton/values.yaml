@@ -24,11 +24,20 @@ baseResources:
       params:
       - name: docker_registry
         value: teyler-bot
+  - name: hyaas
+    tasks:
+    - name: build
+      taskRef: container-build
+      params:
+      - name: docker_registry
+        value: hyaas
   triggerTemplates:
   - name: blog
     pipeline: blog
   - name: teyler-bot
     pipeline: teyler-bot
+  - name: hyaas
+    pipeline: hyaas
   eventListeners:
   - name: ci-listener
     serviceAccountName: triggers
@@ -39,3 +48,6 @@ baseResources:
     - name: teyler-bot
       template: teyler-bot
       url: 'https://github.com/paulsteele/discord-bot'
+    - name: hyaas
+      template: hyaas
+      url: 'https://github.com/paulsteele/hyaas'
