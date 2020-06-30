@@ -17,9 +17,18 @@ baseResources:
       params:
       - name: docker_registry
         value: blog
+  - name: teyler-bot
+    tasks:
+    - name: build
+      taskRef: container-build
+      params:
+      - name: docker_registry
+        value: teyler-bot
   triggerTemplates:
   - name: blog
     pipeline: blog
+  - name: teyler-bot
+    pipeline: teyler-bot
   eventListeners:
   - name: ci-listener
     serviceAccountName: triggers
@@ -27,3 +36,6 @@ baseResources:
     - name: blog
       template: blog
       url: 'https://github.com/paulsteele/blog'
+    - name: teyler-bot
+      template: teyler-bot
+      url: 'https://github.com/paulsteele/discord-bot'
