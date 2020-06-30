@@ -18,6 +18,8 @@ spec:
               - push
         - cel:
             filter: "body.repository.html_url == '{{ $trigger.url }}'"
+        - cel:
+            filter: "body.ref == 'refs/heads/master'"
       bindings:
         - name: github
           ref: github
