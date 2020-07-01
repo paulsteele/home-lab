@@ -1,0 +1,25 @@
+baseResources:
+  ingress:
+    host: jira.paul-steele.com
+    port: 8080
+  service:
+    port: 8080
+  deployment:
+    containers:
+    - image: atlassian/jira-software:8.1.2
+      name: jira
+      ports:
+      - 8080
+      volumeMounts:
+      - app
+      - lib
+  volumes:
+  - name: app
+    source:
+      nfs: /srv/nfs/jira/app
+    mountPath: /var/atlassian/application-data/jira
+  - name: lib
+    source:
+      nfs: /srv/nfs/jira/lib
+    mountPath: /opt/atlassian/jira/lib/mysql-connector-java-5.1.48.jar
+    subPath: mysql-connector-java-5.1.48.jar
