@@ -34,7 +34,7 @@ baseResources:
     mountPath: /mysqldump
 mysql:
   image: "mysql"
-  imageTag: "5.7.14"
+  imageTag: "5.7.30"
   mysqlUser: eos
   existingSecret: database-mysql
   persistence:
@@ -45,3 +45,9 @@ mysql:
     mysql.cnf: |-
       [mysqld]
       skip-name-resolve
+      default-storage-engine=INNODB
+      character_set_server=utf8mb4
+      innodb_default_row_format=DYNAMIC
+      innodb_large_prefix=ON
+      innodb_file_format=Barracuda
+      innodb_log_file_size=2G
