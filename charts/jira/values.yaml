@@ -13,6 +13,13 @@ baseResources:
       volumeMounts:
       - app
       - lib
+      envs:
+      - name: ATL_TOMCAT_SCHEME
+        value: https
+      - name: ATL_PROXY_NAME
+        value: jira.paul-steele.com
+      - name: ATL_PROXY_PORT
+        value: 443
   volumes:
   - name: app
     source:
