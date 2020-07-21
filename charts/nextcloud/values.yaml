@@ -6,7 +6,7 @@ baseResources:
     port: 80
   deployment:
     containers:
-    - image: nextcloud:17.0.1
+    - image: nextcloud:17.0.7
       name: nextcloud
       envs:
       - name: MYSQL_HOST
