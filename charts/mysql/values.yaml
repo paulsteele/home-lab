@@ -37,6 +37,8 @@ mysql:
   imageTag: "5.7.30"
   mysqlUser: eos
   existingSecret: database-mysql
+  nodeSelector:
+    kubernetes.io/hostname: minecraft
   persistence:
     accessMode: ReadWriteOnce
     size: 8Gi
