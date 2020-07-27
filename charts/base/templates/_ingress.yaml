@@ -17,6 +17,16 @@ spec:
   - host: {{ .Values.baseResources.ingress.host }}
     http:
       paths:
+      {{- if .Values.baseResources.ingress.extraPaths }}
+      {{- $root := . -}}
+      {{- $serviceName := .Values.baseResources.ingress.serviceName -}}
+      {{- range $index, $path := .Values.baseResources.ingress.extraPaths }}
+      - backend:
+          serviceName: {{ default ( include "base.name" $root ) $serviceName }}
+          servicePort: {{ $path.port }}
+        path: {{ $path.path }}
+      {{- end }}
+      {{- end }}
       - backend:
           serviceName: {{ default ( include "base.name" . ) .Values.baseResources.ingress.serviceName }}
           servicePort: {{ .Values.baseResources.ingress.port }}

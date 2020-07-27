@@ -5,5 +5,8 @@ nginx-ingress:
     extraArgs: {
       default-ssl-certificate: "default/paul-steele.com"
     }
+    config:
+      enable-modsecurity: "true"
+      enable-owasp-modsecurity-crs: "true"
     service:
       loadBalancerIP: "192.168.0.200"
