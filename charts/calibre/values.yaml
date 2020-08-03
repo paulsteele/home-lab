@@ -6,7 +6,7 @@ baseResources:
     port: 8083
   deployment:
     containers:
-    - image: linuxserver/calibre-web
+    - image: linuxserver/calibre-web:0.6.8-ls74
       name: calibre
       envs:
       - name: TZ
