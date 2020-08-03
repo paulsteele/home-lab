@@ -12,6 +12,9 @@ releases:
 - name: backup
   namespace: default
   chart: ./charts/duplicati
+- name: books
+  namespace: default
+  chart: ./charts/calibre
 - name: ci
   namespace: default
   chart: ./charts/tekton

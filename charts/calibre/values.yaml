@@ -1,0 +1,44 @@
+baseResources:
+  ingress:
+    host: books.paul-steele.com
+    port: 8083
+  service:
+    port: 8083
+  deployment:
+    containers:
+    - image: linuxserver/calibre-web
+      name: calibre
+      envs:
+      - name: TZ
+        value: America/Indianapolis
+      ports:
+      - 8083
+      volumeMounts:
+      - books
+      - config
+  cronjob:
+    containers:
+    - image: nouchka/sqlite3
+      name: bookdump
+      command:
+      - sqlite3
+      args:
+      - /books/metadata.db
+      - .backup '/backup/calibre.sq3'
+      volumeMounts:
+      - books
+      - backup
+    schedule: "0 1 * * 4"
+  volumes:
+  - name: books
+    source:
+      nfs: /srv/nfs/calibre/library
+    mountPath: /books
+  - name: config
+    source:
+      nfs: /srv/nfs/calibre/config
+    mountPath: /config
+  - name: backup
+    source:
+      nfs: /srv/nfs/database-backup/sqlite
+    mountPath: /backup
