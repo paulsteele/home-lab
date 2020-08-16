@@ -5,6 +5,8 @@ repositories:
   url: https://charts.jetstack.io
 - name: eddycharly
   url: https://eddycharly.github.io/tekton-helm
+- name: itzg
+  url: https://itzg.github.io/minecraft-server-charts/
 releases:
 - name: automation
   namespace: default
@@ -54,6 +56,9 @@ releases:
 - name: home
   namespace: default
   chart: ./charts/homeassistant
+- name: minecraft
+  namespace: default
+  chart: ./charts/minecraft
 - name: ingress
   namespace: default
   chart: ./charts/nginx

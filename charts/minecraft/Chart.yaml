@@ -1,0 +1,11 @@
+apiVersion: v2
+name: minecraft
+description: A Helm chart for Kubernetes
+ pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+version: 0.1.0
+appVersion: 1.16.0
+dependencies:
+- name: minecraft
+  version: 2.0.6
+  repository: https://itzg.github.io/minecraft-server-charts/

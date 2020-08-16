@@ -1,0 +1,8 @@
+minecraft:
+  resources:
+    requests:
+      memory: 4098Mi
+      cpu: 1500m
+
+  nodeSelector:
+    kubernetes.io/hostname: minecraft
