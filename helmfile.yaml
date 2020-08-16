@@ -6,7 +6,7 @@ repositories:
 - name: eddycharly
   url: https://eddycharly.github.io/tekton-helm
 - name: itzg
-  url: https://itzg.github.io/minecraft-server-charts/
+  url: https://itzg.github.io/minecraft-server-charts
 releases:
 - name: automation
   namespace: default
