@@ -31,13 +31,13 @@ baseResources:
       params:
       - name: docker_registry
         value: hyaas
-  - name: nginx-ingress-goaccess
+  - name: dotvote
     tasks:
     - name: build
       taskRef: container-build
       params:
       - name: docker_registry
-        value: nginx-ingress-goaccess
+        value: dotvote
   triggerTemplates:
   - name: blog
     pipeline: blog
@@ -45,8 +45,8 @@ baseResources:
     pipeline: teyler-bot
   - name: hyaas
     pipeline: hyaas
-  - name: nginx-ingress-goaccess
-    pipeline: nginx-ingress-goaccess
+  - name: dotvote
+    pipeline: dotvote
   eventListeners:
   - name: ci-listener
     serviceAccountName: triggers
@@ -60,6 +60,6 @@ baseResources:
     - name: hyaas
       template: hyaas
       url: 'https://github.com/paulsteele/hyaas'
-    - name: nginx-ingress-goaccess
-      template: nginx-ingress-goaccess
-      url: 'https://github.com/paulsteele/nginx-ingress-goaccess'
+    - name: dotvote
+      template: dotvote
+      url: 'https://github.com/paulsteele/dotvote'
