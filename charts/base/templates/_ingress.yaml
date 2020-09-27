@@ -8,6 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: '0'
     nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      access_log /var/log/nginx/access.log;
       access_log /logs/{{ include "base.name" . }}.log;
     {{- if .Values.baseResources.ingress.auth }}
     nginx.ingress.kubernetes.io/auth-url: "https://sso.paul-steele.com/api/verify"
@@ -47,6 +48,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: '0'
     nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      access_log /var/log/nginx/access.log;
       access_log /logs/{{ $ingress.name }}.log;
     {{- if $ingress.auth }}
     nginx.ingress.kubernetes.io/auth-url: "https://sso.paul-steele.com/api/verify"
