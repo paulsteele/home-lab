@@ -7,6 +7,8 @@ repositories:
   url: https://eddycharly.github.io/tekton-helm
 - name: itzg
   url: https://itzg.github.io/minecraft-server-charts
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
 releases:
 - name: automation
   namespace: default
@@ -88,6 +90,9 @@ releases:
 - name: storage
   namespace: default
   chart: ./charts/nfs-client-provisioner
+- name: external-dns
+  namespace: default
+  chart: ./charts/external-dns
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments

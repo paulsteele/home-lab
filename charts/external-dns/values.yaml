@@ -1,0 +1,13 @@
+external-dns:
+  sources:
+  - ingress
+  provider: cloudflare
+  cloudflare:
+    secretName: cloudflare-token
+    email: "paul@paul-steele.com"
+  txtOwnerId: "home-lab"
+  logLevel: debug
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
