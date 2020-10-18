@@ -7,13 +7,12 @@ spec:
   acme:
     dns01:
       providers:
-      - name: route53
-        route53:
-          accessKeyID: {{ .Values.baseResources.clusterIssuer.accessKeyID }}
-          region: us-east-1
-          secretAccessKeySecretRef:
-            key: key
+      - name: cloudflare
+        cloudflare:
+          email: paul@paul-steele.com
+          apiKeySecretRef:
             name: {{ .Values.baseResources.clusterIssuer.secretName }}
+            key: key
     email: paul-steele@live.com
     privateKeySecretRef:
       name: letsencrypt-cert-manager
