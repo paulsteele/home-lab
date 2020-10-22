@@ -14,7 +14,7 @@ baseResources:
     targetPort: 8123
   deployment:
     containers:
-    - image: homeassistant/home-assistant:0.110.5
+    - image: homeassistant/home-assistant:0.116.4
       command:
       - sh
       args:
