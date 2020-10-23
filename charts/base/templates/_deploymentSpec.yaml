@@ -3,8 +3,13 @@
 {{- range $index, $volume := get . "volumes" -}}
 {{- $_ := set $volumeDict $volume.name $volume -}}
 {{- end -}}
+{{ $deployment := (get . "resource") -}}  
+{{- if $deployment.nodeSelector -}}
+nodeSelector:
+  kubernetes.io/hostname: {{ $deployment.nodeSelector }}
+{{ end -}}
 containers:
-{{- range $index, $container := (get . "resource").containers }}
+{{- range $index, $container := $deployment.containers }}
 - image: {{ $container.image }}
   name: {{ $container.name }}
   {{- if $container.command }}
@@ -73,6 +78,10 @@ volumes:
     nfs:
       path: {{ $volume.source.nfs }}
       server: 192.168.0.105
+    {{- end -}}
+    {{- if $volume.source.hostPath }} 
+    hostPath:
+      path: {{ $volume.source.hostPath }}
     {{- end -}}
     {{- if $volume.source.configmap }}
     configMap:

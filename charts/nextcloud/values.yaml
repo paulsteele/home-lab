@@ -5,6 +5,7 @@ baseResources:
   service:
     port: 80
   deployment:
+    nodeSelector: minecraft
     containers:
     - image: nextcloud:20.0.0
       name: nextcloud
@@ -34,5 +35,5 @@ baseResources:
   volumes:
   - name: storage
     source:
-      nfs: /srv/nfs/nextcloud
+      hostPath: /srv/nfs/nextcloud
     mountPath: /var/www/html
