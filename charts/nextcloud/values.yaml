@@ -1,12 +1,12 @@
 baseResources:
   ingress:
-    host: files.paul-steele.com
+    host: cloud.paul-steele.com
     port: 80
   service:
     port: 80
   deployment:
     containers:
-    - image: nextcloud:17.0.7
+    - image: nextcloud:20.0.0
       name: nextcloud
       envs:
       - name: MYSQL_HOST
@@ -24,7 +24,7 @@ baseResources:
       - name: NEXTCLOUD_ADMIN_USER
         value: paul
       - name: NEXTCLOUD_TRUSTED_DOMAINS
-        value: files.paul-steele.com
+        value: cloud.paul-steele.com
       - name: NEXTCLOUD_UPDATE
         value: '1'
       ports:
