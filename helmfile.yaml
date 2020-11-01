@@ -79,9 +79,6 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
-- name: issues
-  namespace: default
-  chart: ./charts/jira
 - name: sso
   namespace: default
   chart: ./charts/authelia
