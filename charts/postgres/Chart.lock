@@ -1,0 +1,9 @@
+dependencies:
+- name: base
+  repository: file://../base
+  version: 0.1.0
+- name: postgres-operator
+  repository: git+https://github.com/CrunchyData/postgres-operator.git@installers/helm?ref=fda8a52b665dcc1bdcc7e27529ad8fca7f19ed12
+  version: 0.1.0
+digest: sha256:65b59f08a4d0cb5afe4ae13c272a4064bb82be24f352df22323bce5170da6273
+generated: "2020-11-08T15:46:05.970783468-05:00"

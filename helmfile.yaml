@@ -9,6 +9,8 @@ repositories:
   url: https://itzg.github.io/minecraft-server-charts
 - name: bitnami
   url: https://charts.bitnami.com/bitnami
+- name: prometheus-operator
+  url: git+https://github.com/CrunchyData/postgres-operator.git@installers/helm?ref=fda8a52b665dcc1bdcc7e27529ad8fca7f19ed12
 releases:
 - name: automation
   namespace: default
@@ -45,6 +47,11 @@ releases:
   chart: ./charts/mysql
   secrets:
   - ./charts/mysql/secrets.yaml
+- name: pgo
+  namespace: pgo
+  chart: ./charts/postgres
+  secrets:
+    - ./charts/postgres/secrets.yaml
 - name: files
   namespace: default
   chart: ./charts/nextcloud
