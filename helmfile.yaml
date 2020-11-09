@@ -50,6 +50,9 @@ releases:
   chart: ./charts/nextcloud
   secrets:
   - ./charts/nextcloud/secrets.yaml
+- name: social
+  namespace: default
+  chart: ./charts/friendica
 - name: finance
   namespace: default
   chart: ./charts/firefly

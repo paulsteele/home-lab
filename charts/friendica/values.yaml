@@ -1,0 +1,60 @@
+baseResources:
+  ingress:
+    host: social.paul-steele.com
+    port: 80
+  service:
+    port: 80
+  deployment:
+    containers:
+      - image: friendica:2020.09-apache
+        name: friendica
+        envs:
+          - name: MYSQL_HOST
+            value: database-mysql
+          - name: MYSQL_USER
+            value: eos
+          - name: MYSQL_DATABASE
+            value: friendica
+          - name: MYSQL_PASSWORD
+            secretName: database-mysql
+            secretKey: mysql-password
+          - name: FRIENDICA_URL
+            value: social.paul-steele.com
+          - name: FRIENDICA_TZ
+            value: "America/Indiana/Indianapolis"
+          - name: FRIENDICA_LANG
+            value: "en_US"
+          - name: FRIENDICA_SITENAME
+            value: social.paul-steele.com
+          - name: FRIENDICA_ADMIN_MAIL
+            value: paul@paul-steele.com
+        ports:
+          - 80
+        volumeMounts:
+          - storage
+      - image: friendica:2020.09-apache
+        name: cron
+        command:
+          - sh
+        args:
+          - "-c"
+          - "set -e && /cron.sh"
+        envs:
+          - name: TINI_SUBREAPER
+            value: true
+          - name: MYSQL_HOST
+            value: database-mysql
+          - name: MYSQL_USER
+            value: eos
+          - name: MYSQL_DATABASE
+            value: friendica
+          - name: MYSQL_PASSWORD
+            secretName: database-mysql
+            secretKey: mysql-password
+        volumeMounts:
+          - storage
+  volumes:
+    - name: storage
+      source:
+        nfs: /srv/nfs/friendica
+      mountPath: /var/www/html
