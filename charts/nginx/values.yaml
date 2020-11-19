@@ -6,7 +6,7 @@ nginx-ingress:
       default-ssl-certificate: "default/paul-steele.com"
     }
     config:
-      enable-modsecurity: "true"
-      enable-owasp-modsecurity-crs: "true"
+      enable-modsecurity: "false"
+      enable-owasp-modsecurity-crs: "false"
     service:
       loadBalancerIP: "192.168.0.200"

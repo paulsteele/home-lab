@@ -5,7 +5,7 @@ external-dns:
   cloudflare:
     secretName: cloudflare-token
     email: "paul@paul-steele.com"
-    proxied: false
+    proxied: true
   txtOwnerId: "home-lab"
   logLevel: debug
   metrics:
