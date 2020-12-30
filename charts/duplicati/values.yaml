@@ -9,6 +9,9 @@ baseResources:
       name: duplicati
       ports:
       - 8200
+      envs:
+      - name: PUID
+        value: "0"
       volumeMounts:
       - config
       - source
