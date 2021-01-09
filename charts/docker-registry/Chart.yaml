@@ -10,4 +10,4 @@ dependencies:
   repository: file://../base
 - name: docker-registry
   version: 1.9.2
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  repository: https://charts.helm.sh/stable

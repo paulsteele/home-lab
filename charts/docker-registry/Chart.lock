@@ -3,7 +3,7 @@ dependencies:
   repository: file://../base
   version: 0.1.0
 - name: docker-registry
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  repository: https://charts.helm.sh/stable
   version: 1.9.2
-digest: sha256:aba75a5a9911df44ef1ab79b16d68adde32e8152331cadce833eea2d23ef4aeb
-generated: "2020-04-07T22:14:02.947826717-04:00"
+digest: sha256:09526d52197a4c198bb3f8fa762f7f0ecb8260e445e0fdc147fcfa0501c8153e
+generated: "2021-01-08T20:03:31.202580798-05:00"

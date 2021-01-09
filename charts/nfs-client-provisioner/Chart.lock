@@ -1,6 +1,6 @@
 dependencies:
 - name: nfs-client-provisioner
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  repository: https://charts.helm.sh/stable
   version: 1.2.8
-digest: sha256:bc0ea6bfac7da13c7dda5d2756d1951e515532298af4936c0013c11e4467ac91
-generated: "2020-06-02T21:33:56.521183-04:00"
+digest: sha256:d8708fa0edb4b21a6d284014acf71af711ef25bad9e2918f2dcad0710fac5a0e
+generated: "2021-01-08T20:07:45.425294655-05:00"

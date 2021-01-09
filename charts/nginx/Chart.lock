@@ -1,6 +1,6 @@
 dependencies:
 - name: nginx-ingress
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  repository: https://charts.helm.sh/stable
   version: 1.26.2
-digest: sha256:3fbd757c219f11f053012a2b510289b98b773e5eb6e3c04690544e4e8540b2e5
-generated: "2020-04-23T21:46:39.616674212-04:00"
+digest: sha256:345fa0c5e2fe82239a8745fb6784ac1eee2b70df7d81af057a377ad4d845b843
+generated: "2021-01-08T20:03:10.797947217-05:00"
