@@ -1,7 +1,7 @@
 baseResources:
   persistentVolume:
     hostPath:
-      path: /home/paul/pixelmon
+      path: /srv/nfs/minecraft/metazoa
     capacity: 10Gi
   persistentVolumeClaim:
     capacity: 10Gi
@@ -10,30 +10,30 @@ minecraft:
   imageTag: 1.8.0
   resources:
     requests:
-      memory: 4098Mi
-      cpu: 1500m
+      memory: 11264Mi
+      cpu: 5000m
 
   nodeSelector:
     kubernetes.io/hostname: minecraft
   minecraftServer:
     eula: "True"
-    version: 1.12.2
+    version: 1.16.4
     type: FORGE
-    difficulty: normal
-    maxPlayers: 5
+    difficulty: hard
+    maxPlayers: 20
     maxWorldSize: 100000
-    motd: "Pixelmon!"
+    motd: "Metazoa"
     pvp: true
-    worldSaveName: pixelmon
-    forgeInstallerUrl: https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2854/forge-1.12.2-14.23.5.2854-installer.jar
-    downloadModpackUrl: https://dl.reforged.gg/2CjtaH7
-    memory: 4098M
+    worldSaveName: metazoa
+    forgeInstallerUrl: https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.16.4-35.1.36/forge-1.16.4-35.1.36-installer.jar
+    memory: 11264M
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
     rcon:
       enabled: true
       loadBalancerIP: "192.168.0.203"
-    
+  extraEnv:
+    USE_AIKAR_FLAGS: true
   persistence:
     dataDir:
       enabled: true
