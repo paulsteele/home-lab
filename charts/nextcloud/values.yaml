@@ -7,7 +7,7 @@ baseResources:
   deployment:
     nodeSelector: minecraft
     containers:
-    - image: nextcloud:20.0.0
+    - image: nextcloud:21.0.0
       name: nextcloud
       envs:
       - name: MYSQL_HOST
