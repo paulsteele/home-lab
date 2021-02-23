@@ -1,0 +1,18 @@
+baseResources:
+  ingress:
+    host: matrix.paul-steele.com
+    port: 8008
+  service:
+    port: 8008
+  deployment:
+    containers:
+      - image: matrixdotorg/synapse:v1.26.0
+        name: matrix
+        envs:
+        volumeMounts:
+          - storage
+  volumes:
+    - name: storage
+      source:
+        nfs: /srv/nfs/matrix
+      mountPath: /data

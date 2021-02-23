@@ -93,6 +93,9 @@ releases:
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
+- name: chat
+  namespace: default
+  chart: ./charts/matrix
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments
