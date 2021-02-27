@@ -6,7 +6,7 @@ baseResources:
     port: 80
   deployment:
     containers:
-    - image: linuxserver/freshrss
+    - image: freshrss/freshrss:1.17.0
       name: freshrss
       ports:
       - 80
@@ -15,8 +15,13 @@ baseResources:
         value: "5, 35"
       volumeMounts:
       - config
+      - extensions
   volumes:
   - name: config
     source:
-      nfs: /srv/nfs/freshrss/config
-    mountPath: /config
+      nfs: /srv/nfs/freshrss/data
+    mountPath: /var/www/FreshRSS/data
+  - name: extensions
+    source:
+      nfs: /srv/nfs/freshrss/extensions
+    mountPath: /var/www/FreshRSS/extensions
