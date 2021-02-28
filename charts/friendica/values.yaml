@@ -6,7 +6,7 @@ baseResources:
     port: 80
   deployment:
     containers:
-      - image: friendica:2020.09-apache
+      - image: friendica:2021.01-apache
         name: friendica
         envs:
           - name: MYSQL_HOST

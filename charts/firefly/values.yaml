@@ -4,9 +4,10 @@ baseResources:
     port: 80
   service:
     port: 80
+    targetPort: 8080
   deployment:
     containers:
-    - image: jc5x/firefly-iii:release-5.0.4
+    - image: jc5x/firefly-iii:version-5.4.6
       name: firefly
       envs:
       - name: DB_HOST

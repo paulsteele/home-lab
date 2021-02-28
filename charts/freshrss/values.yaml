@@ -6,7 +6,7 @@ baseResources:
     port: 80
   deployment:
     containers:
-    - image: freshrss/freshrss:1.17.0
+    - image: freshrss/freshrss:alpine
       name: freshrss
       ports:
       - 80
