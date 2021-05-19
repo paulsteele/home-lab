@@ -6,7 +6,7 @@ baseResources:
     port: 8008
   deployment:
     containers:
-      - image: matrixdotorg/synapse:v1.26.0
+      - image: matrixdotorg/synapse:v1.34.0
         name: matrix
         envs:
         volumeMounts:
