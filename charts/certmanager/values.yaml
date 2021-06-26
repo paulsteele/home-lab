@@ -1,7 +1,7 @@
 baseResources:
   clusterIssuer:
     accessKeyID: AKIA5IJM3JBT4OHKN63G
-    secretName: cloudflare_api_token
+    secretName: cloudflare-api-token
   certificates:
   - name: paul-steele.com
     namespace: default

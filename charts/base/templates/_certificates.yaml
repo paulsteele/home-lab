@@ -9,7 +9,7 @@ spec:
   acme:
     config:
     - dns01:
-        provider: route53
+        provider: cloudflare
       domains:
       {{- range $domain := $certificate.domains }}
       - '{{ $domain }}'
