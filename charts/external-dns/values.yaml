@@ -3,7 +3,7 @@ external-dns:
   - ingress
   provider: cloudflare
   cloudflare:
-    secretName: cloudflare-token
+    secretName: cloudflare-api-token
     email: "paul@paul-steele.com"
     proxied: true
   txtOwnerId: "home-lab"

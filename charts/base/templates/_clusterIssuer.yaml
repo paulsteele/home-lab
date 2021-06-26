@@ -12,7 +12,7 @@ spec:
           email: paul@paul-steele.com
           apiKeySecretRef:
             name: {{ .Values.baseResources.clusterIssuer.secretName }}
-            key: key
+            key: cloudflare_api_token
     email: paul-steele@live.com
     privateKeySecretRef:
       name: letsencrypt-cert-manager
