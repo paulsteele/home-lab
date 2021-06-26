@@ -45,7 +45,7 @@ releases:
   chart: ./charts/database
   secrets:
   - ./charts/database/secrets.yaml
-- name: files
+- name: cloud
   namespace: default
   chart: ./charts/nextcloud
   secrets:
