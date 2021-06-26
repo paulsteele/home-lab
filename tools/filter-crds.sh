@@ -2,9 +2,6 @@
 
 for file in "$@"
 do
-  if [ ! -d $file ]; then
-    exit
-  fi
   echo "Filtering CRD's from $file"
   tempfile="$file.tmp"
   tempdir="tempdir"
