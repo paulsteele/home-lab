@@ -26,7 +26,7 @@ baseResources:
   volumes:
   - name: data
     source:
-      nfs: /srv/nfs/automation
+      nfs: /volume1/files/automation
     mountPath: /data
   - name: config
     source:

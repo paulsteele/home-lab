@@ -3,5 +3,5 @@ nfs-client-provisioner:
     defaultClass: "true"
     archiveOnDelete: "false"
   nfs:
-    server: 192.168.0.105
-    path: /srv/nfs/nfs-client-provisioner
+    server: 192.168.0.101
+    path: /volume1/files/nfs-client-provisioner

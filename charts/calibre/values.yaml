@@ -32,13 +32,13 @@ baseResources:
   volumes:
   - name: books
     source:
-      nfs: /srv/nfs/calibre/library
+      nfs: /volume1/files/calibre/library
     mountPath: /books
   - name: config
     source:
-      nfs: /srv/nfs/calibre/config
+      nfs: /volume1/files/calibre/config
     mountPath: /config
   - name: backup
     source:
-      nfs: /srv/nfs/database-backup/sqlite
+      nfs: /volume1/files/database-backup/sqlite
     mountPath: /backup

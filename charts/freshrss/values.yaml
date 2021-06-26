@@ -19,9 +19,9 @@ baseResources:
   volumes:
   - name: config
     source:
-      nfs: /srv/nfs/freshrss/data
+      nfs: /volume1/files/freshrss/data
     mountPath: /var/www/FreshRSS/data
   - name: extensions
     source:
-      nfs: /srv/nfs/freshrss/extensions
+      nfs: /volume1/files/freshrss/extensions
     mountPath: /var/www/FreshRSS/extensions

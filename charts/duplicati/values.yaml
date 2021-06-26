@@ -18,9 +18,9 @@ baseResources:
   volumes:
   - name: config
     source:
-      nfs: /srv/nfs/duplicati
+      nfs: /volume1/files/duplicati
     mountPath: /config
   - name: source
     source:
-      nfs: /srv/nfs
+      nfs: /volume1/files
     mountPath: /source

@@ -1,0 +1,47 @@
+baseResources:
+  configmaps:
+    - name: db-backup
+      data:
+        - name: dump
+          file: resources/dump.sh
+  cronjob:
+    containers:
+    - image: camil/mysqldump
+      command:
+      - /bin/bash
+      args:
+      - -c
+      - ./dump.sh --port=3307
+      name: mysqldump
+      envs:
+      - name: ALL_DATABASES
+        value: 'true'
+      - name: DB_HOST
+        value: 192.168.0.101
+      - name: DB_PORT
+        value: 3307
+      - name: DB_USER
+        secretName: database-credentials
+        secretKey: user
+      - name: DB_PASS
+        secretName: database-credentials
+        secretKey: password
+      volumeMounts:
+      - mysqldump
+      - db-backup
+    schedule: "0 1 * * 4"
+  volumes:
+  - name: mysqldump
+    source:
+      nfs: /volume1/files/database-backup/mysql
+    mountPath: /mysqldump
+  - name: db-backup
+    source:
+      configmap:
+        defaultMode: 0555
+        name: db-backup
+        items:
+          key: dump
+          path: dump
+    mountPath: /dump.sh
+    subPath: dump

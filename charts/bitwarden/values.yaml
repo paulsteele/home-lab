@@ -41,9 +41,9 @@ baseResources:
   volumes:
   - name: data
     source:
-      nfs: /srv/nfs/bitwarden
+      nfs: /volume1/files/bitwarden
     mountPath: /data
   - name: backup
     source:
-      nfs: /srv/nfs/database-backup/sqlite
+      nfs: /volume1/files/database-backup/sqlite
     mountPath: /backup

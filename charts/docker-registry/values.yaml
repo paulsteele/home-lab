@@ -1,7 +1,7 @@
 baseResources:
   persistentVolume:
     nfs:
-      path: /srv/nfs/docker-registry
+      path: /volume1/files/docker-registry
     capacity: 4Gi
   persistentVolumeClaim:
     capacity: 4Gi

@@ -1,7 +1,7 @@
 baseResources:
   persistentVolume:
-    hostPath:
-      path: /srv/nfs/minecraft/pixelmon-redux
+    nfs:
+      path: /volume1/files/minecraft/pixelmon-redux
     capacity: 10Gi
   persistentVolumeClaim:
     capacity: 10Gi

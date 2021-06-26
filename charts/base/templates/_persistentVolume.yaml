@@ -13,7 +13,7 @@ spec:
   {{- if .Values.baseResources.persistentVolume.nfs }}
   nfs:
     path: {{ .Values.baseResources.persistentVolume.nfs.path }}
-    server: 192.168.0.105
+    server: 192.168.0.101
   {{- end }}
   {{- if .Values.baseResources.persistentVolume.hostPath }}
   hostPath:

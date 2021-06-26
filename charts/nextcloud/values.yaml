@@ -5,20 +5,20 @@ baseResources:
   service:
     port: 80
   deployment:
-    nodeSelector: minecraft
     containers:
     - image: nextcloud:21.0.0
       name: nextcloud
       envs:
       - name: MYSQL_HOST
-        value: database-mysql:3306
+        value: 192.168.0.101:3307
       - name: MYSQL_USER
-        value: eos
+        secretName: database-credentials
+        secretKey: user
       - name: MYSQL_DATABASE
         value: nextcloud
       - name: MYSQL_PASSWORD
-        secretName: database-mysql
-        secretKey: mysql-password
+        secretName: database-credentials
+        secretKey: password
       - name: NEXTCLOUD_ADMIN_PASSWORD
         secretName: nextcloud-admin-pass
         secretKey: NEXTCLOUD_ADMIN_PASS
@@ -35,5 +35,5 @@ baseResources:
   volumes:
   - name: storage
     source:
-      hostPath: /srv/nfs/nextcloud
+      nfs: /volume1/files/nextcloud
     mountPath: /var/www/html

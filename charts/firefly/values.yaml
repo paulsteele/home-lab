@@ -11,11 +11,12 @@ baseResources:
       name: firefly
       envs:
       - name: DB_HOST
-        value: database-mysql
+        value: 192.168.0.101
       - name: DB_USERNAME
-        value: eos
+        secretName: database-credentials
+        secretKey: user
       - name: DB_PORT
-        value: 3306
+        value: 3307
       - name: DB_DATABASE
         value: firefly_db
       - name: DB_CONNECTION
@@ -27,8 +28,8 @@ baseResources:
       - name: TRUSTED_PROXIES
         value: '**'
       - name: DB_PASSWORD
-        secretName: database-mysql
-        secretKey: mysql-password
+        secretName: database-credentials
+        secretKey: password
       - name: APP_KEY
         secretName: firefly-token
         secretKey: FF_APP_KEY
@@ -37,5 +38,5 @@ baseResources:
   volumes:
   - name: storage
     source:
-      nfs: /srv/nfs/firefly
+      nfs: /volume1/files/firefly
     mountPath: /var/www/firefly-iii/storage

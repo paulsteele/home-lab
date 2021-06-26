@@ -42,17 +42,14 @@ releases:
   chart: ./charts/docker-registry
 - name: database
   namespace: default
-  chart: ./charts/mysql
+  chart: ./charts/database
   secrets:
-  - ./charts/mysql/secrets.yaml
+  - ./charts/database/secrets.yaml
 - name: files
   namespace: default
   chart: ./charts/nextcloud
   secrets:
   - ./charts/nextcloud/secrets.yaml
-- name: social
-  namespace: default
-  chart: ./charts/friendica
 - name: finance
   namespace: default
   chart: ./charts/firefly
@@ -93,9 +90,6 @@ releases:
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
-- name: chat
-  namespace: default
-  chart: ./charts/matrix
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments

@@ -23,13 +23,13 @@ baseResources:
   volumes:
   - name: config
     source:
-      nfs: /srv/nfs/subsonic/config
+      nfs: /volume1/files/subsonic/config
     mountPath: /subsonic
   - name: data
     source:
-      nfs: /srv/nfs/subsonic/data
+      nfs: /volume1/files/subsonic/data
     mountPath: /data
   - name: music
     source:
-      nfs: /srv/nfs/media/music
+      nfs: /volume1/files/media/music
     mountPath: /music

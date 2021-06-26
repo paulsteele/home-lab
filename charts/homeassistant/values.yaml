@@ -30,7 +30,7 @@ baseResources:
   volumes:
   - name: config
     source:
-      nfs: /srv/nfs/homeassistant
+      nfs: /volume1/files/homeassistant
     mountPath: /config
   - name: zha
     source:
