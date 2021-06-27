@@ -1,19 +1,11 @@
 {{- define "base.certificates" -}}
 {{- range $index, $certificate := .Values.baseResources.certificates }}
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ $certificate.name }}
   namespace: {{ $certificate.namespace }}
 spec:
-  acme:
-    config:
-    - dns01:
-        provider: cloudflare
-      domains:
-      {{- range $domain := $certificate.domains }}
-      - '{{ $domain }}'
-      {{- end }}
   dnsNames:
   {{- range $domain := $certificate.domains }}
   - '{{ $domain }}'

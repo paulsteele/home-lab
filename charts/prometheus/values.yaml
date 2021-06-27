@@ -1,4 +1,4 @@
-prometheus-operator:
+kube-prometheus-stack:
   alertmanager:
     serviceAccount:
       create: true

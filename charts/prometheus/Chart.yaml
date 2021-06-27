@@ -5,6 +5,6 @@ type: application
 version: 1.0.0
 appVersion: 1.15.0
 dependencies:
-- name: prometheus-operator
-  version: 6.7.3
-  repository: https://charts.helm.sh/stable
+- name: kube-prometheus-stack
+  version: 16.12.0
+  repository: https://prometheus-community.github.io/helm-charts
