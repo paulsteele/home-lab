@@ -11,6 +11,8 @@ repositories:
   url: https://charts.bitnami.com/bitnami
 - name: prometheus
   url: https://prometheus-community.github.io/helm-charts
+- name: nfs-subdir-external-provisioner
+  url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 releases:
 - name: automation
   namespace: default
