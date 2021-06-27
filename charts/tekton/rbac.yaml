@@ -28,6 +28,7 @@ baseResources:
       - secrets
       verbs:
       - get
+      - create
       - list
       - watch
   - name: ci-builder
@@ -40,17 +41,20 @@ baseResources:
       verbs:
       - get
       - list
+      - create
       - watch
       - update
       - patch
       - delete
     - apiGroups:
       - 'extensions'
+      - 'networking.k8s.io'
       resources:
       - ingresses
       verbs:
       - get
       - list
+      - create
       - watch
       - update
       - patch
@@ -61,6 +65,7 @@ baseResources:
       - deployments
       verbs:
       - get
+      - create
       - list
       - watch
       - update
