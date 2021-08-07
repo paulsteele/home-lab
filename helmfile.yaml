@@ -62,9 +62,6 @@ releases:
 - name: home
   namespace: default
   chart: ./charts/homeassistant
-- name: minecraft
-  namespace: default
-  chart: ./charts/minecraft
 - name: ingress
   namespace: default
   chart: ./charts/nginx

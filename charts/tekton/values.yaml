@@ -38,6 +38,13 @@ baseResources:
       params:
       - name: docker_registry
         value: dotvote
+  - name: hub
+    tasks:
+      - name: build
+        taskRef: container-build
+        params:
+          - name: docker_registry
+            value: hub
   triggerTemplates:
   - name: blog
     pipeline: blog
@@ -47,6 +54,8 @@ baseResources:
     pipeline: hyaas
   - name: dotvote
     pipeline: dotvote
+  - name: hub
+    pipeline: hub
   eventListeners:
   - name: ci-listener
     serviceAccountName: triggers
@@ -63,3 +72,6 @@ baseResources:
     - name: dotvote
       template: dotvote
       url: 'https://github.com/paulsteele/dotvote'
+    - name: hub
+      template: hub
+      url: 'https://github.com/paulsteele/hub'
