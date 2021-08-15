@@ -10,11 +10,9 @@ minecraft:
   imageTag: 1.8.0
   resources:
     requests:
-      memory: 8192Mi
-      cpu: 4000m
+      memory: 6144Mi
+      cpu: 3000m
 
-  nodeSelector:
-    kubernetes.io/hostname: minecraft
   minecraftServer:
     eula: "True"
     version: 1.12.2
@@ -26,7 +24,7 @@ minecraft:
     pvp: true
     worldSaveName: pixelmon-redux
     forgeInstallerUrl: https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2855/forge-1.12.2-14.23.5.2855-installer.jar
-    memory: 8192M
+    memory: 6144M
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
     rcon:
