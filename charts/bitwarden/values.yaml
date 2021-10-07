@@ -13,8 +13,8 @@ baseResources:
       port: 3012
   deployment:
     containers:
-    - image: bitwardenrs/server:1.14.1-alpine
-      name: bitwarden
+    - image: vaultwarden/server:1.22.2-alpine
+      name: vaultwarden
       envs:
       - name: SIGNUPS_ALLOWED
         value: 'false'
