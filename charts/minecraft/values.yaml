@@ -1,7 +1,7 @@
 baseResources:
   persistentVolume:
     nfs:
-      path: /volume1/files/minecraft/craft-to-exile
+      path: /volume1/files/minecraft/magic
     capacity: 10Gi
   persistentVolumeClaim:
     capacity: 10Gi
@@ -13,7 +13,7 @@ minecraft:
       memory: 6144Mi
       cpu: 3000m
   livenessProbe:
-    initialDelaySeconds: 130
+    initialDelaySeconds: 50
     periodSeconds: 5
     failureThreshold: 10
     successThreshold: 1
@@ -36,7 +36,7 @@ minecraft:
     difficulty: normal
     maxPlayers: 10
     maxWorldSize: 100000
-    motd: "craft to exile"
+    motd: "magic"
     pvp: true
     worldSaveName: craftToExile 
     memory: 6144M
