@@ -1,17 +1,17 @@
 baseResources:
   persistentVolume:
     nfs:
-      path: /volume1/files/minecraft/magic
+      path: /volume1/files/minecraft/MyLifeAsAKing
     capacity: 10Gi
   persistentVolumeClaim:
     capacity: 10Gi
 
 minecraft:
-  imageTag: 2021.18.0
+  imageTag: 2021.26.0-java8-multiarch
   resources:
     requests:
       memory: 6144Mi
-      cpu: 3000m
+      cpu: 4000m
   livenessProbe:
     initialDelaySeconds: 50
     periodSeconds: 5
@@ -32,13 +32,14 @@ minecraft:
   minecraftServer:
     eula: "True"
     version: 1.16.5
-    type: FABRIC
+    type: FORGE
     difficulty: normal
     maxPlayers: 10
     maxWorldSize: 100000
-    motd: "magic"
+    motd: "Minecraft: My Life As A King"
     pvp: true
-    worldSaveName: craftToExile 
+    worldSaveName: myLifeAsAKing 
+    forgeInstallerUrl: "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.20/forge-1.16.5-36.2.20-installer.jar" 
     memory: 6144M
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
@@ -47,7 +48,6 @@ minecraft:
       loadBalancerIP: "192.168.0.203"
   extraEnv:
     USE_AIKAR_FLAGS: true
-    FABRIC_INSTALLER_URL: https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.7.4/fabric-installer-0.7.4.jar
   persistence:
     dataDir:
       enabled: true
