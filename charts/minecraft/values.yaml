@@ -11,7 +11,7 @@ minecraft:
   resources:
     requests:
       memory: 6144Mi
-      cpu: 4000m
+      cpu: 5000m
   livenessProbe:
     initialDelaySeconds: 50
     periodSeconds: 5
@@ -19,7 +19,7 @@ minecraft:
     successThreshold: 1
     timeoutSeconds: 1
   readinessProbe:
-    initialDelaySeconds: 130
+    initialDelaySeconds: 140
     periodSeconds: 5
     failureThreshold: 10
     successThreshold: 1
@@ -40,7 +40,7 @@ minecraft:
     pvp: true
     worldSaveName: myLifeAsAKing 
     forgeInstallerUrl: "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.20/forge-1.16.5-36.2.20-installer.jar" 
-    memory: 6144M
+    memory: 5120M
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
     rcon:
