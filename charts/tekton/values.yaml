@@ -45,6 +45,13 @@ baseResources:
         params:
           - name: docker_registry
             value: hub
+  - name: twitch-dnd
+    tasks:
+      - name: build
+        taskRef: container-build
+        params:
+          - name: docker_registry
+            value: twitch-dnd
   triggerTemplates:
   - name: blog
     pipeline: blog
@@ -56,6 +63,8 @@ baseResources:
     pipeline: dotvote
   - name: hub
     pipeline: hub
+  - name: twitch-dnd
+    pipeline: twitch-dnd
   eventListeners:
   - name: ci-listener
     serviceAccountName: triggers
@@ -75,3 +84,6 @@ baseResources:
     - name: hub
       template: hub
       url: 'https://github.com/paulsteele/hub'
+    - name: twitch-dnd
+      template: twitch-dnd
+      url: 'https://github.com/paulsteele/twitch-dnd'
