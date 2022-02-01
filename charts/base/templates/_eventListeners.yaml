@@ -19,7 +19,7 @@ spec:
         - cel:
             filter: "body.repository.html_url == '{{ $trigger.url }}'"
         - cel:
-            filter: "body.ref == 'refs/heads/master'"
+            filter: "body.ref == 'refs/heads/{{ $trigger.branch }}'"
       bindings:
         - name: github
           ref: github

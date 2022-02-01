@@ -72,18 +72,24 @@ baseResources:
     - name: blog
       template: blog
       url: 'https://github.com/paulsteele/blog'
+      branch: master
     - name: teyler-bot
       template: teyler-bot
       url: 'https://github.com/paulsteele/discord-bot'
+      branch: master
     - name: hyaas
       template: hyaas
       url: 'https://github.com/paulsteele/hyaas'
+      branch: master
     - name: dotvote
       template: dotvote
       url: 'https://github.com/paulsteele/dotvote'
+      branch: master
     - name: hub
       template: hub
       url: 'https://github.com/paulsteele/hub'
+      branch: master
     - name: twitch-dnd
       template: twitch-dnd
       url: 'https://github.com/paulsteele/twitch-dnd'
+      branch: main
