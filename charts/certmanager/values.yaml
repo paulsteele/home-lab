@@ -7,6 +7,10 @@ baseResources:
     namespace: default
     domains:
     - '*.paul-steele.com'
+  - name: twitchplaysdnd.com
+    namespace: deployments
+    domains:
+      - 'twitchplaysdnd.com'
 cert-manager:
   podDnsPolicy: "None"
   podDnsConfig:
