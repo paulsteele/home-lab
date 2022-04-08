@@ -19,19 +19,35 @@ baseResources:
       - sh
       args:
       - "-c"
-      - "zha && zwave && python -m homeassistant --config /config"
+      - "zha && python -m homeassistant --config /config"
       name: homeassistant
       ports:
       - 8123
       volumeMounts:
       - config
       - zha
+    - image: zwavejs/zwavejs2mqtt:sha-fd10576
+      command:
+      - sh
+      args:
+      - "-c"
+      - "zwave && node server/bin/www"
+      name: zwavejs2mqtt
+      ports:
+      - 3000
+      - 8091
+      volumeMounts:
       - zwave
+      - zwaveconfig
   volumes:
   - name: config
     source:
       nfs: /volume1/files/homeassistant
     mountPath: /config
+  - name: zwaveconfig
+    source:
+      nfs: /volume1/files/zwave
+    mountPath: /usr/src/app/store
   - name: zha
     source:
       configmap:
