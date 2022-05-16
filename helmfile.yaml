@@ -23,9 +23,9 @@ releases:
 - name: books
   namespace: default
   chart: ./charts/calibre
-- name: minecraft
-  namespace: default
-  chart: ./charts/minecraft
+# - name: minecraft
+#  namespace: default
+#  chart: ./charts/minecraft
 - name: ci
   namespace: default
   chart: ./charts/tekton
