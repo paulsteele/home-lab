@@ -1,0 +1,46 @@
+baseResources:
+  service:
+    port: 85
+    extraPorts:
+      port: 53312
+    extraPorts1:
+      port: 54001
+    extraPorts2:
+      port: 53310
+    loadBalancerIP: 192.168.0.204
+  deployment:
+    containers:
+    - image: golang:1.18.2-bullseye
+      name : mhfz
+      ports:
+      - 85
+      - 53312
+      - 54001
+      - 53310
+      command:
+      - sh
+      args:
+      - '-c'
+      - 'cd /erupe && go run main.go'
+      volumeMounts:
+      - erupe
+    - image: bitnami/postgresql:14.3.0
+      name: postgres
+      envs:
+      - name: POSTGRESQL_PASSWORD
+        secretName: mhfz-database
+        secretKey: POSTGRES_PASSWORD
+      - name: POSTGRESQL_DATABASE
+        secretName: mhfz-database
+        secretKey: POSTGRES_DB
+      volumeMounts:
+      - database
+  volumes:
+  - name: database
+    source:
+      nfs: /volume1/files/mhfz/postgres
+    mountPath: /bitnami/postgresql
+  - name: erupe
+    source:
+      nfs: /volume1/files/mhfz/Erupe
+    mountPath: /erupe

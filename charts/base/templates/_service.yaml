@@ -15,6 +15,18 @@ spec:
     protocol: TCP
     targetPort: {{ .Values.baseResources.service.extraPorts.port }}
 {{- end}}
+{{- if .Values.baseResources.service.extraPorts1 }}
+  - port: {{ .Values.baseResources.service.extraPorts1.port }}
+    name: 'extra1'
+    protocol: TCP
+    targetPort: {{ .Values.baseResources.service.extraPorts1.port }}
+{{- end}}
+{{- if .Values.baseResources.service.extraPorts2 }}
+  - port: {{ .Values.baseResources.service.extraPorts2.port }}
+    name: 'extra2'
+    protocol: TCP
+    targetPort: {{ .Values.baseResources.service.extraPorts2.port }}
+{{- end}}
   selector:
     app: {{ include "base.name" . }}
   {{- if .Values.baseResources.service.loadBalancerIP }}
