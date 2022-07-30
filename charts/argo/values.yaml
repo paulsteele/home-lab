@@ -1,0 +1,18 @@
+argo-workflows:
+  images:
+    tag: "v3.3.8"
+  controller:
+    parallelism: 5
+  server:
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+      - ci.paul-steele.com
+      tls:
+      - hosts:
+        - ci.paul-steele.com
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: ci.paul-steele.com
+        external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
+
