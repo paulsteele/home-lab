@@ -30,7 +30,7 @@ baseResources:
         items:
           key: config.yml
           path: config.yml
-    mountPath: /etc/authelia/configuration.yml
+    mountPath: /config/configuration.yml
     subPath: config.yml
   - name: users
     source:
