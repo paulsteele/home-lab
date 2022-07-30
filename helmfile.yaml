@@ -34,6 +34,8 @@ releases:
 - name: ci
   namespace: ci
   chart: ./charts/argo
+  secrets:
+    - ./charts/argo/secrets.yaml
 - name: certificates
   namespace: default
   chart: ./charts/certmanager
