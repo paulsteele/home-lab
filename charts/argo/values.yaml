@@ -18,7 +18,7 @@ argo-workflows:
     extraArgs:
     - --auth-mode=sso
     sso:
-      issuer: https://sso.paul-steele.com
+      issuer: https://oidc.paul-steele.com/auth/realms/master
       ## Name of a secret and a key in it to retrieve the app OIDC client ID from.
       clientId:
         name: argo-sso
@@ -40,8 +40,5 @@ argo-workflows:
       ## group membership information, which is usually used for authorization
       ## decisions.
       scopes:
-      - openid
-      - profile
-      - email
       - groups
 
