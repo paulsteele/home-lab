@@ -40,5 +40,8 @@ argo-workflows:
       ## group membership information, which is usually used for authorization
       ## decisions.
       scopes:
+      - openid
+      - profile
+      - email
       - groups
 

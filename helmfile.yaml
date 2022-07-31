@@ -13,6 +13,8 @@ repositories:
   url: https://prometheus-community.github.io/helm-charts
 - name: nfs-subdir-external-provisioner
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+- name: codecentrc
+  url: https://codecentric.github.io/helm-charts
 releases:
 - name: automation
   namespace: default
@@ -80,11 +82,16 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
-- name: sso
+#- name: sso
+#  namespace: default
+#  chart: ./charts/authelia
+#  secrets:
+#  - ./charts/authelia/secrets.yaml
+- name: oidc
   namespace: default
-  chart: ./charts/authelia
+  chart: ./charts/keycloak
   secrets:
-  - ./charts/authelia/secrets.yaml
+    - ./charts/keycloak/secrets.yaml
 - name: storage
   namespace: default
   chart: ./charts/nfs-client-provisioner

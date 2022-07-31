@@ -1,0 +1,90 @@
+keycloak:
+  # Pod resource requests and limits
+  resources: { }
+    # requests:
+    #   cpu: "500m"
+    #   memory: "1024Mi"
+    # limits:
+  #   cpu: "500m"
+  #   memory: "1024Mi"
+  ingress:
+    # If `true`, an Ingress is created
+    enabled: true
+    # The name of the Ingress Class associated with this ingress
+    ingressClassName: "nginx"
+    # The Service port targeted by the Ingress
+    servicePort: http
+    # Ingress annotations
+    rules:
+      - # Ingress host
+        host: oidc.paul-steele.com
+        # Paths for the host
+        paths:
+          - path: /
+            pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+      external-dns.alpha.kubernetes.io/hostname: oidc.paul-steele.com
+      external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
+    tls:
+      - hosts:
+          - oidc.paul-steele.com.com
+
+    # ingress for console only (/auth/admin)
+    console:
+      # If `true`, an Ingress is created for console path only
+      enabled: false
+      # The name of Ingress Class associated with the console ingress only
+      ingressClassName: ""
+      # Ingress annotations for console ingress only
+      # Useful to set nginx.ingress.kubernetes.io/whitelist-source-range particularly
+      annotations: { }
+      rules:
+        - # Ingress host
+          host: oidc.paul-steele.com
+          # Paths for the host
+          paths:
+            - path: /auth/admin/
+              pathType: Prefix
+      # Console TLS configuration
+      tls: [ ]
+  #      - hosts:
+  #          - console.keycloak.example.com
+  #        secretName: ""
+
+  postgresql:
+    enabled: false
+  
+  extraEnv: |
+    - name: DB_VENDOR
+      value: mariadb
+    - name: DB_ADDR
+      value: 192.168.0.101
+    - name: DB_PORT
+      value: "3307"
+    - name: DB_DATABASE
+      value: keycloak
+    - name: DB_USER_FILE
+      value: /secrets/db-creds/user
+    - name: DB_PASSWORD_FILE
+      value: /secrets/db-creds/password
+    - name: KEYCLOAK_USER_FILE
+      value: /secrets/admin-user/user
+    - name: KEYCLOA_PASSWORD_FILE
+      value: /secrets/admin-user/password
+
+  extraVolumeMounts: |
+    - name: db-creds
+      mountPath: /secrets/db-creds
+      readOnly: true
+    - name: admin-user
+      mountPath: /secrets/admin-user
+      readOnly: true
+
+  extraVolumes: |
+    - name: db-creds
+      secret:
+        secretName: database-credentials
+    - name: admin-user
+      secret:
+        secretName: keycloak
