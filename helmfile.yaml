@@ -38,6 +38,8 @@ releases:
   chart: ./charts/argo
   secrets:
     - ./charts/argo/secrets.yaml
+  values:
+    - ./charts/argo/rbac.yaml
 - name: certificates
   namespace: default
   chart: ./charts/certmanager

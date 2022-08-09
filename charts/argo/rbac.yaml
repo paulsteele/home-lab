@@ -1,0 +1,42 @@
+baseResources:
+  serviceAccounts:
+  - name: ci-sso
+    annotations:
+      workflows.argoproj.io/rbac-rule: "'admin' in groups"
+  clusterRoles:
+  - name: ci-sso
+    rules:
+    - apiGroups:
+        - argoproj.io
+      resources:
+        - workflows
+        - workflowtemplates
+        - clusterworkflowtemplates
+        - cronworkflows
+        - sensors
+        - eventsources
+      verbs:
+        - get
+        - list
+        - create
+        - watch
+        - update
+        - patch
+        - delete
+    - apiGroups:
+      - dataflow.argoproj.io
+      resources:
+      - pipelines
+      verbs:
+      - get
+      - list
+      - create
+      - watch
+      - update
+      - patch
+      - delete
+  clusterRoleBindings:
+  - name: ci-sso
+    serviceAccountName: ci-sso
+    serviceAccountNamespace: ci
+    clusterRoleName: ci-sso

@@ -5,7 +5,6 @@ argo-workflows:
     parallelism: 5
     serviceAccount:
       annotations:
-        workflows.argoproj.io/rbac-rule: "'admin' in groups"
   server:
     ingress:
       enabled: true
