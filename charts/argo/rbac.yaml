@@ -3,6 +3,7 @@ baseResources:
   - name: ci-sso
     annotations:
       workflows.argoproj.io/rbac-rule: "'admin' in groups"
+  - name: ci-github
   clusterRoles:
   - name: ci-sso
     rules:
@@ -35,8 +36,32 @@ baseResources:
       - update
       - patch
       - delete
+  - name: ci-submit-workflow
+    rules:
+    - apiGroups:
+      - argoproj.io
+      resources:
+      - workfloweventbindings
+      verbs:
+      - list
+    - apiGroups:
+      - argoproj.io
+      resources:
+      - workflowtemplates
+      verbs:
+      - get
+    - apiGroups:
+      - argoproj.io
+      resources:
+      - workflows
+      verbs:
+      - create
   clusterRoleBindings:
   - name: ci-sso
     serviceAccountName: ci-sso
     serviceAccountNamespace: ci
     clusterRoleName: ci-sso
+  - name: ci-github
+    serviceAccountName: ci-github
+    serviceAccountNamespace: ci
+    clusterRoleName: ci-submit-workflow
