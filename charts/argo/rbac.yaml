@@ -13,6 +13,7 @@ baseResources:
         - workflows
         - workflowtemplates
         - clusterworkflowtemplates
+        - workfloweventbindings
         - cronworkflows
         - sensors
         - eventsources

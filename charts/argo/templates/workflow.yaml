@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: git-clone
+spec:
+  serviceAccountName: argo
+  templates:
+    - name: git-clone
+      container:
+        image: alpine/git
+        args:
+          - "clone"
+          - "{{"{{"}}workflow.parameters.git_url{{"}}"}}"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: build 
+spec:
+  serviceAccountName: argo
+  templates:
+    - name: build 
+      container:
+        image: gcr.io/kaniko-project/executor
+        args: 
+        - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.docker_registry{{"}}"}}:{{"{{"}}workflow.parameters.sha{{"}}"}}"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: prepare-manifest
+spec:
+  serviceAccountName: argo
+  templates:
+    - name: prepare-manifest
+      container:
+      image: loicmahieu/alpine-envsubst
+      command: "sh"
+      args:
+        - "-c"
+        - "envsubst < k8s.template.yaml > k8s.yaml"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: deploy
+spec:
+  serviceAccountName: argo
+  templates:
+    - name: deploy
+      container:
+      image: lachlanevenson/k8s-kubectl:v1.15.0
+      command: "kubectl"
+      args:
+      - "apply"
+      - "-f"
+      - "k8s.yaml"
+---
+{{- range $index, $repository:= .Values.repositories }}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowEventBinding
+metadata:
+  name: event-binding-{{$repository.name}}
+spec:
+  event:
+    # metadata header name must be lowercase to match in selector
+    selector: payload.message.repository.url == "{{$repository.url}}" 
+  submit:
+    workflowTemplateRef:
+      name: git-clone
+    arguments:
+      parameters:
+        - name: git_url
+          valueFrom:
+            event: payload.message.repository.url
+---
+{{- end }}

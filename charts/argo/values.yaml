@@ -1,6 +1,9 @@
+repositories:
+- name: blog
+  url: https://github.com/paulsteele/blog
 argo-workflows:
   images:
-    tag: "v3.3.8"
+    tag: "v3.3.9"
   controller:
     parallelism: 5
     serviceAccount:
@@ -19,6 +22,7 @@ argo-workflows:
         external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
     extraArgs:
     - --auth-mode=sso
+    - --auth-mode=client
     sso:
       issuer: https://oidc.paul-steele.com/auth/realms/master
       ## Name of a secret and a key in it to retrieve the app OIDC client ID from.
