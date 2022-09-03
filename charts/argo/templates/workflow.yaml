@@ -1,37 +1,39 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: git-clone
+  name: ci-build
 spec:
-  serviceAccountName: argo
+  serviceAccountName: ci-workflow
+  entrypoint: build
+  volumeClaimTemplates: 
+  - metadata:
+      name: workdir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
   templates:
+    - name: build
+      steps:
+      - - name: clone
+          template: git-clone
     - name: git-clone
+      volumeMounts: 
+        - name: workdir
+          mountPath: /git
       container:
         image: alpine/git
+        command: 
+          - "git"
         args:
           - "clone"
           - "{{"{{"}}workflow.parameters.git_url{{"}}"}}"
----
-apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
-metadata:
-  name: build 
-spec:
-  serviceAccountName: argo
-  templates:
-    - name: build 
+    - name: build
       container:
         image: gcr.io/kaniko-project/executor
-        args: 
-        - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.docker_registry{{"}}"}}:{{"{{"}}workflow.parameters.sha{{"}}"}}"
----
-apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
-metadata:
-  name: prepare-manifest
-spec:
-  serviceAccountName: argo
-  templates:
+        args:
+          - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.docker_registry{{"}}"}}:{{"{{"}}workflow.parameters.sha{{"}}"}}"
     - name: prepare-manifest
       container:
       image: loicmahieu/alpine-envsubst
@@ -39,14 +41,6 @@ spec:
       args:
         - "-c"
         - "envsubst < k8s.template.yaml > k8s.yaml"
----
-apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
-metadata:
-  name: deploy
-spec:
-  serviceAccountName: argo
-  templates:
     - name: deploy
       container:
       image: lachlanevenson/k8s-kubectl:v1.15.0
@@ -64,14 +58,14 @@ metadata:
 spec:
   event:
     # metadata header name must be lowercase to match in selector
-    selector: payload.message.repository.url == "{{$repository.url}}" 
+    selector: payload.repository.url == "{{$repository.url}}" 
   submit:
     workflowTemplateRef:
-      name: git-clone
+      name: ci-build 
     arguments:
       parameters:
         - name: git_url
           valueFrom:
-            event: payload.message.repository.url
+            event: payload.repository.url
 ---
 {{- end }}

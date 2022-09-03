@@ -4,6 +4,7 @@ baseResources:
     annotations:
       workflows.argoproj.io/rbac-rule: "'admin' in groups"
   - name: ci-github
+  - name: ci-workflow
   clusterRoles:
   - name: ci-sso
     rules:
@@ -57,6 +58,47 @@ baseResources:
       - workflows
       verbs:
       - create
+  - name: ci-workflow
+    rules:
+      - apiGroups:
+          - '""'
+        resources:
+          - configmaps
+          - services
+        verbs:
+          - get
+          - list
+          - create
+          - watch
+          - update
+          - patch
+          - delete
+      - apiGroups:
+          - 'extensions'
+          - 'networking.k8s.io'
+        resources:
+          - ingresses
+        verbs:
+          - get
+          - list
+          - create
+          - watch
+          - update
+          - patch
+          - delete
+      - apiGroups:
+          - 'apps'
+        resources:
+          - deployments
+        verbs:
+          - get
+          - create
+          - list
+          - watch
+          - update
+          - patch
+          - delete
+      
   clusterRoleBindings:
   - name: ci-sso
     serviceAccountName: ci-sso
@@ -66,3 +108,7 @@ baseResources:
     serviceAccountName: ci-github
     serviceAccountNamespace: ci
     clusterRoleName: ci-submit-workflow
+  - name: ci-workflow
+    serviceAccountName: ci-workflow
+    serviceAccountNamespace: ci
+    clusterRoleName: ci-workflow
