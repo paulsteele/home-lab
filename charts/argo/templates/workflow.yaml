@@ -18,10 +18,9 @@ spec:
       steps:
       - - name: clone
           template: git-clone
+      - - name:  build
+          template: build-container
     - name: git-clone
-      volumeMounts: 
-        - name: workdir
-          mountPath: /git
       container:
         image: alpine/git
         command: 
@@ -29,11 +28,31 @@ spec:
         args:
           - "clone"
           - "{{"{{"}}workflow.parameters.git_url{{"}}"}}"
-    - name: build
+        volumeMounts:
+          - name: workdir
+            mountPath: /git
+    - name: build-container
       container:
         image: gcr.io/kaniko-project/executor
+        command:
+          - "/kaniko/executor"
         args:
-          - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.docker_registry{{"}}"}}:{{"{{"}}workflow.parameters.sha{{"}}"}}"
+          - "--dockerfile=/workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}/Dockerfile"
+          - "--context=dir:///workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}"
+          - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.git_name{{"}}"}}:{{"{{"}}workflow.parameters.git_sha{{"}}"}}"
+        volumeMounts:
+          - name: workdir
+            mountPath: /workspace
+          - name: docker-registry
+            mountPath: /kaniko/.docker/config.json
+            subPath: config.json
+      volumes:
+        - name: docker-registry
+          secret:
+            secretName: registry.paul-steele.com
+            items:
+              - key: .dockerconfigjson
+                path: config.json
     - name: prepare-manifest
       container:
       image: loicmahieu/alpine-envsubst
@@ -67,5 +86,11 @@ spec:
         - name: git_url
           valueFrom:
             event: payload.repository.url
+        - name: git_name
+          valueFrom:
+            event: payload.repository.name
+        - name: git_sha
+          valueFrom:
+            event: payload.after
 ---
 {{- end }}
