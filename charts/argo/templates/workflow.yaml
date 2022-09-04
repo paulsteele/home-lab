@@ -20,6 +20,10 @@ spec:
           template: git-clone
       - - name:  build
           template: build-container
+      - - name:  prepare-manifest
+          template: prepare-manifest 
+      - - name:  deploy
+          template: deploy
     - name: git-clone
       container:
         image: alpine/git
@@ -55,19 +59,30 @@ spec:
                 path: config.json
     - name: prepare-manifest
       container:
-      image: loicmahieu/alpine-envsubst
-      command: "sh"
-      args:
-        - "-c"
-        - "envsubst < k8s.template.yaml > k8s.yaml"
+        image: loicmahieu/alpine-envsubst
+        command: 
+          - "sh"
+        env:
+          - name: BUILD_TAG
+            value: "{{"{{"}}workflow.parameters.git_sha{{"}}"}}"
+        args:
+          - "-c"
+          - "envsubst < /workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}/k8s.template.yaml > /workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}/k8s.yaml"
+        volumeMounts:
+          - name: workdir
+            mountPath: /workspace
     - name: deploy
       container:
-      image: lachlanevenson/k8s-kubectl:v1.15.0
-      command: "kubectl"
-      args:
-      - "apply"
-      - "-f"
-      - "k8s.yaml"
+        image: lachlanevenson/k8s-kubectl:v1.15.0
+        command: 
+          - "kubectl"
+        args:
+          - "apply"
+          - "-f"
+          - "/workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}/k8s.yaml"
+        volumeMounts:
+          - name: workdir
+            mountPath: /workspace
 ---
 {{- range $index, $repository:= .Values.repositories }}
 apiVersion: argoproj.io/v1alpha1

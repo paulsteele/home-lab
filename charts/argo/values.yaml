@@ -1,6 +1,8 @@
 repositories:
 - name: blog
   url: https://github.com/paulsteele/blog
+- name: hub
+  url: https://github.com/paulsteele/hub
 argo-workflows:
   images:
     tag: "v3.3.9"
