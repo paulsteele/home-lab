@@ -12,8 +12,25 @@ baseResources:
       - 8000
       volumeMounts:
       - storage
+  cronjob:
+    containers:
+      - image: nouchka/sqlite3
+        name: passworddump
+        command:
+          - sqlite3
+        args:
+          - /data/focalboard.db
+          - .backup '/backup/focalboard.db'
+        volumeMounts:
+          - storage
+          - backup
+    schedule: "0 1 * * 4"
   volumes:
   - name: storage
     source:
       nfs: /volume1/files/focalboard
     mountPath: /data
+  - name: backup
+    source:
+      nfs: /volume1/files/database-backup/sqlite
+    mountPath: /backup
