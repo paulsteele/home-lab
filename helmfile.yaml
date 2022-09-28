@@ -84,6 +84,9 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
+- name: focalboard
+  namespace: default
+  chart: ./charts/focalboard
 - name: oidc
   namespace: default
   chart: ./charts/keycloak
