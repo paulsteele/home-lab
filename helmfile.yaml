@@ -19,9 +19,6 @@ releases:
 - name: automation
   namespace: default
   chart: ./charts/nodered
-- name: backup
-  namespace: default
-  chart: ./charts/duplicati
 - name: books
   namespace: default
   chart: ./charts/calibre
