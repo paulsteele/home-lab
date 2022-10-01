@@ -7,7 +7,7 @@ baseResources:
     targetPort: 8080
   deployment:
     containers:
-    - image: fireflyiii/core:version-5.5.12
+    - image: fireflyiii/core:version-5.7.12
       name: firefly
       envs:
       - name: DB_HOST
