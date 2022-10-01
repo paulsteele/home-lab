@@ -5,6 +5,7 @@ metadata:
 spec:
   serviceAccountName: ci-workflow
   entrypoint: build
+  onExit: exit-handler
   volumeClaimTemplates: 
   - metadata:
       name: workdir
@@ -83,6 +84,39 @@ spec:
         volumeMounts:
           - name: workdir
             mountPath: /workspace
+    - name: exit-handler
+      steps:
+        - - name: exit-handler-success
+            template: exit-sender
+            arguments:
+              parameters:
+                - name: color
+                  value: "65280"
+            when: "{{"{{"}}workflow.status{{"}}"}} == Succeeded"
+        - - name: exit-handler-fail
+            template: exit-sender
+            arguments:
+              parameters:
+                - name: color
+                  value: "16711680"
+            when: "{{"{{"}}workflow.status{{"}}"}} != Succeeded"
+    - name: exit-sender
+      inputs:
+      parameters:
+        - name: color
+      container:
+        image: curlimages/curl:7.85.0
+        env:
+          - name: DISCORD_WEBHOOK
+            valueFrom:
+              secretKeyRef:
+                name: argo-notifications
+                key: discord-webhook
+        command:
+          - "sh"
+          - "-c"
+        args:
+          - "curl -H \"Content-Type: application/json\" -d '{ \"embeds\": [ { \"color\": {{"{{"}}inputs.parameters.color{{"}}"}}, \"title\": \"Pipeline Results\", \"fields\": [{\"name\": \"{{"{{"}}workflow.name{{"}}"}}\", \"value\": \"hub\", \"inline\": true},{\"name\": \"Status\", \"value\": \"{{"{{"}}workflow.status{{"}}"}}\", \"inline\": true }, {\"name\": \"Duration\", \"value\": \"{{"{{"}}workflow.duration{{"}}"}}\", \"inline\": true }, { \"name\": \"Failures\", \"value\": \"{{"{{"}}workflow.failures{{"}}"}}\" }]}]}' $DISCORD_WEBHOOK"
 ---
 {{- range $index, $repository:= .Values.repositories }}
 apiVersion: argoproj.io/v1alpha1
