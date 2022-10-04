@@ -3,8 +3,8 @@ repositories:
   url: https://github.com/paulsteele/blog
 - name: hub
   url: https://github.com/paulsteele/hub
-- name: firefly-iii-auto-connector
-  url: https://github.com/paulsteele/firefly-iii-auto-connector
+- name: bank-etl
+  url: https://github.com/paulsteele/bank-etl
 argo-workflows:
   images:
     tag: "v3.3.9"
