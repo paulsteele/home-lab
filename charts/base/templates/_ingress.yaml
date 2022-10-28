@@ -1,6 +1,6 @@
 {{- define "base.ingress" -}}
 {{- if .Values.baseResources.ingress }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -24,15 +24,21 @@ spec:
       {{- $serviceName := .Values.baseResources.ingress.serviceName -}}
       {{- range $index, $path := .Values.baseResources.ingress.extraPaths }}
       - backend:
-          serviceName: {{ default ( include "base.name" $root ) $serviceName }}
-          servicePort: {{ $path.port }}
+          service:
+            name: {{ default ( include "base.name" $root ) $serviceName }}
+            port: 
+              number: {{ $path.port }}
         path: {{ $path.path }}
+        pathType: Prefix
       {{- end }}
       {{- end }}
       - backend:
-          serviceName: {{ default ( include "base.name" . ) .Values.baseResources.ingress.serviceName }}
-          servicePort: {{ .Values.baseResources.ingress.port }}
+          service:
+            name: {{ default ( include "base.name" . ) .Values.baseResources.ingress.serviceName }}
+            port: 
+              number: {{ .Values.baseResources.ingress.port }}
         path: /
+        pathType: Prefix
   tls:
   - hosts:
     - {{ .Values.baseResources.ingress.host }}
@@ -59,9 +65,12 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: {{ $ingress.serviceName }}
-          servicePort: {{ $ingress.port }}
+          service:
+            name: {{ $ingress.serviceName }}
+            port: 
+              number: {{ $ingress.port }}
         path: /
+        pathType: Prefix
   tls:
   - hosts:
     - {{ $ingress.host }}

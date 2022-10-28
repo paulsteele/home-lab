@@ -15,6 +15,10 @@ repositories:
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 - name: codecentrc
   url: https://codecentric.github.io/helm-charts
+- name: ingress-nginx
+  url: https://kubernetes.github.io/ingress-nginx
+- name: metallb
+  url: https://metallb.github.io/metallb
 releases:
 - name: automation
   namespace: default
@@ -22,9 +26,9 @@ releases:
 - name: books
   namespace: default
   chart: ./charts/calibre
-- name: minecraft
-  namespace: default
-  chart: ./charts/minecraft
+# - name: minecraft
+#   namespace: default
+#   chart: ./charts/minecraft
 #- name: mhfz
 #  namespace: default
 #  chart: ./charts/mhfz
@@ -69,9 +73,9 @@ releases:
 - name: loadbalancer
   namespace: default
   chart: ./charts/metallb
-- name: monitoring
-  namespace: default
-  chart: ./charts/prometheus
+# - name: monitoring
+  # namespace: default
+  # chart: ./charts/prometheus
 - name: music
   namespace: default
   chart: ./charts/subsonic

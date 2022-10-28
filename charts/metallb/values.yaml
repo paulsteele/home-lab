@@ -1,8 +1,0 @@
-metallb:
-  configInline:
-    address-pools:
-      - name: default
-        protocol: layer2
-        addresses:
-          - 192.168.0.200-192.168.0.255
-        avoid-buggy-ips: true

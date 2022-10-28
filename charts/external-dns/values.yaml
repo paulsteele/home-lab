@@ -9,6 +9,6 @@ external-dns:
   txtOwnerId: "home-lab"
   logLevel: debug
   metrics:
-    enabled: true
+    enabled: false
     serviceMonitor:
-      enabled: true
+      enabled: false

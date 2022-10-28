@@ -1,6 +1,6 @@
 dependencies:
 - name: metallb
-  repository: https://charts.helm.sh/stable
-  version: 0.11.2
-digest: sha256:b4cf9c02cfde7cb9ddfc4a19e2af8a0b8de73fea1613a1775bc7a65471474bd9
-generated: "2021-01-08T20:03:21.083416943-05:00"
+  repository: https://metallb.github.io/metallb
+  version: 0.13.7
+digest: sha256:f1b189d89d9f8b5702bcfb4a110bbaff5d5d7c7de02ab1421f20a11ee84bd832
+generated: "2022-10-27T21:17:56.008083-04:00"
