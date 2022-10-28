@@ -19,6 +19,8 @@ repositories:
   url: https://kubernetes.github.io/ingress-nginx
 - name: metallb
   url: https://metallb.github.io/metallb
+- name: twuni
+  url: https://helm.twun.io
 releases:
 - name: automation
   namespace: default
@@ -49,6 +51,8 @@ releases:
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
+  secrets:
+    - ./charts/docker-registry/secrets.yaml
 - name: database
   namespace: default
   chart: ./charts/database

@@ -3,7 +3,7 @@ dependencies:
   repository: file://../base
   version: 0.1.0
 - name: docker-registry
-  repository: https://charts.helm.sh/stable
-  version: 1.9.2
-digest: sha256:09526d52197a4c198bb3f8fa762f7f0ecb8260e445e0fdc147fcfa0501c8153e
-generated: "2021-01-08T20:03:31.202580798-05:00"
+  repository: https://helm.twun.io
+  version: 2.2.2
+digest: sha256:67ff92230135fb3a873d20b8d77c0df3d76266502a446206a39997535cb03748
+generated: "2022-10-28T19:28:28.719379-04:00"
