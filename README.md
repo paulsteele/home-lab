@@ -63,6 +63,11 @@ edit `/etc/containerd/config.toml`
 sudo systemctl restart containerd
 ```
 
+### Install nfs
+```
+sudo apt install nfs-common
+```
+
 ## Install Kuberentes (Per Node)
 ```
 sudo apt install kubelet=1.25.3-00 kubectl=1.25.3-00 kubeadm=1.25.3-00

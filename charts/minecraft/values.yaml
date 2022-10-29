@@ -10,8 +10,8 @@ minecraft:
   imageTag: 2022.9.0-java17-alpine
   resources:
     requests:
-      memory: 4096Mi
-      cpu: 5000m
+      memory: 13Gi
+      cpu: 3000m
   livenessProbe:
     initialDelaySeconds: 1
     periodSeconds: 60
@@ -40,12 +40,19 @@ minecraft:
     pvp: true
     worldSaveName: medieval 
     forgeInstallerUrl: ""
-    memory: 4096M
+    memory: 13G
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
     rcon:
       enabled: false
       loadBalancerIP: "192.168.0.203"
+  tolerations:
+    - key: "gaming"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  nodeSelector:
+    gaming: "true"
   extraEnv:
     USE_AIKAR_FLAGS: true
     FABRIC_INSTALLER_URL: "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar"
