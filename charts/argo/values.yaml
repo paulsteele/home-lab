@@ -7,7 +7,7 @@ repositories:
   url: https://github.com/paulsteele/bank-etl
 argo-workflows:
   images:
-    tag: "v3.3.9"
+    tag: "v3.4.2"
   controller:
     parallelism: 5
     serviceAccount:
