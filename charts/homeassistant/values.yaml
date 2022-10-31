@@ -26,7 +26,7 @@ baseResources:
       volumeMounts:
       - config
       - zha
-    - image: zwavejs/zwavejs2mqtt:sha-fd10576
+    - image: zwavejs/zwavejs2mqtt:sha-4dd1414
       command:
       - sh
       args:
