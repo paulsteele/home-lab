@@ -12,7 +12,7 @@ baseResources:
     targetPort: 1880
   deployment:
     containers:
-    - image: nodered/node-red:1.0.3
+    - image: nodered/node-red:3.0.2
       name: nodered
       args:
       - "--settings"
