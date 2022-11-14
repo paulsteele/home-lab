@@ -10,5 +10,5 @@ dependencies:
   version: 0.1.0
   repository: file://../base
 - name: minecraft
-  version: 2.0.6
+  version: 4.4.0
   repository: https://itzg.github.io/minecraft-server-charts

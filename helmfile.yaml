@@ -28,9 +28,9 @@ releases:
 - name: books
   namespace: default
   chart: ./charts/calibre
-- name: minecraft
-  namespace: default
-  chart: ./charts/minecraft
+#- name: minecraft
+#  namespace: default
+#  chart: ./charts/minecraft
 #- name: mhfz
 #  namespace: default
 #  chart: ./charts/mhfz
