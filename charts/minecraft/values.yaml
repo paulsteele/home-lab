@@ -43,7 +43,7 @@ minecraft:
     generatorSettings: "skyislands"
     levelType: OTG
     viewDistance: 14
-    forgeInstallerUrl: "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-installer.jar"
+    forgeVersion: 36.2.39
     memory: 13G
     serviceType: LoadBalancer
     loadBalancerIP: "192.168.0.202"
