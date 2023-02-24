@@ -21,6 +21,8 @@ repositories:
   url: https://metallb.github.io/metallb
 - name: twuni
   url: https://helm.twun.io
+- name: zabbix-community
+  url: https://zabbix-community.github.io/helm-zabbix
 releases:
 - name: automation
   namespace: default
@@ -43,11 +45,11 @@ releases:
     - ./charts/argo/secrets.yaml
   values:
     - ./charts/argo/rbac.yaml
-- name: certificates
-  namespace: default
-  chart: ./charts/certmanager
-  secrets:
-  - ./charts/certmanager/secrets.yaml
+#- name: certificates
+#  namespace: default
+#  chart: ./charts/certmanager
+#  secrets:
+#  - ./charts/certmanager/secrets.yaml
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
@@ -89,9 +91,9 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
-- name: focalboard
-  namespace: default
-  chart: ./charts/focalboard
+#- name: focalboard
+#  namespace: default
+#  chart: ./charts/focalboard
 - name: oidc
   namespace: default
   chart: ./charts/keycloak
@@ -103,6 +105,9 @@ releases:
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
+- name: zabbix
+  namespace: default
+  chart: ./charts/zabbix
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments
