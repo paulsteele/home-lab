@@ -4,6 +4,7 @@
   vars:
     os: Debian_11
     clusterVersion: 1.26
+    clusterPatchVersion: 1-00
   tasks:
   - name: Install https packages for apt
     apt:
@@ -41,4 +42,49 @@
       packages:
       - cri-o
       - cri-o-runc
+       
+  - name: Enable and run crio
+    ansible.builtin.systemd:
+      state: started
+      enabled: true
+      name: crio
+      
+  - name: Add an apt signing key for Kubernetes
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Adding apt repository for Kubernetes
+    apt_repository:
+      repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: kubernetes.list
+
+  - name: Install Kubernetes binaries
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet={{ clusterVersion }}.{{ clusterPatchVersion }}
+        - kubeadm={{ clusterVersion }}.{{ clusterPatchVersion }}
+        - kubectl={{ clusterVersion }}.{{ clusterPatchVersion }}
+
+  - name: Hold packages
+    ansible.builtin.dpkg_selections:
+      name: "{{ item }}"
+      selection: hold
+    loop:
+      - cri-o
+      - cri-o-runc
+      - kubelet
+      - kubeadm
+      - kubectl
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
         
