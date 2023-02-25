@@ -11,3 +11,4 @@ secrets.yaml.dec
 .DS_Store
 .idea
 admin.conf
+join-command.sh
