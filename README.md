@@ -5,6 +5,7 @@
 * [Helm 3](https://helm.sh/)
 * [sops](https://github.com/mozilla/sops)
 * [helmfile](https://github.com/roboll/helmfile)
+* [ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## Helm Plugins
 * [helm secrets](https://github.com/zendesk/helm-secrets)
@@ -19,7 +20,17 @@
 `helmfile apply` to apply changes
 
 # Cluster Setup
-Instructions based off https://www.hostafrica.ng/blog/servers/kubernetes-cluster-debian-11-containerd/
+
+* Install Operating System on Node
+  * Holding ALT will enter boot menu for mac mini 2016s
+* Deselect all desktop environments
+* Select SSH tools
+
+* (flesh out) give ansible access to node
+* (flesh out) copy ssh key to node
+* ```ansible-playbook 01-sudo.yaml -K```
+* ```ansible-playbook 02-nodes.yaml```
+
 
 ## Setup Setup Kernel Modules (Per Node)
 ### Setup Up Modules

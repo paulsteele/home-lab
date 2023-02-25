@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: true
+  become_method: su
+  vars:
+    username: paul
+  tasks:
+    - name: Update apt
+      apt:
+        upgrade: true
+        update_cache: true
+    - name: Install sudo
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - sudo
+    - name: Add user to sudoers
+      copy:
+        content: "{{ username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        dest: /etc/sudoers.d/user_nopasswd
+        mode: 0440
