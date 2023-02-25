@@ -1,0 +1,69 @@
+---
+- hosts: masters
+  become: true
+  vars:
+    clusterVersion: 1.26
+    clusterPatchVersion: 1-00
+    adminConfPath: "/etc/kubernetes/admin.conf"
+    cniNetPath: "/etc/cni/net.d/100-crio-bridge.conflist"
+    flannelNetPath: "/etc/cni/net.d/10-flannel.conflist"
+  tasks:
+  - name: Check if cluster already exists
+    stat:
+      path: "{{ adminConfPath }}"
+    register: configurationStat
+    
+  - name: Prompt for action
+    pause:
+      prompt: "Cluster is already running. A reset is required. This operation is destructive and can't be reversed. Continue? (yes / no)"
+    when: configurationStat.stat.exists
+    register: confirm
+
+  - name: Early exit
+    meta: end_play
+    when: configurationStat.stat.exists and confirm.user_input != "yes"
+    
+  - name: Reset cluster
+    command: "kubeadm reset -f"
+    when: configurationStat.stat.exists
+    
+  - name: Reset CNI
+    file:
+      state: absent
+      path: "{{ item }}"
+    when: configurationStat.stat.exists
+    loop:
+      - "{{ cniNetPath }}"
+      - "{{ flannelNetPath }}"
+        
+  - name: Restart
+    when: configurationStat.stat.exists
+    reboot:
+  
+  - name: Initialize the Kubernetes cluster using kubeadm
+    command: "kubeadm init --apiserver-advertise-address='{{ inventory_hostname }}' --apiserver-cert-extra-sans='{{ inventory_hostname }}' --pod-network-cidr=10.244.0.0/16"
+    
+  - name: Get user home
+    become: false
+    command: "echo $HOME"
+    register: home
+
+  - name: Creates kube directory
+    file:
+      path: "{{ home.stdout }}/.kube"
+      state: directory
+  
+  - name: Move config
+    copy:
+      remote_src: true
+      src: "{{ adminConfPath }}"
+      dest: "{{ home.stdout }}/.kube/config"
+    
+  - name: Fetch kubeconfig
+    fetch:
+      src: "{{ adminConfPath }}"
+      dest: cluster-credentials
+
+  - name: Install flannel
+    become: false
+    command: kubectl create -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml

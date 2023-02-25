@@ -10,3 +10,4 @@ dhall/dependencies**
 secrets.yaml.dec
 .DS_Store
 .idea
+admin.conf

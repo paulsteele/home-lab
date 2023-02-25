@@ -17,6 +17,14 @@
       - curl
       - gnupg-agent
       - software-properties-common
+  - name: Install supporting packages
+    apt:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - nfs-common
+        - chrony
   - name: Add an apt signing key for cri-o stable
     apt_key:
       url: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ os }}/Release.key"
@@ -81,10 +89,16 @@
       - kubelet
       - kubeadm
       - kubectl
-
-  - name: Restart kubelet
-    service:
-      name: kubelet
-      daemon_reload: yes
-      state: restarted
-        
+      
+  - name: Update kernel modules
+    copy:
+      src: files/crio.conf
+      dest: /etc/modules-load.d/crio.conf
+      
+  - name: Update ip forwarding
+    copy:
+      src: files/99-kubernetes-cri.conf
+      dest: /etc/sysctl.d/99-kubernetes-cri.conf
+  
+  - name: Restart
+    reboot:
