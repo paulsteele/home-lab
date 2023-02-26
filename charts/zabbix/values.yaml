@@ -1,5 +1,5 @@
 zabbix:
-  zabbix_image_tag: ubuntu-6.0.12
+  zabbix_image_tag: alpine-6.0.12
 
   # **Zabbix DB access / credentials** configurations
   # with this dict, you can set unified DB access credentials, IP and so on for both Zabbix server and Zabbix web frontend
