@@ -31,6 +31,6 @@
 * add node ip to inventory
 * ```ansible-playbook 01-sudo.yaml -K```
 * ```ansible-playbook 02-nodes.yaml```
-* ```ansible-playbook 03-nodes.yaml```
+* ```ansible-playbook 03-master.yaml```
 * ```ansible-playbook 04-join-generation.yaml```
 * ```ansible-playbook 05-join-execution.yaml```

@@ -23,6 +23,8 @@ repositories:
   url: https://helm.twun.io
 - name: zabbix-community
   url: https://zabbix-community.github.io/helm-zabbix
+- name: cilium 
+  url: https://helm.cilium.io/
 releases:
 - name: automation
   namespace: default
@@ -108,6 +110,9 @@ releases:
 - name: zabbix
   namespace: default
   chart: ./charts/zabbix
+- name: cilium
+  namespace: kube-system
+  chart: ./charts/cilium
 - name: deployments
   namespace: deployments
   chart: ./charts/deployments

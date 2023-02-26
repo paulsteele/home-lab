@@ -41,7 +41,7 @@
     reboot:
   
   - name: Initialize the Kubernetes cluster using kubeadm
-    command: "kubeadm init --apiserver-advertise-address='{{ inventory_hostname }}' --apiserver-cert-extra-sans='{{ inventory_hostname }}' --pod-network-cidr=10.244.0.0/16"
+    command: "kubeadm init --apiserver-advertise-address='{{ inventory_hostname }}' --apiserver-cert-extra-sans='{{ inventory_hostname }}' --skip-phases=addon/kube-proxy"
     
   - name: Get user home
     become: false
@@ -64,6 +64,6 @@
       src: "{{ adminConfPath }}"
       dest: cluster-credentials
 
-  - name: Install flannel
-    become: false
-    command: kubectl create -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+#  - name: Install flannel
+#    become: false
+#    command: kubectl create -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
