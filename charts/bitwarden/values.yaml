@@ -13,7 +13,7 @@ baseResources:
       port: 3012
   deployment:
     containers:
-    - image: vaultwarden/server:1.22.2-alpine
+    - image: vaultwarden/server:1.27.0-alpine
       name: vaultwarden
       envs:
       - name: SIGNUPS_ALLOWED
