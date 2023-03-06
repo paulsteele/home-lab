@@ -8,8 +8,8 @@
 * [ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## Helm Plugins
-* [helm secrets](https://github.com/zendesk/helm-secrets)
-  * `helm plugin install https://github.com/futuresimple/helm-secrets`
+* [helm secrets](https://github.com/jkroepke/helm-secrets)
+  * `helm plugin install https://github.com/jkroepke/helm-secrets`
 * [helm diff](https://github.com/databus23/helm-diff)
   * `helm plugin install https://github.com/databus23/helm-diff --version master`
 * [helm git](https://github.com/aslafy-z/helm-git)
