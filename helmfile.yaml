@@ -47,11 +47,6 @@ releases:
     - ./charts/argo/secrets.yaml
   values:
     - ./charts/argo/rbac.yaml
-#- name: certificates
-#  namespace: default
-#  chart: ./charts/certmanager
-#  secrets:
-#  - ./charts/certmanager/secrets.yaml
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
@@ -81,6 +76,9 @@ releases:
 - name: loadbalancer
   namespace: default
   chart: ./charts/metallb
+- name: loadbalancer-config
+  namespace: default
+  chart: ./charts/metallb-configuration
 # - name: monitoring
   # namespace: default
   # chart: ./charts/prometheus
