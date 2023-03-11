@@ -32,9 +32,9 @@ releases:
 - name: books
   namespace: default
   chart: ./charts/calibre
-- name: minecraft
-  namespace: default
-  chart: ./charts/minecraft
+#- name: minecraft
+#  namespace: default
+#  chart: ./charts/minecraft
 #- name: mhfz
 #  namespace: default
 #  chart: ./charts/mhfz
@@ -47,6 +47,9 @@ releases:
     - ./charts/argo/secrets.yaml
   values:
     - ./charts/argo/rbac.yaml
+- name: ci-workflows
+  namespace: ci
+  chart: ./charts/argo-workflows
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
@@ -105,9 +108,9 @@ releases:
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
-- name: zabbix
-  namespace: default
-  chart: ./charts/zabbix
+#- name: zabbix
+#  namespace: default
+#  chart: ./charts/zabbix
 - name: cilium
   namespace: kube-system
   chart: ./charts/cilium

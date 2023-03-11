@@ -1,0 +1,7 @@
+repositories:
+- name: blog
+  url: https://github.com/paulsteele/blog
+- name: hub
+  url: https://github.com/paulsteele/hub
+- name: bank-etl
+  url: https://github.com/paulsteele/bank-etl
