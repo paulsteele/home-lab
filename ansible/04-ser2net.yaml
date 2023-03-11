@@ -1,0 +1,16 @@
+---
+- hosts: masters
+  become: true
+  tasks:
+  - name: Install ser2net packages
+    apt:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - ser2net
+        
+  - name: Update ser2net config
+    copy:
+      src: files/ser2net.yaml
+      dest: /etc/ser2net/ser2net.yaml

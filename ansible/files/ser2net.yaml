@@ -1,0 +1,12 @@
+#3333:raw:0:/dev/ttyUSB0:115200 8DATABITS NONE 1STOPBIT
+#3334:raw:0:/dev/ttyUSB1:57600 8DATABITS NONE 1STOPBIT
+connection: &zwave
+  accepter: tcp,3333
+  connector: serialdev,/dev/ttyUSB0,115200n81,nobreak,local
+  options:
+    kickolduser: true
+connection: &zigbee
+  accepter: tcp,20108
+  connector: serialdev,/dev/ttyUSB1,57600n81,nobreak,local
+  options:
+    kickolduser: true

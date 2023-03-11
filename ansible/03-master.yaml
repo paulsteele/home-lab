@@ -63,7 +63,4 @@
     fetch:
       src: "{{ adminConfPath }}"
       dest: cluster-credentials
-
-#  - name: Install flannel
-#    become: false
-#    command: kubectl create -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+      

@@ -32,5 +32,6 @@
 * ```ansible-playbook 01-sudo.yaml -K```
 * ```ansible-playbook 02-nodes.yaml```
 * ```ansible-playbook 03-master.yaml```
-* ```ansible-playbook 04-join-generation.yaml```
-* ```ansible-playbook 05-join-execution.yaml```
+* ```ansible-playbook 04-ser2net.yaml```
+* ```ansible-playbook 05-join-generation.yaml```
+* ```ansible-playbook 06-join-execution.yaml```
