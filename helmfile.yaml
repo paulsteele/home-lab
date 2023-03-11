@@ -108,6 +108,8 @@ releases:
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
+  secrets:
+    - ./charts/external-dns/secrets.yaml
 #- name: zabbix
 #  namespace: default
 #  chart: ./charts/zabbix
