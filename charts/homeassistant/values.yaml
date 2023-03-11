@@ -14,7 +14,7 @@ baseResources:
     targetPort: 8123
   deployment:
     containers:
-    - image: homeassistant/home-assistant:2022.10.5
+    - image: homeassistant/home-assistant:2023.3
       command:
       - sh
       args:
@@ -26,7 +26,7 @@ baseResources:
       volumeMounts:
       - config
       - zha
-    - image: zwavejs/zwavejs2mqtt:sha-4dd1414
+    - image: zwavejs/zwavejs2mqtt:8.10.1
       command:
       - sh
       args:
