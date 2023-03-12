@@ -3,13 +3,13 @@
 connection: &zwave
   accepter: ipv4,tcp,3333
   enable: on
-  connector: serialdev,/dev/ttyUSB0,115200n81
+  connector: serialdev,/dev/ttyUSB0,115200n81,local,nobreak
   options:
     kickolduser: true
   
 connection: &zigbee
   accepter: ipv4,tcp,3334
   enable: on
-  connector: serialdev,/dev/ttyUSB1,57600n81
+  connector: serialdev,/dev/ttyUSB1,57600n81,local,nobreak
   options:
     kickolduser: true
