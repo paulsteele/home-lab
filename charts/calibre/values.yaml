@@ -2,8 +2,9 @@ baseResources:
   ingress:
     host: books.paul-steele.com
     port: 8083
-  service:
-    port: 8083
+  services:
+    - ports: 
+        - port: 8083
   deployment:
     containers:
     - image: linuxserver/calibre-web:0.6.8-ls74

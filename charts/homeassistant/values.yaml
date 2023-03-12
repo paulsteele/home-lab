@@ -9,9 +9,10 @@ baseResources:
   ingress:
     host: home.paul-steele.com
     port: 80
-  service:
-    port: 80
-    targetPort: 8123
+  services:
+    - ports:
+        - port: 80
+          targetPort: 8123
   deployment:
     containers:
     - image: homeassistant/home-assistant:2023.3

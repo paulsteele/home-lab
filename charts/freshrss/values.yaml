@@ -2,8 +2,9 @@ baseResources:
   ingress:
     host: reader.paul-steele.com
     port: 80
-  service:
-    port: 80
+  services:
+    - ports:
+        - port: 80
   deployment:
     containers:
     - image: freshrss/freshrss:alpine

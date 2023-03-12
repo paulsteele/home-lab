@@ -7,10 +7,10 @@ baseResources:
         path: /notifications/hub/negotiate
       - port: 3012
         path: /notifications/hub
-  service:
-    port: 80
-    extraPorts:
-      port: 3012
+  services:
+    - ports: 
+        - port: 80
+        - port: 3012
   deployment:
     containers:
     - image: vaultwarden/server:1.27.0-alpine

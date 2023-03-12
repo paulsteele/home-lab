@@ -1,0 +1,23 @@
+{{- define "base.services" -}}
+{{- range $index, $service:= .Values.baseResources.services }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ default (include "base.name" $) $service.name }}
+spec:
+  ports:
+  {{- range $index, $port:= $service.ports }}
+  - port: {{ $port.port }}
+    protocol: TCP
+    targetPort: {{ default $port.port $port.targetPort }}
+    name: port-{{ $index }}
+  {{- end }}
+  selector:
+    app: {{ include "base.name" $ }}
+  {{- if $service.loadBalancerIP }}
+  type: LoadBalancer
+  loadBalancerIP: {{ $service.loadBalancerIP }}
+  {{- end }}
+---
+{{- end -}}
+{{- end -}}

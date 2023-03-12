@@ -2,9 +2,10 @@ baseResources:
   ingress:
     host: finance.paul-steele.com
     port: 80
-  service:
-    port: 80
-    targetPort: 8080
+  services:
+    - ports:
+        - port: 80
+          targetPort: 8080
   deployment:
     containers:
     - image: fireflyiii/core:version-5.7.12

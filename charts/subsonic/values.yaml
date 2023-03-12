@@ -2,9 +2,10 @@ baseResources:
   ingress:
     host: media.paul-steele.com
     port: 80
-  service:
-    port: 80
-    targetPort: 8080
+  services:
+    - ports:
+        - port: 80
+          targetPort: 8080
   deployment:
    containers:
     - image: mbirth/subsonic:6.1.6

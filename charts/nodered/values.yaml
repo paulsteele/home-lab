@@ -7,9 +7,10 @@ baseResources:
   ingress:
     host: automation.paul-steele.com
     port: 80
-  service:
-    port: 80
-    targetPort: 1880
+  services:
+    - ports:
+        - port: 80
+          targetPort: 1880
   deployment:
     containers:
     - image: nodered/node-red:3.0.2

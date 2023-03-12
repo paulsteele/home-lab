@@ -2,8 +2,9 @@ baseResources:
   ingress:
     host: board.paul-steele.com
     port: 8000
-  service:
-    port: 8000
+  services:
+    - ports:
+        - port: 8000
   deployment:
     containers:
     - image: mattermost/focalboard:7.2.1
