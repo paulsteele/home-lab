@@ -1,0 +1,32 @@
+baseResources:
+  ingress:
+    host: mc.paul-steele.com
+    port: 80
+  service:
+    port: 80
+    targetPort: 8080
+  deployment:
+    nodeSelector:
+      gaming: "true"
+    tolerations:
+      - key: "gaming"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+    containers:
+      - image: pufferpanel/pufferpanel:2.6.6
+        name: pufferpanel
+        ports:
+          - 8080
+        volumeMounts:
+          - storage
+          - config
+  volumes:
+    - name: config
+      source:
+        nfs: /volume1/files/pufferpanel/config
+      mountPath: /etc/pufferpanel
+    - name: storage
+      source:
+        nfs: /volume1/files/pufferpanel
+      mountPath: /var/lib/pufferpanel/storage

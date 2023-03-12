@@ -1,5 +1,5 @@
 apiVersion: v2
-name: minecraft
+name: pufferpanel
 description: A Helm chart for Kubernetes
  pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
@@ -9,6 +9,3 @@ dependencies:
 - name: base
   version: 0.1.0
   repository: file://../base
-- name: minecraft
-  version: 4.4.0
-  repository: https://itzg.github.io/minecraft-server-charts

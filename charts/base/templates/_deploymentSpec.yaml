@@ -6,7 +6,9 @@
 {{ $deployment := (get . "resource") -}}  
 {{- if $deployment.nodeSelector -}}
 nodeSelector:
-  kubernetes.io/hostname: {{ $deployment.nodeSelector }}
+  {{- range $key, $val := $deployment.nodeSelector }}
+  {{ $key }}: "{{ $val }}"
+  {{- end }}
 {{ end -}}
 containers:
 {{- range $index, $container := $deployment.containers }}
@@ -55,6 +57,15 @@ containers:
     subPath: {{ $volume.subPath }}
     {{- end -}}
   {{- end }}
+{{- if $deployment.tolerations }}
+tolerations:
+{{- range $toleration := $deployment.tolerations }}
+- key: '{{ $toleration.key }}'
+  operator: '{{ $toleration.operator }}'
+  value: '{{ $toleration.value }}'
+  effect: '{{ $toleration.effect }}'
+{{- end }}
+{{- end -}}
   {{- end -}}
 {{- end }}
 imagePullSecrets:
