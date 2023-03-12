@@ -4,9 +4,9 @@ baseResources:
     data:
     - name: nodered-config
       file: resources/nodered-config.js
-#  ingress:
-#    host: automation.paul-steele.com
-#    port: 80
+  ingress:
+    host: automation.paul-steele.com
+    port: 80
   service:
     port: 80
     targetPort: 1880
