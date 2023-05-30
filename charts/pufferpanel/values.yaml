@@ -23,6 +23,7 @@ baseResources:
         name: pufferpanel
         ports:
           - 8080
+          - 25565
         volumeMounts:
           - storage
           - config
@@ -33,5 +34,5 @@ baseResources:
       mountPath: /etc/pufferpanel
     - name: storage
       source:
-        nfs: /volume1/files/pufferpanel
-      mountPath: /var/lib/pufferpanel/storage
+        nfs: /volume1/files/pufferpanel/storage
+      mountPath: /var/lib/pufferpanel
