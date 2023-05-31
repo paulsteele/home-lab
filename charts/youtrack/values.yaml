@@ -1,0 +1,30 @@
+baseResources:
+  ingress:
+    host: board.paul-steele.com
+    port: 8080
+  services:
+    - ports:
+        - port: 8080
+  deployment:
+    containers:
+    - image: jetbrains/youtrack:2023.1.10106
+      name: youtrack
+      ports:
+      - 8080
+      volumeMounts:
+      - data
+      - conf
+      - backups
+  volumes:
+  - name: data
+    source:
+      nfs: /volume1/files/youtrack/data
+    mountPath: /opt/youtrack/data
+  - name: conf
+    source:
+      nfs: /volume1/files/youtrack/conf
+    mountPath: /opt/youtrack/conf
+  - name: backups
+    source:
+      nfs: /volume1/files/youtrack/backups
+    mountPath: /opt/youtrack/backups

@@ -97,6 +97,9 @@ releases:
 #- name: focalboard
 #  namespace: default
 #  chart: ./charts/focalboard
+- name: youtrack
+  namespace: default
+  chart: ./charts/youtrack
 - name: oidc
   namespace: default
   chart: ./charts/keycloak
