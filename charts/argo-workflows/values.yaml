@@ -5,3 +5,5 @@ repositories:
   url: https://github.com/paulsteele/hub
 - name: bank-etl
   url: https://github.com/paulsteele/bank-etl
+- name: talks 
+  url: https://github.com/paulsteele/presentations
