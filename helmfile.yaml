@@ -50,6 +50,8 @@ releases:
 - name: ci-workflows
   namespace: ci
   chart: ./charts/argo-workflows
+  secrets:
+    - ./charts/argo-workflows/secrets.yaml
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
