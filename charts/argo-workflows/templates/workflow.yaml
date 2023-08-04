@@ -29,11 +29,21 @@ spec:
       container:
         image: alpine/git
         command: 
-          - "git"
+          - "sh"
         args:
-          - "clone"
-          - "--recurse-submodules"
-          - "{{"{{"}}workflow.parameters.git_url{{"}}"}}"
+          - "-c"
+          - "git clone https://$GITTOKEN@github.com/{{"{{"}}workflow.parameters.git_url{{"}}"}}.git"
+        env:
+          - name: GITUSER
+            valueFrom:
+              secretKeyRef:
+                name: github-credentials
+                key: username 
+          - name: GITTOKEN
+            valueFrom:
+              secretKeyRef:
+                name: github-credentials
+                key: token 
         volumeMounts:
           - name: workdir
             mountPath: /git
@@ -135,7 +145,7 @@ spec:
       parameters:
         - name: git_url
           valueFrom:
-            event: payload.repository.url
+            event: payload.repository.full_name
         - name: git_name
           valueFrom:
             event: payload.repository.name
