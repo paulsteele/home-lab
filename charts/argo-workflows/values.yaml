@@ -8,4 +8,4 @@ repositories:
 - name: talks 
   url: https://github.com/paulsteele/presentations
 - name: packs 
-  url: https://github.com/paulsteele/presentations
+  url: https://github.com/paulsteele/packwiz-packs
