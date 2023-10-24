@@ -67,11 +67,11 @@ releases:
   chart: ./charts/nextcloud
   secrets:
   - ./charts/nextcloud/secrets.yaml
-#- name: finance
-#  namespace: default
-#  chart: ./charts/firefly
-#  secrets:
-#  - ./charts/firefly/secrets.yaml
+- name: finance
+  namespace: default
+  chart: ./charts/firefly
+  secrets:
+  - ./charts/firefly/secrets.yaml
 - name: home
   namespace: default
   chart: ./charts/homeassistant
