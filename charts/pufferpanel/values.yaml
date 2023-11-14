@@ -10,6 +10,11 @@ baseResources:
         - port: 25565
       loadBalancerIP: 192.168.0.201
       name: minecraft
+    - ports:
+        - port: 25564
+          protocol: UDP
+      loadBalancerIP: 192.168.0.201
+      name: minecraft-voip
   deployment:
     nodeSelector:
       gaming: "true"
@@ -24,6 +29,7 @@ baseResources:
         ports:
           - 8080
           - 25565
+          - 25564
         volumeMounts:
           - storage
           - config

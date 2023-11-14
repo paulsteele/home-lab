@@ -8,7 +8,7 @@ spec:
   ports:
   {{- range $index, $port:= $service.ports }}
   - port: {{ $port.port }}
-    protocol: TCP
+    protocol: {{ default "TCP" $port.protocol }}
     targetPort: {{ default $port.port $port.targetPort }}
     name: port-{{ $index }}
   {{- end }}
