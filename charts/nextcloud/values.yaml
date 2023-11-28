@@ -7,8 +7,15 @@ baseResources:
         - port: 80
   deployment:
     containers:
-    - image: nextcloud:21.0.0
+    - image: nextcloud:27.1.3
       name: nextcloud
+      command:
+        - /bin/sh
+      args:
+        - -c
+#        need to map www-data group to the ids that synology wants the filesystem to be
+#        once an rsync goes through go into nextcloud folder and apply inherited permissions
+        - "groupmod -g 101 users && groupmod -g 100 www-data && usermod -u 1024 -g 100 www-data && /entrypoint.sh apache2-foreground"
       envs:
       - name: MYSQL_HOST
         value: 192.168.0.101:3307

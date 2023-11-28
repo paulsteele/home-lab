@@ -47,6 +47,25 @@ containers:
   - containerPort: {{ $port }}
   {{- end }}
   {{- end -}}
+  {{- if $container.securityContext }}
+  securityContext:
+  {{- if $container.securityContext.runAsUser }}
+    runAsUser: {{ $container.securityContext.runAsUser }}
+  {{- end }}
+  {{- if $container.securityContext.runAsGroup }}
+    runAsGroup: {{ $container.securityContext.runAsGroup }}
+  {{- end }}
+  {{- if $container.securityContext.fsGroup }}
+    fsGroup: {{ $container.securityContext.fsGroup }}
+  {{- end }}
+  {{- if $container.securityContext.capabilities }}
+    capabilities:
+      add:
+    {{- range $index, $capabilities := $container.securityContext.capabilities }}
+        - {{ $capabilities }}
+    {{- end }}
+  {{- end }}
+  {{- end -}}
   {{- if $container.volumeMounts }}
   volumeMounts:
   {{- range $volumeName := $container.volumeMounts }}
