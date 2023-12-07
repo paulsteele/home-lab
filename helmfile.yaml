@@ -7,8 +7,8 @@ repositories:
   url: https://argoproj.github.io/argo-helm
 - name: itzg
   url: https://itzg.github.io/minecraft-server-charts
-- name: bitnami
-  url: https://charts.bitnami.com/bitnami
+#- name: bitnami
+#  url: https://charts.bitnami.com/bitnami
 - name: prometheus
   url: https://prometheus-community.github.io/helm-charts
 - name: nfs-subdir-external-provisioner
@@ -52,6 +52,9 @@ releases:
   chart: ./charts/argo-workflows
   secrets:
     - ./charts/argo-workflows/secrets.yaml
+- name: dav
+  namespace: default
+  chart: ./charts/baikal
 - name: containers
   namespace: default
   chart: ./charts/docker-registry

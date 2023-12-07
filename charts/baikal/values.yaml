@@ -1,0 +1,48 @@
+baseResources:
+  ingress:
+    host: dav.paul-steele.com
+    port: 80
+  services:
+    - ports:
+        - port: 80
+  deployment:
+    containers:
+      - image: ckulka/baikal:0.9.3-nginx
+        name: baikal
+        command:
+          - /bin/sh
+        args:
+          - -c
+          - "rm /docker-entrypoint.d/40-fix-baikal-file-permissions.sh && /docker-entrypoint.sh nginx -g 'daemon off;'"
+        ports:
+          - 80
+        volumeMounts:
+          - specific
+          - config
+  cronjob:
+    containers:
+      - image: nouchka/sqlite3
+        name: passworddump
+        command:
+          - sqlite3
+        args:
+          - /var/www/baikal/Specific/db/db.sqlite
+          - .backup '/backup/baikal.sq3'
+        volumeMounts:
+          - specific
+          - config
+          - backup
+    schedule: "0 1 * * 4"
+  volumes:
+    - name: specific
+      source:
+        nfs: /volume1/files/baikal/specific
+      mountPath: /var/www/baikal/Specific
+    - name: config
+      source:
+        nfs: /volume1/files/baikal/config
+      mountPath: /var/www/baikal/config
+    - name: backup
+      source:
+        nfs: /volume1/files/database-backup/sqlite
+      mountPath: /backup
