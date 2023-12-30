@@ -15,8 +15,8 @@ repositories:
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 - name: codecentrc
   url: https://codecentric.github.io/helm-charts
-- name: ingress-nginx
-  url: https://kubernetes.github.io/ingress-nginx
+#- name: ingress-nginx
+#  url: https://kubernetes.github.io/ingress-nginx
 - name: metallb
   url: https://metallb.github.io/metallb
 - name: twuni
@@ -25,6 +25,8 @@ repositories:
   url: https://zabbix-community.github.io/helm-zabbix
 - name: cilium 
   url: https://helm.cilium.io/
+- name: strrl.dev 
+  url: https://helm.strrl.dev
 releases:
 - name: automation
   namespace: default
@@ -113,11 +115,11 @@ releases:
 - name: storage
   namespace: default
   chart: ./charts/nfs-client-provisioner
-- name: external-dns
-  namespace: default
-  chart: ./charts/external-dns
-  secrets:
-    - ./charts/external-dns/secrets.yaml
+#- name: external-dns
+#  namespace: default
+#  chart: ./charts/external-dns
+#  secrets:
+#    - ./charts/external-dns/secrets.yaml
 #- name: zabbix
 #  namespace: default
 #  chart: ./charts/zabbix
@@ -129,3 +131,8 @@ releases:
   chart: ./charts/deployments
   secrets:
   - ./charts/deployments/secrets.yaml
+- name: cloudflare-tunnel
+  namespace: default
+  chart: ./charts/cloudflare-tunnel
+  secrets:
+    - ./charts/cloudflare-tunnel/secrets.yaml
