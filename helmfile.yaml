@@ -15,8 +15,8 @@ repositories:
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 - name: codecentrc
   url: https://codecentric.github.io/helm-charts
-#- name: ingress-nginx
-#  url: https://kubernetes.github.io/ingress-nginx
+- name: ingress-nginx
+  url: https://kubernetes.github.io/ingress-nginx
 - name: metallb
   url: https://metallb.github.io/metallb
 - name: twuni
@@ -80,9 +80,9 @@ releases:
 - name: home
   namespace: default
   chart: ./charts/homeassistant
-- name: ingress
-  namespace: default
-  chart: ./charts/nginx
+#- name: ingress
+#  namespace: default
+#  chart: ./charts/nginx
 - name: loadbalancer
   namespace: default
   chart: ./charts/metallb
