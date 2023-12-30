@@ -11,7 +11,7 @@ keycloak:
     # If `true`, an Ingress is created
     enabled: true
     # The name of the Ingress Class associated with this ingress
-    ingressClassName: "nginx"
+    ingressClassName: "cloudflare-tunnel"
     # The Service port targeted by the Ingress
     servicePort: http
     # Ingress annotations
@@ -35,7 +35,7 @@ keycloak:
       # If `true`, an Ingress is created for console path only
       enabled: true
       # The name of Ingress Class associated with the console ingress only
-      ingressClassName: "nginx"
+      ingressClassName: "cloudflare-tunnel"
       # Ingress annotations for console ingress only
       # Useful to set nginx.ingress.kubernetes.io/whitelist-source-range particularly
       annotations:

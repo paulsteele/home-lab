@@ -8,7 +8,7 @@ argo-workflows:
   server:
     ingress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: "cloudflare-tunnel"
       hosts:
       - ci.paul-steele.com
       tls:

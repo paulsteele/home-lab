@@ -9,6 +9,7 @@ baseResources:
 docker-registry:
   ingress:
     enabled: true
+    className: "cloudflare-tunnel"
     hosts:
       - registry.paul-steele.com
     annotations:
