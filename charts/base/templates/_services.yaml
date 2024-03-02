@@ -12,8 +12,10 @@ spec:
     targetPort: {{ default $port.port $port.targetPort }}
     name: port-{{ $index }}
   {{- end }}
+  {{- if not $service.hideSelector }}
   selector:
     app: {{ include "base.name" $ }}
+  {{- end }}
   {{- if $service.loadBalancerIP }}
   type: LoadBalancer
   loadBalancerIP: {{ $service.loadBalancerIP }}

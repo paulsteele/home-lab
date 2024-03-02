@@ -1,0 +1,17 @@
+baseResources:
+  ingress:
+    host: dynasty.paul-steele.com
+    port: 80
+    serviceName: dynasty
+  services:
+    - name: dynasty
+      hideSelector: true
+      ports:
+        - port: 80
+          targetPort: 5000
+  endpointSlices:
+    - name: dynasty-slice 
+      serviceName: dynasty
+      servicePort: 5000
+      servicePortName: port-0
+      address: 192.168.0.101

@@ -1,0 +1,18 @@
+{{- define "base.endpointSlices" -}}
+{{- range $index, $slice:= .Values.baseResources.endpointSlices }}
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: {{ $slice.name }}
+  labels:
+    kubernetes.io/service-name: {{ $slice.serviceName }}
+addressType: IPv4
+ports:
+  - port: {{ $slice.servicePort }}
+    name: {{ $slice.servicePortName }}
+endpoints:
+  - addresses:
+      - {{ $slice.address }}
+---
+{{- end }}
+{{- end -}}
