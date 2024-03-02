@@ -9,14 +9,14 @@ repositories:
   url: https://itzg.github.io/minecraft-server-charts
 #- name: bitnami
 #  url: https://charts.bitnami.com/bitnami
-- name: prometheus
-  url: https://prometheus-community.github.io/helm-charts
+#- name: prometheus
+#  url: https://prometheus-community.github.io/helm-charts
 - name: nfs-subdir-external-provisioner
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 - name: codecentrc
   url: https://codecentric.github.io/helm-charts
-- name: ingress-nginx
-  url: https://kubernetes.github.io/ingress-nginx
+#- name: ingress-nginx
+#  url: https://kubernetes.github.io/ingress-nginx
 - name: metallb
   url: https://metallb.github.io/metallb
 - name: twuni
@@ -72,11 +72,11 @@ releases:
   chart: ./charts/nextcloud
   secrets:
   - ./charts/nextcloud/secrets.yaml
-- name: finance
-  namespace: default
-  chart: ./charts/firefly
-  secrets:
-  - ./charts/firefly/secrets.yaml
+#- name: finance
+#  namespace: default
+#  chart: ./charts/firefly
+#  secrets:
+#  - ./charts/firefly/secrets.yaml
 - name: home
   namespace: default
   chart: ./charts/homeassistant
@@ -104,9 +104,9 @@ releases:
 #- name: focalboard
 #  namespace: default
 #  chart: ./charts/focalboard
-- name: youtrack
-  namespace: default
-  chart: ./charts/youtrack
+#- name: youtrack
+#  namespace: default
+#  chart: ./charts/youtrack
 - name: oidc
   namespace: default
   chart: ./charts/keycloak
