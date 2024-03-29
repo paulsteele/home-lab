@@ -49,6 +49,13 @@ spec:
             mountPath: /git
     - name: build-container
       container:
+        nodeSelector:
+          gaming: "true"
+        tolerations:
+          - key: "gaming"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
         image: gcr.io/kaniko-project/executor
         command:
           - "/kaniko/executor"
