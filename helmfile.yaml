@@ -34,6 +34,9 @@ releases:
 - name: books
   namespace: default
   chart: ./charts/calibre
+- name: audiobooks
+  namespace: default
+  chart: ./charts/audiobookshelf
 - name: pufferpanel
   namespace: default
   chart: ./charts/pufferpanel

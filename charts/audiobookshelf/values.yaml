@@ -1,0 +1,41 @@
+baseResources:
+  ingress:
+    host: audiobooks.paul-steele.com
+    port: 80
+  services:
+    - ports:
+        - port: 80
+          targetPort: 80
+  deployment:
+   containers:
+    - image: ghcr.io/advplyr/audiobookshelf:2.12.3
+      name: audiobooks
+      envs:
+      - name: TZ
+        value: America/Indiana/Indianapolis
+      - name: LANG
+        value: en_US.UTF-8
+      ports:
+      - 80
+      volumeMounts:
+      - audiobooks
+      - podcasts
+      - config
+      - metadata
+  volumes:
+  - name: audiobooks
+    source:
+      nfs: /volume1/files/audiobookshelf/audiobooks
+    mountPath: /audiobooks
+  - name: podcasts
+    source:
+      nfs: /volume1/files/audiobookshelf/podcasts
+    mountPath: /podcasts
+  - name: config
+    source:
+      nfs: /volume1/files/audiobookshelf/config
+    mountPath: /config
+  - name: metadata
+    source:
+      nfs: /volume1/files/audiobookshelf/metadata
+    mountPath: /metadata
