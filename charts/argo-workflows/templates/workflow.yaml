@@ -144,7 +144,7 @@ metadata:
 spec:
   event:
     # metadata header name must be lowercase to match in selector
-    selector: payload.repository.url == "{{$repository.url}}" 
+    selector: payload.repository.html_url == "{{$repository.url}}" 
   submit:
     workflowTemplateRef:
       name: ci-build 
