@@ -1,0 +1,74 @@
+baseResources:
+  ingress:
+    host: frigate.paul-steele.com
+    serviceName: frigate
+    port: 8971
+frigate:
+  strategyType: Recreate
+  image:
+    repository: ghcr.io/blakeblackshear/frigate
+    tag: 0.15.2
+  envFromSecrets:
+    - frigate-creds
+  coral:
+    enabled: true
+    hostPath: /dev/bus/usb
+
+  shmSize: 1Gi
+  tmpfs:
+    enabled: true
+    sizeLimit: 1Gi
+
+  # -- frigate configuration - see [Docs](https://docs.frigate.video/configuration/index) for more info
+  config: |
+    mqtt:
+      enabled: False
+    tls:
+      enabled: False
+
+    detectors:
+      coral:
+        type: edgetpu
+        device: usb
+
+    cameras:
+      front_door:
+        ffmpeg:
+          inputs:
+            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.0.150:554/stream1
+              roles:
+                - detect
+                - rtmp
+    
+    record:
+      enabled: True
+      retain:
+        days: 0
+      alerts:
+        retain:
+          days: 30
+          mode: motion
+  
+  persistence:
+    config:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 100Mi
+      skipuninstall: true
+      ephemeralWritableConfigYaml: true
+    media:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 10Gi
+      skipuninstall: true
+
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "" 
+
+  tolerations: 
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node.kubernetes.io/unschedulable"
+      operator: "Exists"
+      effect: "NoSchedule"

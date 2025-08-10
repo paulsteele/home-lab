@@ -7,16 +7,10 @@ repositories:
   url: https://argoproj.github.io/argo-helm
 - name: itzg
   url: https://itzg.github.io/minecraft-server-charts
-#- name: bitnami
-#  url: https://charts.bitnami.com/bitnami
-#- name: prometheus
-#  url: https://prometheus-community.github.io/helm-charts
 - name: nfs-subdir-external-provisioner
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 - name: codecentrc
   url: https://codecentric.github.io/helm-charts
-#- name: ingress-nginx
-#  url: https://kubernetes.github.io/ingress-nginx
 - name: metallb
   url: https://metallb.github.io/metallb
 - name: twuni
@@ -27,6 +21,8 @@ repositories:
   url: https://helm.cilium.io/
 - name: strrl.dev 
   url: https://helm.strrl.dev
+- name: blakeblackshear
+  url: https://blakeblackshear.github.io/blakeshome-charts/
 releases:
 - name: automation
   namespace: default
@@ -40,11 +36,6 @@ releases:
 - name: pufferpanel
   namespace: default
   chart: ./charts/pufferpanel
-#- name: mhfz
-#  namespace: default
-#  chart: ./charts/mhfz
-#  secrets:
-#  - ./charts/mhfz/secrets.yaml
 - name: ci
   namespace: ci
   chart: ./charts/argo
@@ -70,31 +61,15 @@ releases:
   chart: ./charts/database
   secrets:
   - ./charts/database/secrets.yaml
-- name: cloud
-  namespace: default
-  chart: ./charts/nextcloud
-  secrets:
-  - ./charts/nextcloud/secrets.yaml
-#- name: finance
-#  namespace: default
-#  chart: ./charts/firefly
-#  secrets:
-#  - ./charts/firefly/secrets.yaml
 - name: home
   namespace: default
   chart: ./charts/homeassistant
-#- name: ingress
-#  namespace: default
-#  chart: ./charts/nginx
 - name: loadbalancer
   namespace: default
   chart: ./charts/metallb
 - name: loadbalancer-config
   namespace: default
   chart: ./charts/metallb-configuration
-# - name: monitoring
-  # namespace: default
-  # chart: ./charts/prometheus
 - name: music
   namespace: default
   chart: ./charts/subsonic
@@ -104,12 +79,6 @@ releases:
 - name: reader
   namespace: default
   chart: ./charts/freshrss
-#- name: focalboard
-#  namespace: default
-#  chart: ./charts/focalboard
-#- name: youtrack
-#  namespace: default
-#  chart: ./charts/youtrack
 - name: oidc
   namespace: default
   chart: ./charts/keycloak
@@ -118,17 +87,14 @@ releases:
 - name: storage
   namespace: default
   chart: ./charts/nfs-client-provisioner
-#- name: external-dns
-#  namespace: default
-#  chart: ./charts/external-dns
-#  secrets:
-#    - ./charts/external-dns/secrets.yaml
-#- name: zabbix
-#  namespace: default
-#  chart: ./charts/zabbix
 - name: cilium
   namespace: kube-system
   chart: ./charts/cilium
+- name: frigate
+  namespace: default
+  chart: ./charts/frigate
+  secrets:
+    - ./charts/frigate/secrets.yaml
 - name: external-proxy
   namespace: default
   chart: ./charts/external-proxy

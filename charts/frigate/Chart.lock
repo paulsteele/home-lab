@@ -1,0 +1,9 @@
+dependencies:
+- name: base
+  repository: file://../base
+  version: 0.1.0
+- name: frigate
+  repository: https://blakeblackshear.github.io/blakeshome-charts/
+  version: 7.8.0
+digest: sha256:b740aa2050df7cc692218fdffbf3d0a146a29325cb65bda631ba9af53f2c4463
+generated: "2025-08-09T19:23:39.865831949-04:00"
