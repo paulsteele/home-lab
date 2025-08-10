@@ -22,7 +22,9 @@ frigate:
   # -- frigate configuration - see [Docs](https://docs.frigate.video/configuration/index) for more info
   config: |
     mqtt:
-      enabled: False
+      host: "mosquitto-mosquitto"
+      user: "{FRIGATE_MQTT_USER}"
+      password: "{FRIGATE_MQTT_PASSWORD}"
     tls:
       enabled: False
 
