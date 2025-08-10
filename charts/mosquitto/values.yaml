@@ -1,0 +1,44 @@
+baseResources:
+  services:
+    - ports: 
+        - port: 1883
+  configmaps:
+    - name: mosquitto
+      data:
+        - name: mosquitto-config 
+          file: resources/mosquitto.conf
+  deployment:
+    containers:
+    - image: eclipse-mosquitto:2.0.22
+      name: mosquitto
+      ports:
+      - 1883
+      volumeMounts:
+      - data
+      - config
+      - passwd
+  volumes:
+  - name: data
+    source:
+      nfs: /volume1/files/mosquitto/data
+    mountPath: /books
+  - name: config
+    source:
+      configmap:
+        defaultMode: 0555
+        name: mosquitto
+        items:
+          key: mosquitto-config
+          path: mosquitto.conf
+    mountPath: /mosquitto/config/mosquitto.conf
+    subPath: mosquitto.conf
+  - name: passwd
+    source:
+      secret:
+        defaultMode: 0555
+        name: mosquitto-passwd
+        items:
+          key: passwd
+          path: passwd
+    mountPath: /mosquitto/config/passwd
+    subPath: passwd

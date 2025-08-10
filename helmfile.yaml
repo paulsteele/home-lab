@@ -95,6 +95,11 @@ releases:
   chart: ./charts/frigate
   secrets:
     - ./charts/frigate/secrets.yaml
+- name: mosquitto
+  namespace: default
+  chart: ./charts/mosquitto
+  secrets:
+    - ./charts/mosquitto/secrets.yaml
 - name: external-proxy
   namespace: default
   chart: ./charts/external-proxy
