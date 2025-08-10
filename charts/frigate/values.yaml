@@ -41,6 +41,10 @@ frigate:
               roles:
                 - detect
                 - rtmp
+        motion:
+          mask:
+            - 0.717,0,0.573,0.301,0.15,0.302,0,0.304,0,0
+            - 0.365,0.654,0.441,0.645,0.474,0.642,0.494,0.637,0.556,0.628,0.557,0.6,0.363,0.617
     
     record:
       enabled: True
@@ -48,7 +52,7 @@ frigate:
         days: 0
       alerts:
         retain:
-          days: 30
+          days: 7
           mode: motion
     
     notifications:
