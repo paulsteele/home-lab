@@ -48,6 +48,10 @@ frigate:
         retain:
           days: 30
           mode: motion
+    
+    notifications:
+      enabled: true
+      email: paul@paul-steele.com
   
   persistence:
     config:
