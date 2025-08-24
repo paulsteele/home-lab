@@ -35,6 +35,10 @@ frigate:
 
     cameras:
       front_door:
+        review:
+          alerts:
+            required_zones:
+              - entry
         ffmpeg:
           inputs:
             - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.0.150:554/stream1
@@ -42,9 +46,12 @@ frigate:
                 - detect
                 - rtmp
         motion:
-          mask:
-            - 0.717,0,0.56,0.378,0.23,0.523,0,0.642,0,0
-            - 0.353,0.672,0.567,0.66,0.564,0.582,0.351,0.593
+          mask: 0.772,0,0.59,0.408,0.23,0.523,0,0.642,0,0
+        zones:
+          entry:
+            coordinates: 
+              0.465,0.658,0.403,0.672,0.418,0.802,0.396,0.93,0.178,0.892,0.08,1,1,1,1,0.968,0.844,0.864,0.585,0.662,0.521,0.654
+            loitering_time: 0
     
     record:
       enabled: True
@@ -54,10 +61,6 @@ frigate:
         retain:
           days: 7
           mode: motion
-    
-    notifications:
-      enabled: true
-      email: paul@paul-steele.com
   
   persistence:
     config:
