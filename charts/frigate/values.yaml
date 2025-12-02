@@ -41,7 +41,7 @@ frigate:
               - entry
         ffmpeg:
           inputs:
-            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.1.2:554/stream1
+            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.0.150:554/stream1
               roles:
                 - detect
                 - rtmp
