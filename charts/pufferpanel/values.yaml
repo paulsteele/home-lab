@@ -9,6 +9,7 @@ baseResources:
     - ports:
         - port: 25565
         - port: 25049
+        - port: 5520
         - port: 24454
           protocol: UDP
       loadBalancerIP: 192.168.0.201
@@ -29,6 +30,7 @@ baseResources:
           - 25565
           - 25049
           - 24454
+          - 5520
         volumeMounts:
           - storage
           - config
