@@ -3,7 +3,7 @@ dependencies:
   repository: file://../base
   version: 0.1.0
 - name: docker-registry
-  repository: https://helm.twun.io
+  repository: https://twuni.github.io/docker-registry.helm
   version: 2.2.2
-digest: sha256:67ff92230135fb3a873d20b8d77c0df3d76266502a446206a39997535cb03748
-generated: "2022-10-28T19:28:28.719379-04:00"
+digest: sha256:06435e8c7734284d6ab4766409756b3cedfe8b79d5862b43759202d430fb0156
+generated: "2026-01-17T20:48:24.939638405-05:00"
