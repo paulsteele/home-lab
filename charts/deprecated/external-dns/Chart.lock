@@ -1,9 +1,0 @@
-dependencies:
-- name: base
-  repository: file://../base
-  version: 0.1.0
-- name: external-dns
-  repository: https://charts.bitnami.com/bitnami
-  version: 6.7.2
-digest: sha256:e556fbbff595535968c613e6b46fa7f7fe9bc09ad40e9c936f64410b6ba36609
-generated: "2023-03-11T17:39:28.641535915-05:00"

@@ -1,0 +1,69 @@
+baseResources:
+  ingress:
+    host: media.paul-steele.com
+    port: 80
+  services:
+    - ports:
+        - port: 80
+          targetPort: 80
+  deployment:
+   containers:
+    - image: sentriz/gonic:v0.20.1
+      name: gonic
+      envs:
+      - name: TZ
+        value: America/Indiana/Indianapolis
+      - name: GONIC_MUSIC_PATH
+        value: /music
+      - name: GONIC_PODCAST_PATH
+        value: /podcasts
+      - name: GONIC_PLAYLISTS_PATH
+        value: /playlists
+      - name: GONIC_CACHE_PATH
+        value: /cache
+      ports:
+      - 80
+      volumeMounts:
+      - data
+      - music
+      - podcasts
+      - playlists
+      - cache
+  cronjob:
+    containers:
+    - image: nouchka/sqlite3
+      name: gonicdump
+      command:
+      - sqlite3
+      args:
+      - /data/gonic.db
+      - .backup '/backup/gonic.sq3'
+      volumeMounts:
+      - data
+      - backup
+    schedule: "0 1 * * 4"
+  volumes:
+  - name: data
+    source:
+      nfs: /volume1/files/gonic/data
+    mountPath: /data
+  - name: music
+    source:
+      nfs: /volume1/files/media/music
+    mountPath: /music
+  - name: podcasts
+    source:
+      nfs: /volume1/files/gonic/podcasts
+    mountPath: /podcasts
+  - name: playlists
+    source:
+      nfs: /volume1/files/gonic/playlists
+    mountPath: /playlists
+  - name: cache
+    source:
+      nfs: /volume1/files/gonic/cache
+    mountPath: /cache
+  - name: backup
+    source:
+      nfs: /volume1/files/database-backup/sqlite
+    mountPath: /backup

@@ -70,9 +70,9 @@ releases:
 - name: loadbalancer-config
   namespace: default
   chart: ./charts/metallb-configuration
-- name: music
+- name: gonic
   namespace: default
-  chart: ./charts/subsonic
+  chart: ./charts/gonic
 - name: passwords
   namespace: default
   chart: ./charts/bitwarden
