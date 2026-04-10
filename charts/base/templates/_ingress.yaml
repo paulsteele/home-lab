@@ -28,7 +28,7 @@ spec:
             name: {{ default ( include "base.name" . ) .Values.baseResources.ingress.serviceName }}
             port: 
               number: {{ .Values.baseResources.ingress.port }}
-        path: /
+        path: {{ default "/" .Values.baseResources.ingress.path }}
         pathType: Prefix
   tls:
   - hosts:

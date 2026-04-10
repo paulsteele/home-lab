@@ -1,0 +1,32 @@
+baseResources:
+  configmaps:
+    - name: webfinger-nginx
+      data:
+        - name: nginx-conf
+          file: resources/nginx.conf
+  ingress:
+    host: paul-steele.com
+    port: 80
+    path: /.well-known/webfinger
+  services:
+    - ports:
+        - port: 80
+  deployment:
+    containers:
+    - image: nginx:1.29.8-alpine3.23
+      name: webfinger
+      ports:
+      - 80
+      volumeMounts:
+      - nginx-config
+  volumes:
+  - name: nginx-config
+    source:
+      configmap:
+        defaultMode: 0444
+        name: webfinger-nginx
+        items:
+          key: nginx-conf
+          path: default.conf
+    mountPath: /etc/nginx/conf.d/default.conf
+    subPath: default.conf

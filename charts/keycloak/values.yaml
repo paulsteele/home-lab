@@ -20,7 +20,11 @@ keycloak:
         host: oidc.paul-steele.com
         # Paths for the host
         paths:
-          - path: /
+          - path: /auth/realms/
+            pathType: Prefix
+          - path: /auth/resources/
+            pathType: Prefix
+          - path: /auth/js/
             pathType: Prefix
     annotations:
       nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
@@ -28,7 +32,7 @@ keycloak:
       external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
     tls:
       - hosts:
-          - oidc.paul-steele.com.com
+          - oidc.paul-steele.com
 
     # ingress for console only (/auth/admin)
     console:
@@ -39,20 +43,29 @@ keycloak:
       # Ingress annotations for console ingress only
       # Useful to set nginx.ingress.kubernetes.io/whitelist-source-range particularly
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: oidc.paul-steele.com
+        external-dns.alpha.kubernetes.io/hostname: keycloak.paul-steele.com
         external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
         nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
       rules:
         - # Ingress host
-          host: oidc.paul-steele.com
+          host: keycloak.paul-steele.com
           # Paths for the host
           paths:
-            - path: /auth/admin/
+            - path: /
               pathType: Prefix
       # Console TLS configuration
       tls:
         - hosts:
-            - oidc.paul-steele.com.com
+            - keycloak.paul-steele.com
+
+  startupScripts:
+    hostname.cli: |
+      embed-server --server-config=standalone-ha.xml --std-out=echo
+      echo Configuring hostname provider
+      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="https://oidc.paul-steele.com/auth")
+      /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.adminUrl, value="https://keycloak.paul-steele.com/auth")
+      echo Finished configuring hostname provider
+      stop-embedded-server
 
   postgresql:
     enabled: false

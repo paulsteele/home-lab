@@ -108,6 +108,9 @@ releases:
   chart: ./charts/deployments
   secrets:
   - ./charts/deployments/secrets.yaml
+- name: webfinger
+  namespace: default
+  chart: ./charts/webfinger
 - name: cloudflare-tunnel
   namespace: default
   chart: ./charts/cloudflare-tunnel
