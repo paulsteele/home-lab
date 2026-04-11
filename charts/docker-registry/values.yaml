@@ -7,6 +7,10 @@ baseResources:
     capacity: 4Gi
 
 docker-registry:
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 31234
   ingress:
     enabled: false
   persistence:

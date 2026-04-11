@@ -60,8 +60,6 @@ releases:
 - name: containers
   namespace: default
   chart: ./charts/docker-registry
-  secrets:
-    - ./charts/docker-registry/secrets.yaml
 - name: database
   namespace: default
   chart: ./charts/database

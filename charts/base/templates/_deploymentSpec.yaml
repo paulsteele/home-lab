@@ -87,8 +87,6 @@ tolerations:
 {{- end -}}
   {{- end -}}
 {{- end }}
-imagePullSecrets:
-- name: registry.paul-steele.com
 {{- if get . "volumes" }}
 volumes:
 {{- range $index, $volume := get . "volumes" }}

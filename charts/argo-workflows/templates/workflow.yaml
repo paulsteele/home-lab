@@ -62,20 +62,11 @@ spec:
         args:
           - "--dockerfile=/workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}/Dockerfile"
           - "--context=dir:///workspace/{{"{{"}}workflow.parameters.git_name{{"}}"}}"
-          - "--destination=registry.paul-steele.com/{{"{{"}}workflow.parameters.git_name{{"}}"}}:{{"{{"}}workflow.parameters.git_sha{{"}}"}}"
+          - "--destination=containers-docker-registry.default.svc.cluster.local/{{"{{"}}workflow.parameters.git_name{{"}}"}}:{{"{{"}}workflow.parameters.git_sha{{"}}"}}"
+          - "--insecure"
         volumeMounts:
           - name: workdir
             mountPath: /workspace
-          - name: docker-registry
-            mountPath: /kaniko/.docker/config.json
-            subPath: config.json
-      volumes:
-        - name: docker-registry
-          secret:
-            secretName: registry.paul-steele.com
-            items:
-              - key: .dockerconfigjson
-                path: config.json
     - name: prepare-manifest
       container:
         image: loicmahieu/alpine-envsubst

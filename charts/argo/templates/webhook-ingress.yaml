@@ -10,7 +10,7 @@ spec:
       paths:
       - backend:
           service:
-            name: argo-workflows-server
+            name: ci-argo-workflows-server
             port:
               number: 2746
         path: /api/v1/events
