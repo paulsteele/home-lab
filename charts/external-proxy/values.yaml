@@ -1,5 +1,6 @@
 baseResources:
   ingress:
+    ingressClassName: traefik
     host: dynasty.paul-steele.com
     port: 80
     serviceName: dynasty

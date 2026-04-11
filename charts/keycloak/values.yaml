@@ -36,26 +36,18 @@ keycloak:
 
     # ingress for console only (/auth/admin)
     console:
-      # If `true`, an Ingress is created for console path only
       enabled: true
-      # The name of Ingress Class associated with the console ingress only
-      ingressClassName: "cloudflare-tunnel"
-      # Ingress annotations for console ingress only
-      # Useful to set nginx.ingress.kubernetes.io/whitelist-source-range particularly
+      ingressClassName: "traefik"
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: keycloak.paul-steele.com
-        external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
         nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
       rules:
-        - # Ingress host
-          host: keycloak.paul-steele.com
-          # Paths for the host
+        - host: keycloak.paul-steele.com
           paths:
             - path: /
               pathType: Prefix
-      # Console TLS configuration
       tls:
-        - hosts:
+        - secretName: paul-steele.com
+          hosts:
             - keycloak.paul-steele.com
 
   startupScripts:

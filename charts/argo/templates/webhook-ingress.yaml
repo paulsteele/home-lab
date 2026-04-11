@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo-workflows-webhook
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+  - host: ci-events.paul-steele.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: argo-workflows-server
+            port:
+              number: 2746
+        path: /api/v1/events
+        pathType: Prefix
+  tls:
+  - hosts:
+    - ci-events.paul-steele.com

@@ -1,5 +1,6 @@
 baseResources:
   ingress:
+    ingressClassName: traefik
     host: frigate.paul-steele.com
     serviceName: frigate
     port: 8971

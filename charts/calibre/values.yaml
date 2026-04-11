@@ -1,5 +1,6 @@
 baseResources:
   ingress:
+    ingressClassName: traefik
     host: books.paul-steele.com
     port: 8083
   services:

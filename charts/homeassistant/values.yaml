@@ -7,6 +7,7 @@ baseResources:
     - name: zwave-config
       file: resources/zwave.sh
   ingress:
+    ingressClassName: traefik
     host: home.paul-steele.com
     port: 80
   services:

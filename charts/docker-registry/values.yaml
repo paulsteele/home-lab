@@ -8,18 +8,7 @@ baseResources:
 
 docker-registry:
   ingress:
-    enabled: true
-    className: "cloudflare-tunnel"
-    hosts:
-      - registry.paul-steele.com
-    annotations:
-      kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/proxy-body-size: 0
-      external-dns.alpha.kubernetes.io/hostname: registry.paul-steele.com
-      external-dns.alpha.kubernetes.io/target: "paulsteelehome.duckdns.org"
-    tls:
-      - hosts:
-          - registry.paul-steele.com
+    enabled: false
   persistence:
     accessMode: 'ReadWriteOnce'
     enabled: true

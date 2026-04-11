@@ -8,15 +8,14 @@ argo-workflows:
   server:
     ingress:
       enabled: true
-      ingressClassName: "cloudflare-tunnel"
+      ingressClassName: "traefik"
       hosts:
       - ci.paul-steele.com
       tls:
-      - hosts:
+      - secretName: paul-steele.com
+        hosts:
         - ci.paul-steele.com
-      annotations:
-        external-dns.alpha.kubernetes.io/hostname: ci.paul-steele.com
-        external-dns.alpha.kubernetes.io/target: paulsteelehome.duckdns.org
+      annotations: {}
     extraArgs:
     - --auth-mode=sso
     - --auth-mode=client

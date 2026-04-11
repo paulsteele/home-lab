@@ -1,5 +1,6 @@
 baseResources:
   ingress:
+    ingressClassName: traefik
     host: audiobooks.paul-steele.com
     port: 80
   services:
