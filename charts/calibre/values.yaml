@@ -4,19 +4,25 @@ baseResources:
     host: books.paul-steele.com
     port: 8083
   services:
-    - ports: 
+    - ports:
         - port: 8083
   deployment:
     containers:
-    - image: linuxserver/calibre-web:0.6.8-ls74
+    - image: crocodilestick/calibre-web-automated:v4.0.6
       name: calibre
       envs:
       - name: TZ
         value: America/Indianapolis
+      - name: PUID
+        value: "1000"
+      - name: PGID
+        value: "1000"
+      - name: NETWORK_SHARE_MODE
+        value: "true"
       ports:
       - 8083
       volumeMounts:
-      - books
+      - library
       - config
   cronjob:
     containers:
@@ -25,17 +31,17 @@ baseResources:
       command:
       - sqlite3
       args:
-      - /books/metadata.db
+      - /calibre-library/metadata.db
       - .backup '/backup/calibre.sq3'
       volumeMounts:
-      - books
+      - library
       - backup
     schedule: "0 1 * * 4"
   volumes:
-  - name: books
+  - name: library
     source:
       nfs: /volume1/files/calibre/library
-    mountPath: /books
+    mountPath: /calibre-library
   - name: config
     source:
       nfs: /volume1/files/calibre/config
