@@ -1,0 +1,14 @@
+traefik:
+  ingressClass:
+    enabled: true
+    name: traefik
+    isDefaultClass: false
+  providers:
+    kubernetesIngress:
+      enabled: true
+  service:
+    annotations:
+      tailscale.com/proxy-group: ingress-proxies
+      tailscale.com/hostname: traefik-ingress
+    spec:
+      loadBalancerClass: tailscale

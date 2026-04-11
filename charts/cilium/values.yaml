@@ -2,3 +2,5 @@ cilium:
   kubeProxyReplacement: strict
   k8sServiceHost: 192.168.0.11
   k8sServicePort: 6443
+  socketLB:
+    hostNamespaceOnly: true

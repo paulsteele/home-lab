@@ -4,6 +4,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ default (include "base.name" $) $service.name }}
+  {{- if $service.annotations }}
+  annotations:
+    {{- range $key, $val := $service.annotations }}
+    {{ $key }}: "{{ $val }}"
+    {{- end }}
+  {{- end }}
 spec:
   ports:
   {{- range $index, $port:= $service.ports }}
@@ -16,9 +22,14 @@ spec:
   selector:
     app: {{ include "base.name" $ }}
   {{- end }}
-  {{- if $service.loadBalancerIP }}
+  {{- if or $service.loadBalancerIP $service.loadBalancerClass }}
   type: LoadBalancer
+  {{- end }}
+  {{- if $service.loadBalancerIP }}
   loadBalancerIP: {{ $service.loadBalancerIP }}
+  {{- end }}
+  {{- if $service.loadBalancerClass }}
+  loadBalancerClass: {{ $service.loadBalancerClass }}
   {{- end }}
 ---
 {{- end -}}

@@ -5,7 +5,7 @@ kind: Ingress
 metadata:
   name: {{ include "base.name" . }}
 spec:
-  ingressClassName: cloudflare-tunnel 
+  ingressClassName: {{ default "cloudflare-tunnel" .Values.baseResources.ingress.ingressClassName }}
   rules:
   - host: {{ .Values.baseResources.ingress.host }}
     http:
@@ -33,6 +33,9 @@ spec:
   tls:
   - hosts:
     - {{ .Values.baseResources.ingress.host }}
+    {{- if or .Values.baseResources.ingress.tlsSecretName (eq (default "cloudflare-tunnel" .Values.baseResources.ingress.ingressClassName) "traefik") }}
+    secretName: {{ default "paul-steele.com" .Values.baseResources.ingress.tlsSecretName }}
+    {{- end }}
 {{- end }}
 {{- if .Values.baseResources.ingresses }}
 {{- range $index, $ingress := .Values.baseResources.ingresses }}

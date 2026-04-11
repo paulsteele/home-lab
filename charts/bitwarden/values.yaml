@@ -1,5 +1,6 @@
 baseResources:
   ingress:
+    ingressClassName: traefik
     host: passwords.paul-steele.com
     port: 80
     extraPaths:

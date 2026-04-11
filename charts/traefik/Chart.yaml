@@ -1,0 +1,10 @@
+apiVersion: v2
+name: traefik
+description: A Helm chart for Traefik Ingress Controller
+type: application
+version: 39.0.7
+appVersion: "3.6.12"
+dependencies:
+  - name: traefik
+    version: 39.0.7
+    repository: https://traefik.github.io/charts

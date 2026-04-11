@@ -1,0 +1,15 @@
+external-dns:
+  provider:
+    name: cloudflare
+  sources:
+  - ingress
+  env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: cloudflare-api-token
+        key: cloudflare_api_token
+  extraArgs:
+  - --ingress-class=traefik
+  txtOwnerId: "home-lab"
+  logLevel: debug

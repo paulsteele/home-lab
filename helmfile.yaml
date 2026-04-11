@@ -17,8 +17,14 @@ repositories:
   url: https://twuni.github.io/docker-registry.helm
 - name: zabbix-community
   url: https://zabbix-community.github.io/helm-zabbix
-- name: cilium 
+- name: cilium
   url: https://helm.cilium.io/
+- name: tailscale
+  url: https://pkgs.tailscale.com/helmcharts
+- name: traefik
+  url: https://traefik.github.io/charts
+- name: external-dns
+  url: https://kubernetes-sigs.github.io/external-dns/
 - name: strrl.dev 
   url: https://helm.strrl.dev
 - name: blakeblackshear
@@ -90,6 +96,28 @@ releases:
 - name: cilium
   namespace: kube-system
   chart: ./charts/cilium
+- name: external-dns
+  namespace: default
+  chart: ./charts/external-dns
+  secrets:
+    - ./charts/external-dns/secrets.yaml
+- name: certmanager
+  namespace: default
+  chart: ./charts/certmanager
+- name: certmanager-config
+  namespace: default
+  chart: ./charts/certmanager-config
+- name: tailscale-operator
+  namespace: tailscale
+  chart: ./charts/tailscale-operator
+  secrets:
+    - ./charts/tailscale-operator/secrets.yaml
+- name: tailscale-config
+  namespace: tailscale
+  chart: ./charts/tailscale-config
+- name: traefik
+  namespace: default
+  chart: ./charts/traefik
 - name: frigate
   namespace: default
   chart: ./charts/frigate
