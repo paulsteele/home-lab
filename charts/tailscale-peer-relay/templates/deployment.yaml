@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.relay.hostname }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.relay.hostname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.relay.hostname }}
+    spec:
+      containers:
+        - name: tailscale
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          env:
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_HOSTNAME
+              value: {{ .Values.relay.hostname | quote }}
+            - name: TS_ACCEPT_DNS
+              value: "false"
+            - name: TS_EXTRA_ARGS
+              value: "--advertise-tags={{ .Values.relay.tag }}"
+            - name: OAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.secretName }}
+                  key: {{ .Values.auth.secretKey }}
+            - name: TS_AUTHKEY
+              value: "$(OAUTH_SECRET)?ephemeral=true&preauthorized=true"
+            - name: RELAY_PORT
+              value: {{ .Values.relay.port | quote }}
+            - name: RELAY_LAN_IP
+              value: {{ .Values.relay.lanIP | quote }}
+            - name: RELAY_IP_ECHO
+              value: {{ .Values.relay.ipEchoUrl | quote }}
+          ports:
+            - name: relay
+              containerPort: {{ .Values.relay.port }}
+              protocol: UDP
+          volumeMounts:
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    for i in $(seq 1 120); do
+                      if tailscale status --json 2>/dev/null | grep -qE '"BackendState":[[:space:]]*"Running"'; then
+                        break
+                      fi
+                      sleep 2
+                    done
+                    ENDPOINTS="${RELAY_LAN_IP}:${RELAY_PORT}"
+                    if [ -n "$RELAY_IP_ECHO" ]; then
+                      PUBLIC_IP=$(wget -qO- --timeout=5 "$RELAY_IP_ECHO" 2>/dev/null | tr -d '[:space:]')
+                      if [ -n "$PUBLIC_IP" ]; then
+                        ENDPOINTS="${ENDPOINTS},${PUBLIC_IP}:${RELAY_PORT}"
+                      fi
+                    fi
+                    tailscale set \
+                      --relay-server-port="${RELAY_PORT}" \
+                      --relay-server-static-endpoints="${ENDPOINTS}"
+      volumes:
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice

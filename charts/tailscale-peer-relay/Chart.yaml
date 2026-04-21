@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tailscale-peer-relay
+description: Self-hosted Tailscale peer relay exposed via MetalLB
+type: application
+version: 1.0.0
+appVersion: "1.96.5"

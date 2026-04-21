@@ -1,0 +1,14 @@
+image:
+  repository: tailscale/tailscale
+  tag: v1.96.5
+
+relay:
+  hostname: peer-relay
+  tag: tag:peer-relay
+  port: 40000
+  lanIP: 192.168.0.203
+  ipEchoUrl: https://api.ipify.org
+
+auth:
+  secretName: operator-oauth
+  secretKey: client_secret

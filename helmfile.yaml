@@ -113,6 +113,9 @@ releases:
 - name: tailscale-config
   namespace: tailscale
   chart: ./charts/tailscale-config
+- name: tailscale-peer-relay
+  namespace: tailscale
+  chart: ./charts/tailscale-peer-relay
 - name: traefik
   namespace: default
   chart: ./charts/traefik
