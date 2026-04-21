@@ -12,18 +12,6 @@ spec:
       labels:
         app: {{ .Values.relay.hostname }}
     spec:
-      {{- if .Values.relay.exitNode }}
-      initContainers:
-        - name: sysctler
-          image: busybox:1.36
-          securityContext:
-            privileged: true
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              sysctl -w net.ipv4.ip_forward=1
-              sysctl -w net.ipv6.conf.all.forwarding=1
-      {{- end }}
       containers:
         - name: tailscale
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -70,6 +58,10 @@ spec:
                   - /bin/sh
                   - -c
                   - |
+                    {{- if .Values.relay.exitNode }}
+                    echo 1 > /proc/sys/net/ipv4/ip_forward
+                    echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+                    {{- end }}
                     for i in $(seq 1 120); do
                       if tailscale status --json 2>/dev/null | grep -qE '"BackendState":[[:space:]]*"Running"'; then
                         break
