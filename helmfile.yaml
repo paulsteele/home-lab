@@ -140,6 +140,9 @@ releases:
 - name: webfinger
   namespace: default
   chart: ./charts/webfinger
+- name: video
+  namespace: default
+  chart: ./charts/jellyfin
 - name: cloudflare-tunnel
   namespace: default
   chart: ./charts/cloudflare-tunnel

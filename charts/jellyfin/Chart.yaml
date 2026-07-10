@@ -1,0 +1,10 @@
+apiVersion: v2
+name: jellyfin
+description: Jellyfin media server for video streaming
+type: application
+version: 1.0.0
+appVersion: 10.10.7
+dependencies:
+- name: base
+  version: 0.1.0
+  repository: file://../base

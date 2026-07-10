@@ -1,0 +1,37 @@
+baseResources:
+  ingress:
+    ingressClassName: traefik
+    host: video.paul-steele.com
+    port: 80
+  services:
+    - ports:
+        - port: 80
+          targetPort: 8096
+  deployment:
+    containers:
+    - image: jellyfin/jellyfin:10.11.11
+      name: jellyfin
+      envs:
+      - name: TZ
+        value: America/Indiana/Indianapolis
+      - name: JELLYFIN_PublishedServerUrl
+        value: https://video.paul-steele.com
+      ports:
+      - 8096
+      volumeMounts:
+      - config
+      - cache
+      - media
+  volumes:
+  - name: config
+    source:
+      nfs: /volume1/files/jellyfin/config
+    mountPath: /config
+  - name: cache
+    source:
+      nfs: /volume1/files/jellyfin/cache
+    mountPath: /cache
+  - name: media
+    source:
+      nfs: /volume1/files/media/video
+    mountPath: /media
