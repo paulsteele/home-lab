@@ -22,6 +22,8 @@ Then install/verify:
 - [SOPS](https://github.com/getsops/sops)
 - [age](https://github.com/FiloSottile/age)
 - `kubectl`, Helm 3, and [Helmfile](https://helmfile.readthedocs.io/)
+- `curl` and standard Linux disk tools (`lsblk`, `findmnt`, `dd`) for creating
+  Talos USB boot media
 - Network access from the ser2net pod to Alpine package repositories on first
   startup (the chart uses stock `alpine:3.22` and installs `ser2net` at runtime)
 
@@ -43,34 +45,47 @@ Run commands from the repository root. Discover the complete ordered workflow:
 
 ```sh
 task --list
-task --summary cluster:03-apply
+task --summary cluster:04-apply
 task --summary helmfile:apply
 ```
 
 The cluster workflow is intentionally ordered:
 
-1. `cluster:00-validate` — validate `talconfig.yaml` and print the generated
+1. `cluster:00-installer` — generate and flash Talos boot media.
+2. `cluster:01-validate` — validate `talconfig.yaml` and print the generated
    IP-to-host command inventory.
-2. `cluster:01-secrets` — create encrypted Talos PKI/NUT inputs when absent.
-3. `cluster:02-generate` — generate ignored per-node configs with talhelper.
-4. `cluster:03-apply` — explicitly confirm and apply Talos configs.
-5. `cluster:04-bootstrap` — explicitly bootstrap etcd once.
-6. `cluster:05-kubeconfig` — retrieve the ignored kubeconfig.
-7. `cluster:06-cilium` — install only Cilium through Helmfile.
-8. `cluster:07-health` — check Talos health.
-9. `cluster:08-workloads` — diff the remaining Helmfile releases.
+3. `cluster:02-secrets` — create encrypted Talos PKI/NUT inputs when absent.
+4. `cluster:03-generate` — generate ignored per-node configs with talhelper.
+5. `cluster:04-apply` — explicitly confirm and apply Talos configs.
+6. `cluster:05-bootstrap` — explicitly bootstrap etcd once.
+7. `cluster:06-kubeconfig` — retrieve the ignored kubeconfig.
+8. `cluster:07-cilium` — install only Cilium through Helmfile.
+9. `cluster:08-health` — check Talos health.
+10. `cluster:09-workloads` — diff the remaining Helmfile releases.
 
 Run a named task directly, for example:
 
 ```sh
-task cluster:00-validate
-task cluster:02-generate
-task cluster:03-apply CONFIRM=APPLY
+task cluster:01-validate
+task cluster:03-generate
+task cluster:04-apply CONFIRM=APPLY
+# Create and flash the custom Talos boot ISO:
+task cluster:00-installer
+# Preselect a known USB disk (the safety checks and FLASH confirmation still run):
+task cluster:00-installer DISK=/dev/sdb
 # Apply one node only:
-task cluster:03-apply NODE=azure CONFIRM=APPLY
+task cluster:04-apply NODE=azure CONFIRM=APPLY
 ```
 
-`cluster:03-apply` defaults to insecure maintenance-mode application because it
+`cluster:00-installer` generates the Image Factory ISO URL with `talhelper`,
+downloads it, and offers only unmounted removable/USB disks by default. It
+refuses the running system's disks, mounted disks, active swap, read-only disks,
+and non-removable/non-USB disks, then requires typing `FLASH` before writing.
+Use USB, PXE, or virtual media to boot each node into Talos maintenance mode;
+the later `cluster:04-apply` task installs the configured Talos image to the
+node's install disk.
+
+`cluster:04-apply` defaults to insecure maintenance-mode application because it
 is intended for a fresh rebuild. Review the command and type `APPLY`, or pass
 `CONFIRM=APPLY` in a controlled noninteractive invocation.
 
@@ -96,7 +111,7 @@ task helmfile:apply RELEASE=ser2net SKIP_DEPS=false
 
 `--skip-deps` is passed to Helmfile only when `SKIP_DEPS=true` (or when the
 interactive prompt is answered yes). Apply always uses Helmfile's interactive
-confirmation. `cluster:06-cilium` calls this same shared runner with
+confirmation. `cluster:07-cilium` calls this same shared runner with
 `RELEASE=cilium`; it does not maintain a separate Helm installation path.
 
 All Kubernetes releases, including `ser2net`, must be managed through
@@ -130,7 +145,7 @@ address `192.168.0.11`.
 To create missing encrypted inputs:
 
 ```sh
-task cluster:01-secrets
+task cluster:02-secrets
 ```
 
 The task encrypts from the repository root using `.sops.yaml`. To edit the NUT
@@ -145,7 +160,15 @@ sops --config .sops.yaml talos/talenv.sops.yaml
 This procedure erases the configured node disks. Back up any data not stored on
 Synology NFS first.
 
-1. Boot every node into Talos maintenance mode.
+1. Create boot media and boot every node into Talos maintenance mode. Use the
+   interactive task to download and flash the custom ISO:
+
+   ```sh
+   task cluster:00-installer
+   ```
+
+   Alternatively, use PXE or virtual media with the URL printed by
+   `talhelper genurl image`. The task will not write the running system disk.
 2. Verify each maintenance IP and disk:
 
    ```sh
@@ -157,32 +180,32 @@ Synology NFS first.
 4. Validate and generate configs:
 
    ```sh
-   task cluster:00-validate
-   task cluster:02-generate
+   task cluster:01-validate
+   task cluster:03-generate
    ```
 
 5. Apply the generated configs. The task derives every IP, hostname, role, and
    generated filename from `talconfig.yaml`:
 
    ```sh
-   task cluster:03-apply CONFIRM=APPLY
+   task cluster:04-apply CONFIRM=APPLY
    ```
 
    Apply the control plane first if performing the operation manually by node.
 6. Bootstrap etcd exactly once and retrieve kubeconfig:
 
    ```sh
-   task cluster:04-bootstrap CONFIRM=BOOTSTRAP
-   task cluster:05-kubeconfig
+   task cluster:05-bootstrap CONFIRM=BOOTSTRAP
+   task cluster:06-kubeconfig
    export KUBECONFIG="$PWD/talos/clusterconfig/kubeconfig"
    ```
 
 7. Install Cilium, check health, then reconcile workloads:
 
    ```sh
-   task cluster:06-cilium
-   task cluster:07-health
-   task cluster:08-workloads
+   task cluster:07-cilium
+   task cluster:08-health
+   task cluster:09-workloads
    task helmfile:apply
    ```
 
@@ -208,17 +231,17 @@ until repository access returns.
 4. Regenerate and apply the selected node config:
 
    ```sh
-   task cluster:02-generate
-   task cluster:03-apply NODE=<hostname-or-ip> CONFIRM=APPLY
+   task cluster:03-generate
+   task cluster:04-apply NODE=<hostname-or-ip> CONFIRM=APPLY
    ```
 
-5. Run `task cluster:07-health`, then use the shared Helmfile diff/apply tasks
+5. Run `task cluster:08-health`, then use the shared Helmfile diff/apply tasks
    to reconcile workloads.
 
 ## Talos upgrades
 
 Update `talosVersion`, `kubernetesVersion`, and the schematic extension list in
 `talos/talconfig.yaml`, review the Helm compatibility document, then run
-`cluster:00-validate` and `cluster:02-generate`. Upgrade Talos nodes one at a
+`cluster:01-validate` and `cluster:03-generate`. Upgrade Talos nodes one at a
 time using the generated talhelper commands. Verify Cilium, NUT graceful
 shutdown, serial discovery, and workload readiness after each node.

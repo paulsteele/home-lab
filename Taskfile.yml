@@ -27,7 +27,19 @@ tasks:
           }
         done
 
-  cluster:00-validate:
+  cluster:00-installer:
+    desc: Generate, download, and safely flash the Talos boot ISO to USB
+    deps: [tools:check]
+    cmds:
+      - |
+        DISK='{{.DISK | default ""}}' \
+        NODE='{{.NODE | default ""}}' \
+        CONFIRM='{{.CONFIRM | default ""}}' \
+        bash scripts/flash-talos-installer.sh \
+          --config-file '{{.TALCONFIG}}' \
+          --env-file '{{.TALENV}}'
+
+  cluster:01-validate:
     desc: Validate talconfig.yaml and print its IP-to-host inventory
     deps: [tools:check]
     cmds:
@@ -40,7 +52,7 @@ tasks:
           --env-file {{.TALENV}} \
           --out-dir {{.CLUSTERCONFIG}}
 
-  cluster:01-secrets:
+  cluster:02-secrets:
     desc: Create encrypted Talos PKI and NUT environment inputs
     deps: [tools:check]
     cmds:
@@ -88,9 +100,9 @@ tasks:
         fi
         echo "Use: sops --config $root/{{.SOPS_CONFIG}} "$env_file""
 
-  cluster:02-generate:
+  cluster:03-generate:
     desc: Generate ignored per-node Talos configs with talhelper
-    deps: [cluster:00-validate, cluster:01-secrets]
+    deps: [cluster:01-validate, cluster:02-secrets]
     cmds:
       - |
         set -eu
@@ -107,9 +119,9 @@ tasks:
       - mkdir -p {{.CLUSTERCONFIG}}
       - talhelper genconfig --config-file {{.TALCONFIG}} --env-file {{.TALENV}} --secret-file {{.TALSECRET}} --out-dir {{.CLUSTERCONFIG}}
 
-  cluster:03-apply:
+  cluster:04-apply:
     desc: Apply Talos configs to all nodes or NODE=<hostname|ip> (destructive)
-    deps: [cluster:02-generate]
+    deps: [cluster:03-generate]
     cmds:
       - |
         set -eu
@@ -129,9 +141,9 @@ tasks:
         if [ "$insecure" = "true" ]; then set -- "$@" --extra-flags=--insecure; fi
         "$@" | bash
 
-  cluster:04-bootstrap:
+  cluster:05-bootstrap:
     desc: Bootstrap the configured single control plane exactly once
-    deps: [cluster:02-generate]
+    deps: [cluster:03-generate]
     cmds:
       - |
         set -eu
@@ -146,9 +158,9 @@ tasks:
           --env-file {{.TALENV}} \
           --out-dir {{.CLUSTERCONFIG}} | bash
 
-  cluster:05-kubeconfig:
+  cluster:06-kubeconfig:
     desc: Retrieve kubeconfig into ignored talos/clusterconfig/kubeconfig
-    deps: [cluster:02-generate]
+    deps: [cluster:03-generate]
     cmds:
       - mkdir -p {{.CLUSTERCONFIG}}
       - |
@@ -158,18 +170,18 @@ tasks:
           --out-dir {{.CLUSTERCONFIG}} \
           --extra-flags="--force {{.KUBECONFIG_FILE}}" | bash
 
-  cluster:06-cilium:
+  cluster:07-cilium:
     desc: Install only the Cilium Helmfile release before health checks
-    deps: [cluster:05-kubeconfig]
+    deps: [cluster:06-kubeconfig]
     cmds:
       - task: helmfile:apply
         vars:
           RELEASE: cilium
           SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
 
-  cluster:07-health:
+  cluster:08-health:
     desc: Check Talos health and verify gaming node placement
-    deps: [cluster:06-cilium]
+    deps: [cluster:07-cilium]
     cmds:
       - |
         talhelper gencommand health \
@@ -195,9 +207,9 @@ tasks:
         echo 'Gaming node label and taint verified:'
         kubectl get nodes -l gaming=true -o wide
 
-  cluster:08-workloads:
+  cluster:09-workloads:
     desc: Diff Helmfile releases after Cilium, optionally RELEASE=<name>
-    deps: [cluster:07-health]
+    deps: [cluster:08-health]
     cmds:
       - task: helmfile:diff
         vars:

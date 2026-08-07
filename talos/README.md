@@ -26,21 +26,26 @@ The root Taskfile is the operator interface:
 
 ```sh
 task --list
-task --summary cluster:00-validate
-task cluster:00-validate
-task cluster:02-generate
-task cluster:03-apply CONFIRM=APPLY
-task cluster:04-bootstrap CONFIRM=BOOTSTRAP
-task cluster:05-kubeconfig
-task cluster:06-cilium
-task cluster:07-health
-task cluster:08-workloads
+task --summary cluster:01-validate
+task cluster:00-installer
+task cluster:01-validate
+task cluster:03-generate
+task cluster:04-apply CONFIRM=APPLY
+task cluster:05-bootstrap CONFIRM=BOOTSTRAP
+task cluster:06-kubeconfig
+task cluster:07-cilium
+task cluster:08-health
+task cluster:09-workloads
 ```
 
-`cluster:03-apply` and `cluster:04-bootstrap` require explicit confirmation.
-The generated apply/bootstrap/health/kubeconfig commands come from
-`talhelper gencommand`, so adding or changing a node requires only editing
-`talconfig.yaml`.
+`cluster:00-installer`, `cluster:04-apply`, and `cluster:05-bootstrap` require
+explicit confirmation where they can overwrite media or change a node. The
+installer task runs `talhelper genurl image --boot-method iso`, downloads the
+custom ISO, and refuses the running system disk, mounted disks, active swap, and
+non-removable/non-USB disks before it allows flashing. Boot that ISO on each
+machine (or use PXE/virtual media) to enter maintenance mode. The generated
+apply/bootstrap/health/kubeconfig commands come from `talhelper gencommand`, so
+adding or changing a node requires only editing `talconfig.yaml`.
 
 ## Talhelper commands
 
@@ -50,6 +55,11 @@ inputs:
 ```sh
 talhelper validate talconfig talos/talconfig.yaml \
   --env-file talos/talenv.sops.yaml
+talhelper genurl image \
+  --config-file talos/talconfig.yaml \
+  --env-file talos/talenv.sops.yaml \
+  --boot-method iso \
+  --offline-mode
 talhelper genconfig \
   --config-file talos/talconfig.yaml \
   --env-file talos/talenv.sops.yaml \
@@ -73,12 +83,12 @@ The root SOPS configuration is intentionally the only configuration/key path.
 Create missing files with:
 
 ```sh
-task cluster:01-secrets
+task cluster:02-secrets
 sops --config .sops.yaml talos/talenv.sops.yaml
 ```
 
 The safe example has `NUT_SERVER_PASSWORD: CHANGE_ME`; replace it before
-`cluster:02-generate`. Never commit decrypted secret or generated config files.
+`cluster:03-generate`. Never commit decrypted secret or generated config files.
 
 ## Helmfile ordering
 
