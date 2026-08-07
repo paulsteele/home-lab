@@ -1,0 +1,287 @@
+version: '3'
+
+vars:
+  TALCONFIG: talos/talconfig.yaml
+  TALENV: talos/talenv.sops.yaml
+  TALSECRET: talos/talsecret.sops.yaml
+  CLUSTERCONFIG: talos/clusterconfig
+  SOPS_CONFIG: .sops.yaml
+  KUBECONFIG_FILE: talos/clusterconfig/kubeconfig
+
+tasks:
+  default:
+    desc: Show the ordered cluster and Helmfile tasks
+    cmds:
+      - task --list
+
+  tools:check:
+    internal: true
+    silent: true
+    cmds:
+      - |
+        set -eu
+        for tool in task talhelper sops age helm helmfile kubectl talosctl; do
+          command -v "$tool" >/dev/null 2>&1 || {
+            echo "Missing required tool: $tool" >&2
+            exit 1
+          }
+        done
+
+  cluster:00-validate:
+    desc: Validate talconfig.yaml and print its IP-to-host inventory
+    deps: [tools:check]
+    cmds:
+      - talhelper validate talconfig {{.TALCONFIG}} --env-file {{.TALENV}}
+      - |
+        echo ""
+        echo "Generated inventory commands:"
+        talhelper gencommand apply \
+          --config-file {{.TALCONFIG}} \
+          --env-file {{.TALENV}} \
+          --out-dir {{.CLUSTERCONFIG}}
+
+  cluster:01-secrets:
+    desc: Create encrypted Talos PKI and NUT environment inputs
+    deps: [tools:check]
+    cmds:
+      - |
+        set -eu
+        root='{{.ROOT_DIR}}'
+        secret_file='{{.TALSECRET}}'
+        env_file='{{.TALENV}}'
+        tmp_secret=''
+        tmp_env=''
+        cleanup() { rm -f "$tmp_secret" "$tmp_env"; }
+        trap cleanup EXIT
+        case "$secret_file" in /*) ;; *) secret_file="$root/$secret_file" ;; esac
+        case "$env_file" in /*) ;; *) env_file="$root/$env_file" ;; esac
+        if [ ! -f "$secret_file" ]; then
+          tmp_secret=$(mktemp "$root/.talsecret.XXXXXX.yaml")
+          talhelper gensecret > "$tmp_secret"
+          sops --config "$root/{{.SOPS_CONFIG}}" --encrypt \
+            --input-type yaml --output-type yaml "$tmp_secret" > "$secret_file"
+          echo "Created encrypted $secret_file"
+        else
+          echo "Keeping existing $secret_file"
+        fi
+        if [ ! -f "$env_file" ]; then
+          password="${NUT_SERVER_PASSWORD:-}"
+          if [ -z "$password" ]; then
+            printf 'NUT server password: ' >&2
+            stty -echo
+            IFS= read -r password
+            stty echo
+            printf '\n' >&2
+          fi
+          tmp_env=$(mktemp "$root/.talenv.XXXXXX.yaml")
+          {
+            printf 'NUT_SERVER_ADDRESS: %s\n' "${NUT_SERVER_ADDRESS:-192.168.0.101}"
+            printf 'NUT_UPS_NAME: %s\n' "${NUT_UPS_NAME:-ups}"
+            printf 'NUT_SERVER_USER: %s\n' "${NUT_SERVER_USER:-monuser}"
+            printf 'NUT_SERVER_PASSWORD: %s\n' "$password"
+          } > "$tmp_env"
+          sops --config "$root/{{.SOPS_CONFIG}}" --encrypt \
+            --input-type yaml --output-type yaml "$tmp_env" > "$env_file"
+          echo "Created encrypted $env_file"
+        else
+          echo "Keeping existing $env_file"
+        fi
+        echo "Use: sops --config $root/{{.SOPS_CONFIG}} "$env_file""
+
+  cluster:02-generate:
+    desc: Generate ignored per-node Talos configs with talhelper
+    deps: [cluster:00-validate, cluster:01-secrets]
+    cmds:
+      - |
+        set -eu
+        case '{{.TALENV}}' in
+          *.example) ;;
+          *)
+            if sops --config '{{.SOPS_CONFIG}}' --decrypt '{{.TALENV}}' | grep -q 'NUT_SERVER_PASSWORD: CHANGE_ME'; then
+              echo 'Replace CHANGE_ME in talos/talenv.sops.yaml before generating configs.' >&2
+              exit 1
+            fi
+            ;;
+        esac
+      - rm -rf {{.CLUSTERCONFIG}}
+      - mkdir -p {{.CLUSTERCONFIG}}
+      - talhelper genconfig --config-file {{.TALCONFIG}} --env-file {{.TALENV}} --secret-file {{.TALSECRET}} --out-dir {{.CLUSTERCONFIG}}
+
+  cluster:03-apply:
+    desc: Apply Talos configs to all nodes or NODE=<hostname|ip> (destructive)
+    deps: [cluster:02-generate]
+    cmds:
+      - |
+        set -eu
+        node='{{.NODE | default ""}}'
+        insecure='{{.INSECURE | default "true"}}'
+        confirmation='{{.CONFIRM | default ""}}'
+        if [ "$confirmation" != "APPLY" ]; then
+          printf 'This installs Talos and may erase the selected node disk. Type APPLY to continue: ' >&2
+          IFS= read -r confirmation
+        fi
+        [ "$confirmation" = "APPLY" ] || { echo 'Aborted.' >&2; exit 1; }
+        set -- talhelper gencommand apply \
+          --config-file {{.TALCONFIG}} \
+          --env-file {{.TALENV}} \
+          --out-dir {{.CLUSTERCONFIG}}
+        if [ -n "$node" ]; then set -- "$@" --node "$node"; fi
+        if [ "$insecure" = "true" ]; then set -- "$@" --extra-flags=--insecure; fi
+        "$@" | bash
+
+  cluster:04-bootstrap:
+    desc: Bootstrap the configured single control plane exactly once
+    deps: [cluster:02-generate]
+    cmds:
+      - |
+        set -eu
+        confirmation='{{.CONFIRM | default ""}}'
+        if [ "$confirmation" != "BOOTSTRAP" ]; then
+          printf 'Bootstrap etcd on the configured control plane now? Type BOOTSTRAP to continue: ' >&2
+          IFS= read -r confirmation
+        fi
+        [ "$confirmation" = "BOOTSTRAP" ] || { echo 'Aborted.' >&2; exit 1; }
+        talhelper gencommand bootstrap \
+          --config-file {{.TALCONFIG}} \
+          --env-file {{.TALENV}} \
+          --out-dir {{.CLUSTERCONFIG}} | bash
+
+  cluster:05-kubeconfig:
+    desc: Retrieve kubeconfig into ignored talos/clusterconfig/kubeconfig
+    deps: [cluster:02-generate]
+    cmds:
+      - mkdir -p {{.CLUSTERCONFIG}}
+      - |
+        talhelper gencommand kubeconfig \
+          --config-file {{.TALCONFIG}} \
+          --env-file {{.TALENV}} \
+          --out-dir {{.CLUSTERCONFIG}} \
+          --extra-flags="--force {{.KUBECONFIG_FILE}}" | bash
+
+  cluster:06-cilium:
+    desc: Install only the Cilium Helmfile release before health checks
+    deps: [cluster:05-kubeconfig]
+    cmds:
+      - task: helmfile:apply
+        vars:
+          RELEASE: cilium
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
+
+  cluster:07-health:
+    desc: Check Talos health and verify gaming node placement
+    deps: [cluster:06-cilium]
+    cmds:
+      - |
+        talhelper gencommand health \
+          --config-file {{.TALCONFIG}} \
+          --env-file {{.TALENV}} \
+          --out-dir {{.CLUSTERCONFIG}} | bash
+      - |
+        set -eu
+        export KUBECONFIG='{{.KUBECONFIG_FILE}}'
+        gaming_count=$(kubectl get nodes -l gaming=true --no-headers | wc -l | tr -d ' ')
+        [ "$gaming_count" = 1 ] || {
+          echo "Expected exactly one gaming=true node; found $gaming_count." >&2
+          kubectl get nodes --show-labels >&2
+          exit 1
+        }
+        gaming_taints=$(kubectl get nodes -l gaming=true \
+          -o jsonpath='{range .items[*].spec.taints[*]}{.key}={.value}:{.effect}{"\n"}{end}')
+        printf '%s\n' "$gaming_taints" | grep -Fx 'gaming=true:NoSchedule' >/dev/null || {
+          echo 'The gaming node is missing gaming=true:NoSchedule.' >&2
+          kubectl get nodes -l gaming=true -o custom-columns='NAME:.metadata.name,TAINTS:.spec.taints' >&2
+          exit 1
+        }
+        echo 'Gaming node label and taint verified:'
+        kubectl get nodes -l gaming=true -o wide
+
+  cluster:08-workloads:
+    desc: Diff Helmfile releases after Cilium, optionally RELEASE=<name>
+    deps: [cluster:07-health]
+    cmds:
+      - task: helmfile:diff
+        vars:
+          RELEASE: '{{.RELEASE | default ""}}'
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
+
+  helmfile:diff:
+    desc: Diff all or one Helmfile release; prompts for release and --skip-deps
+    deps: [tools:check]
+    cmds:
+      - task: helmfile:run
+        vars:
+          MODE: diff
+          RELEASE: '{{.RELEASE | default ""}}'
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
+
+  helmfile:apply:
+    desc: Apply all or one Helmfile release with explicit confirmation
+    deps: [tools:check]
+    cmds:
+      - task: helmfile:run
+        vars:
+          MODE: apply
+          RELEASE: '{{.RELEASE | default ""}}'
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
+
+  helmfile:template:
+    desc: Render all or one Helmfile release for compatibility checks
+    deps: [tools:check]
+    cmds:
+      - task: helmfile:run
+        vars:
+          MODE: template
+          RELEASE: '{{.RELEASE | default ""}}'
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'
+
+  helmfile:build:
+    desc: Build Helmfile dependencies and expose stale chart locks
+    deps: [tools:check]
+    cmds:
+      - helmfile build
+
+  helmfile:run:
+    internal: true
+    cmds:
+      - |
+        set -eu
+        mode='{{.MODE}}'
+        release='{{.RELEASE | default ""}}'
+        skip_deps='{{.SKIP_DEPS | default ""}}'
+        if [ -f '{{.KUBECONFIG_FILE}}' ]; then
+          export KUBECONFIG='{{.KUBECONFIG_FILE}}'
+        fi
+        if [ -z "$release" ]; then
+          echo "Available Helmfile releases:"
+          helmfile list --skip-charts
+          printf 'Release name (blank for all): ' >&2
+          IFS= read -r release
+        fi
+        if [ -z "$skip_deps" ]; then
+          printf 'Use --skip-deps and skip repository/dependency updates? [y/N]: ' >&2
+          IFS= read -r answer
+          case "$answer" in
+            y|Y|yes|YES) skip_deps=true ;;
+            *) skip_deps=false ;;
+          esac
+        fi
+        set -- helmfile "$mode"
+        if [ -n "$release" ] && [ "$release" != "all" ]; then
+          set -- "$@" --selector "name=$release"
+        fi
+        if [ "$skip_deps" = "true" ] || [ "$skip_deps" = "1" ]; then
+          set -- "$@" --skip-deps
+        fi
+        if [ "$mode" = "apply" ]; then
+          set -- "$@" --interactive
+        fi
+        echo "Running: $*"
+        "$@"
+
+  helmfile:apply-release:
+    desc: Apply one Helmfile release noninteractively with RELEASE=<name>
+    cmds:
+      - task: helmfile:apply
+        vars:
+          RELEASE: '{{.RELEASE}}'
+          SKIP_DEPS: '{{.SKIP_DEPS | default ""}}'

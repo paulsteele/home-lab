@@ -3,6 +3,7 @@ htpasswd
 **/output/**
 output.yaml
 **/secrets/**
+ansible/group_vars/all/ups.yaml
 .mypy_cache
 .vscode
 dhall/dependencies**
@@ -12,3 +13,6 @@ secrets.yaml.dec
 .idea
 admin.conf
 join-command.sh
+talos/clusterconfig/
+.talenv.*.yaml
+.talsecret.*.yaml

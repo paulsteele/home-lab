@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ser2net.name" . }}-snippets
+  labels:
+    {{- include "ser2net.labels" . | nindent 4 }}
+data:
+  # The key is selected by the USB vendor/product IDs discovered on the host.
+  {{- if not .Values.serialMappings }}
+  _README: No USB serial mappings configured yet.
+  {{- end }}
+  {{- range .Values.serialMappings }}
+  {{- if and .vendorId .productId }}
+  {{ printf "%s:%s.yaml" .vendorId .productId | quote }}: |-
+    connection: &{{ .name }}
+      accepter: ipv4,tcp,{{ .port }}
+      enable: on
+      connector: serialdev,DEVNODE,{{ default "115200n81,local,nobreak" .serialOptions }}
+      options:
+        kickolduser: true
+  {{- end }}
+  {{- end }}

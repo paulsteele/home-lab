@@ -1,0 +1,7 @@
+# Copy this shape into the encrypted talos/talenv.sops.yaml via:
+#   task cluster:01-secrets
+# This example contains no usable credential.
+NUT_SERVER_ADDRESS: 192.168.0.101
+NUT_UPS_NAME: ups
+NUT_SERVER_USER: monuser
+NUT_SERVER_PASSWORD: CHANGE_ME

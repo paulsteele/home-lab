@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ser2net
+description: USB serial-to-TCP bridge for serial-capable Talos nodes
+type: application
+version: 0.1.0
+appVersion: 4.6.4

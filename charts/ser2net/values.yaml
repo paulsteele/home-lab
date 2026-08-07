@@ -1,0 +1,51 @@
+# Stock Alpine; the startup script installs ser2net from Alpine's package
+# repository before discovering the host's USB serial devices.
+image:
+  repository: alpine
+  tag: "3.22"
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+# The current single control plane owns the physical serial adapters. Use the
+# standard hostname label so this remains a node-configured, not custom,
+# scheduling label.
+nodeSelector:
+  kubernetes.io/hostname: azure
+
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: homelab.paul-steele.com/control-plane
+    operator: Equal
+    value: reserved
+    effect: NoSchedule
+
+service:
+  type: ClusterIP
+  ports:
+    - name: zwave
+      port: 3333
+      targetPort: 3333
+      protocol: TCP
+    - name: zigbee
+      port: 3334
+      targetPort: 3334
+      protocol: TCP
+
+# The startup script looks for /etc/ser2net/snippets/<vendor>:<product>.yaml.
+# Fill these IDs from the physical USB devices before enabling the bridge. Do not
+# use ttyUSB numbers here: those can change across reboots and node replacement.
+serialMappings: []
+# Example:
+# serialMappings:
+#   - name: zwave
+#     vendorId: "0658"
+#     productId: "0200"
+#     port: 3333
+#     serialOptions: 115200n81,local,nobreak
+#   - name: zigbee
+#     vendorId: "10c4"
+#     productId: "ea60"
+#     port: 3334
+#     serialOptions: 57600n81,local,nobreak

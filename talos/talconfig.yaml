@@ -1,0 +1,114 @@
+---
+clusterName: home-lab
+talosVersion: v1.13.7
+kubernetesVersion: v1.36.2
+# Keep the real, reachable single-control-plane endpoint here.
+endpoint: https://192.168.0.11:6443
+# Cilium is installed by Helmfile after Talos bootstrap.
+cniConfig:
+  name: none
+# Preserve the existing control-plane-only scheduling behavior.
+allowSchedulingOnControlPlanes: false
+
+# Common Talos settings are inline and apply to every generated node config.
+patches:
+  - |-
+    cluster:
+      proxy:
+        disabled: true
+  - |-
+    machine:
+      kubelet:
+        extraConfig:
+          shutdownGracePeriod: 60s
+          shutdownGracePeriodCriticalPods: 20s
+
+controlPlane:
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/nut-client
+  extensionServices:
+    - name: nut-client
+      configFiles:
+        - content: |-
+            MONITOR ${NUT_UPS_NAME}@${NUT_SERVER_ADDRESS} 1 ${NUT_SERVER_USER} ${NUT_SERVER_PASSWORD} secondary
+            SHUTDOWNCMD "/sbin/poweroff"
+
+            MINSUPPLIES 1
+            POWERDOWNFLAG /etc/killpower
+            FINALDELAY 5
+
+            POLLFREQ 5
+            POLLFREQALERT 5
+            DEADTIME 15
+            HOSTSYNC 15
+            MAXAGE 15
+
+            NOTIFYFLAG ONLINE SYSLOG+WALL
+            NOTIFYFLAG ONBATT SYSLOG+WALL
+            NOTIFYFLAG LOWBATT SYSLOG+WALL
+            NOTIFYFLAG FSD SYSLOG+WALL
+            NOTIFYFLAG COMMOK SYSLOG+WALL
+            NOTIFYFLAG COMMBAD SYSLOG+WALL
+          mountPath: /usr/local/etc/nut/upsmon.conf
+
+worker:
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/nut-client
+  extensionServices:
+    - name: nut-client
+      configFiles:
+        - content: |-
+            MONITOR ${NUT_UPS_NAME}@${NUT_SERVER_ADDRESS} 1 ${NUT_SERVER_USER} ${NUT_SERVER_PASSWORD} secondary
+            SHUTDOWNCMD "/sbin/poweroff"
+
+            MINSUPPLIES 1
+            POWERDOWNFLAG /etc/killpower
+            FINALDELAY 5
+
+            POLLFREQ 5
+            POLLFREQALERT 5
+            DEADTIME 15
+            HOSTSYNC 15
+            MAXAGE 15
+
+            NOTIFYFLAG ONLINE SYSLOG+WALL
+            NOTIFYFLAG ONBATT SYSLOG+WALL
+            NOTIFYFLAG LOWBATT SYSLOG+WALL
+            NOTIFYFLAG FSD SYSLOG+WALL
+            NOTIFYFLAG COMMOK SYSLOG+WALL
+            NOTIFYFLAG COMMBAD SYSLOG+WALL
+          mountPath: /usr/local/etc/nut/upsmon.conf
+
+# This is the complete IP -> hostname/role/disk/label inventory.
+nodes:
+  - hostname: azure
+    ipAddress: 192.168.0.11
+    controlPlane: true
+    installDisk: /dev/sda
+    # Use the standard node identity label for the single serial-capable
+    # control-plane node; it is safe to set from the node machine config.
+    nodeLabels:
+      kubernetes.io/hostname: azure
+  - hostname: blitz
+    ipAddress: 192.168.0.12
+    controlPlane: false
+    installDisk: /dev/sda
+    # Preserve the current gaming workload placement after the Talos rebuild.
+    nodeLabels:
+      gaming: "true"
+    nodeTaints:
+      gaming: "true:NoSchedule"
+  - hostname: cyclone
+    ipAddress: 192.168.0.13
+    controlPlane: false
+    installDisk: /dev/sda
+  - hostname: duo
+    ipAddress: 192.168.0.14
+    controlPlane: false
+    installDisk: /dev/sda

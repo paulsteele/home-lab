@@ -1,37 +1,224 @@
 # Home-Lab Setup
 
-## Dependencies
-* [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
-* [Helm 3](https://helm.sh/)
-* [sops](https://github.com/mozilla/sops)
-* [helmfile](https://github.com/roboll/helmfile)
-* [ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+This repository manages a Talos Linux Kubernetes cluster and its Helmfile
+workloads. The node inventory and desired Talos state live in
+`talos/talconfig.yaml`; `talhelper` generates the machine configs and commands.
+The standard operator entrypoint is the root `Taskfile.yml`.
 
-## Helm Plugins
-* [helm secrets](https://github.com/jkroepke/helm-secrets)
-  * `helm plugin install https://github.com/jkroepke/helm-secrets`
-* [helm diff](https://github.com/databus23/helm-diff)
-  * `helm plugin install https://github.com/databus23/helm-diff --version master`
-* [helm git](https://github.com/aslafy-z/helm-git)
-  * `helm plugin install https://github.com/aslafy-z/helm-git`
+## Required tools
 
-## Updating Cluster
-`helmfile diff` to preview changes
-`helmfile apply` to apply changes
+Install these on the workstation used to manage the cluster. For example:
 
-# Cluster Setup
+```sh
+# Task's official installer; put it somewhere on PATH.
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b "$HOME/.local/bin"
+```
 
-* Install Operating System on Node
-  * Holding ALT will enter boot menu for mac mini 2016s
-  * Spam F2 will enter boot menu for nuc
-* Deselect all desktop environments
-* Select SSH tools
+Then install/verify:
 
-* ```ssh-copy-id -i ~/.ssh/[].pub [node-ip]```
-* add node ip to inventory
-* ```ansible-playbook 01-sudo.yaml -K```
-* ```ansible-playbook 02-nodes.yaml```
-* ```ansible-playbook 03-master.yaml```
-* ```ansible-playbook 04-ser2net.yaml```
-* ```ansible-playbook 05-join-generation.yaml```
-* ```ansible-playbook 06-join-execution.yaml```
+- [Task](https://taskfile.dev/installation/)
+- [talhelper](https://budimanjojo.github.io/talhelper/latest/installation/)
+- [talosctl](https://www.talos.dev/latest/introduction/quickstart/)
+- [SOPS](https://github.com/getsops/sops)
+- [age](https://github.com/FiloSottile/age)
+- `kubectl`, Helm 3, and [Helmfile](https://helmfile.readthedocs.io/)
+- Network access from the ser2net pod to Alpine package repositories on first
+  startup (the chart uses stock `alpine:3.22` and installs `ser2net` at runtime)
+
+SOPS and age must be able to use the same age private key that decrypts this
+repository's Helm secrets. The repository-root `.sops.yaml` is the only SOPS
+configuration; do not create a second Talos-specific key or `.sops.yaml`.
+
+Install the Helm plugins used by Helmfile:
+
+```sh
+helm plugin install https://github.com/jkroepke/helm-secrets
+helm plugin install https://github.com/databus23/helm-diff --version master
+helm plugin install https://github.com/aslafy-z/helm-git
+```
+
+## Task CLI
+
+Run commands from the repository root. Discover the complete ordered workflow:
+
+```sh
+task --list
+task --summary cluster:03-apply
+task --summary helmfile:apply
+```
+
+The cluster workflow is intentionally ordered:
+
+1. `cluster:00-validate` — validate `talconfig.yaml` and print the generated
+   IP-to-host command inventory.
+2. `cluster:01-secrets` — create encrypted Talos PKI/NUT inputs when absent.
+3. `cluster:02-generate` — generate ignored per-node configs with talhelper.
+4. `cluster:03-apply` — explicitly confirm and apply Talos configs.
+5. `cluster:04-bootstrap` — explicitly bootstrap etcd once.
+6. `cluster:05-kubeconfig` — retrieve the ignored kubeconfig.
+7. `cluster:06-cilium` — install only Cilium through Helmfile.
+8. `cluster:07-health` — check Talos health.
+9. `cluster:08-workloads` — diff the remaining Helmfile releases.
+
+Run a named task directly, for example:
+
+```sh
+task cluster:00-validate
+task cluster:02-generate
+task cluster:03-apply CONFIRM=APPLY
+# Apply one node only:
+task cluster:03-apply NODE=azure CONFIRM=APPLY
+```
+
+`cluster:03-apply` defaults to insecure maintenance-mode application because it
+is intended for a fresh rebuild. Review the command and type `APPLY`, or pass
+`CONFIRM=APPLY` in a controlled noninteractive invocation.
+
+## Helmfile selection and dependencies
+
+The shared Helmfile Task runner supports all releases or one named release. If
+`RELEASE` and `SKIP_DEPS` are omitted, it displays the available releases and
+prompts for both choices:
+
+```sh
+task helmfile:diff
+task helmfile:apply
+```
+
+Use variables for automation or an explicit selection:
+
+```sh
+task helmfile:diff RELEASE=cilium SKIP_DEPS=true
+task helmfile:template RELEASE=ser2net SKIP_DEPS=true
+task helmfile:build
+task helmfile:apply RELEASE=ser2net SKIP_DEPS=false
+```
+
+`--skip-deps` is passed to Helmfile only when `SKIP_DEPS=true` (or when the
+interactive prompt is answered yes). Apply always uses Helmfile's interactive
+confirmation. `cluster:06-cilium` calls this same shared runner with
+`RELEASE=cilium`; it does not maintain a separate Helm installation path.
+
+All Kubernetes releases, including `ser2net`, must be managed through
+`helmfile.yaml`. Do not use ad-hoc `helm install` or `kubectl apply` for
+workloads.
+
+Before using Kubernetes v1.36.2, read:
+
+- `talos/helm-compatibility.md` for packages that still require upgrades or
+  compatibility testing.
+- `talos/workload-compatibility.md` for Talos host-device, NFS, and scheduling
+  assumptions.
+
+Cilium remains pinned to 1.20.0 because Cilium 1.13 only supports Kubernetes
+through v1.26. Cilium 1.20 requires the boolean
+`kubeProxyReplacement: true`; its API service host remains the real reachable
+address `192.168.0.11`.
+
+## Desired state and secrets
+
+- `talos/talconfig.yaml` is the central, reviewable IP-to-hostname/role/disk/
+  label mapping and Talos desired state.
+- `talos/talsecret.sops.yaml` contains generated Talos cluster PKI encrypted
+  with the repository-root age recipient.
+- `talos/talenv.sops.yaml` contains the NUT password and connection variables,
+  encrypted with that same recipient. Replace the safe `CHANGE_ME` placeholder
+  with `sops talos/talenv.sops.yaml` before generating configs.
+- `talos/clusterconfig/` contains talhelper-generated machine configs,
+  talosconfig, and kubeconfig. It is ignored and must never be committed.
+
+To create missing encrypted inputs:
+
+```sh
+task cluster:01-secrets
+```
+
+The task encrypts from the repository root using `.sops.yaml`. To edit the NUT
+input in place:
+
+```sh
+sops --config .sops.yaml talos/talenv.sops.yaml
+```
+
+## Full destructive rebuild
+
+This procedure erases the configured node disks. Back up any data not stored on
+Synology NFS first.
+
+1. Boot every node into Talos maintenance mode.
+2. Verify each maintenance IP and disk:
+
+   ```sh
+   talosctl get disks --insecure --nodes <node-ip>
+   ```
+
+   Confirm the `/dev/sda` values in `talos/talconfig.yaml` before applying.
+3. Ensure the NUT password is set in the encrypted environment file.
+4. Validate and generate configs:
+
+   ```sh
+   task cluster:00-validate
+   task cluster:02-generate
+   ```
+
+5. Apply the generated configs. The task derives every IP, hostname, role, and
+   generated filename from `talconfig.yaml`:
+
+   ```sh
+   task cluster:03-apply CONFIRM=APPLY
+   ```
+
+   Apply the control plane first if performing the operation manually by node.
+6. Bootstrap etcd exactly once and retrieve kubeconfig:
+
+   ```sh
+   task cluster:04-bootstrap CONFIRM=BOOTSTRAP
+   task cluster:05-kubeconfig
+   export KUBECONFIG="$PWD/talos/clusterconfig/kubeconfig"
+   ```
+
+7. Install Cilium, check health, then reconcile workloads:
+
+   ```sh
+   task cluster:06-cilium
+   task cluster:07-health
+   task cluster:08-workloads
+   task helmfile:apply
+   ```
+
+The control plane remains unschedulable through Talos's
+`allowSchedulingOnControlPlanes: false`; the standard
+`kubernetes.io/hostname: azure` selector for the serial node is declared in the
+same central file and used by the Helmfile-managed `ser2net` DaemonSet. The
+live gaming placement is also preserved centrally: `blitz` (`192.168.0.12`)
+receives the `gaming=true` label and `gaming=true:NoSchedule` taint used by
+Pufferpanel and Argo Workflows. The existing service endpoints are used by Home
+Assistant. The ser2net chart uses
+stock `alpine:3.22`; its mounted startup script installs Alpine's `ser2net`
+package and discovers USB devices, so no custom OCI image or Docker build is
+required. A pod recreated without network access cannot reinstall the package
+until repository access returns.
+
+## Replacing a node
+
+1. Drain or otherwise protect node-local workloads and data.
+2. Boot the replacement into Talos maintenance mode and verify its disk.
+3. Change only the node entry in `talos/talconfig.yaml` if the IP, hostname, or
+   disk changed.
+4. Regenerate and apply the selected node config:
+
+   ```sh
+   task cluster:02-generate
+   task cluster:03-apply NODE=<hostname-or-ip> CONFIRM=APPLY
+   ```
+
+5. Run `task cluster:07-health`, then use the shared Helmfile diff/apply tasks
+   to reconcile workloads.
+
+## Talos upgrades
+
+Update `talosVersion`, `kubernetesVersion`, and the schematic extension list in
+`talos/talconfig.yaml`, review the Helm compatibility document, then run
+`cluster:00-validate` and `cluster:02-generate`. Upgrade Talos nodes one at a
+time using the generated talhelper commands. Verify Cilium, NUT graceful
+shutdown, serial discovery, and workload readiness after each node.
