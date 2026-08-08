@@ -118,12 +118,16 @@ All Kubernetes releases, including `ser2net`, must be managed through
 `helmfile.yaml`. Do not use ad-hoc `helm install` or `kubectl apply` for
 workloads.
 
-Before using Kubernetes v1.36.2, read:
+Before using Kubernetes v1.35.4, read:
 
 - `talos/helm-compatibility.md` for packages that still require upgrades or
   compatibility testing.
 - `talos/workload-compatibility.md` for Talos host-device, NFS, and scheduling
   assumptions.
+
+The cluster uses upstream Talos v1.12.11 and Kubernetes v1.35.4 because the
+Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.
+Do not upgrade these nodes to Talos v1.13+ without a tested custom kernel.
 
 Cilium remains pinned to 1.20.0 because Cilium 1.13 only supports Kubernetes
 through v1.26. Cilium 1.20 requires the boolean

@@ -74,8 +74,9 @@ talhelper gencommand health --config-file talos/talconfig.yaml \
 ```
 
 Talhelper uses the node list for every generated command. It also creates the
-Talos Image Factory installer URL from the `nut-client` schematic, so no
-separate installer template or manually copied image URL is needed.
+Talos Image Factory installer URL from the declared `nut-client` and
+`realtek-firmware` schematic, so no separate installer template or manually
+copied image URL is needed.
 
 ## Secret setup
 

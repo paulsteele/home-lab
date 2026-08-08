@@ -36,5 +36,5 @@ kubectl -n default exec daemonset/ser2net -- cat /tmp/ser2net.yaml
 ```
 
 The final compatibility gate is a server-side dry run of the full Helmfile
-render against Kubernetes v1.36.2, followed by a real rollout and a Talos node
+render against Kubernetes v1.35.4, followed by a real rollout and a Talos node
 reboot test for NUT graceful shutdown, USB discovery, and Cilium recovery.

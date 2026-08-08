@@ -1,7 +1,8 @@
 ---
 clusterName: home-lab
-talosVersion: v1.13.7
-kubernetesVersion: v1.36.2
+# v1.12.11 keeps the upstream GCC/LTO_NONE kernel path required by the Intel Mac nodes.
+talosVersion: v1.12.11
+kubernetesVersion: v1.35.4
 # Keep the real, reachable single-control-plane endpoint here.
 endpoint: https://192.168.0.11:6443
 # Cilium is installed by Helmfile after Talos bootstrap.
@@ -29,6 +30,7 @@ controlPlane:
       systemExtensions:
         officialExtensions:
           - siderolabs/nut-client
+          - siderolabs/realtek-firmware
   extensionServices:
     - name: nut-client
       configFiles:
@@ -60,6 +62,7 @@ worker:
       systemExtensions:
         officialExtensions:
           - siderolabs/nut-client
+          - siderolabs/realtek-firmware
   extensionServices:
     - name: nut-client
       configFiles:
