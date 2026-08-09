@@ -106,7 +106,7 @@ nodes:
   - hostname: blitz
     ipAddress: 192.168.0.12
     controlPlane: false
-    installDisk: /dev/sda
+    installDisk: /dev/nvme0n1
     # Preserve the current gaming workload placement after the Talos rebuild.
     nodeLabels:
       gaming: "true"
