@@ -112,6 +112,18 @@ nodes:
       gaming: "true"
     nodeTaints:
       gaming: "true:NoSchedule"
+    # NodeRestriction prevents a worker kubelet from changing custom taints
+    # after registration. Seed this one during the initial Node registration;
+    # nodeTaints above remains the Talos desired state.
+    patches:
+      - |-
+          machine:
+            kubelet:
+              extraConfig:
+                registerWithTaints:
+                  - key: gaming
+                    value: "true"
+                    effect: NoSchedule
   - hostname: cyclone
     ipAddress: 192.168.0.13
     controlPlane: false
