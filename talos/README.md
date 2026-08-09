@@ -42,8 +42,10 @@ task cluster:09-workloads
 explicit confirmation where they can overwrite media or change a node. The
 installer task runs `talhelper genurl image --boot-method iso`, downloads the
 custom ISO, and refuses the running system disk, mounted disks, active swap, and
-non-removable/non-USB disks before it allows flashing. Boot that ISO on each
-machine (or use PXE/virtual media) to enter maintenance mode. The generated
+non-removable/non-USB disks before it allows flashing. The schematic explicitly
+selects Talos's GRUB bootloader because this Mac's Apple EFI rejects the default
+systemd-boot UKI handoff. Boot that ISO on each machine (or use PXE/virtual
+media) to enter maintenance mode. The generated
 apply/bootstrap/health/kubeconfig commands come from `talhelper gencommand`, so
 adding or changing a node requires only editing `talconfig.yaml`.
 

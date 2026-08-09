@@ -27,6 +27,9 @@ patches:
 controlPlane:
   schematic:
     customization:
+      # Apple EFI cannot execute the default systemd-boot UKI path reliably.
+      # Use the Talos GRUB path, which loads vmlinuz/initramfs directly.
+      bootloader: grub
       systemExtensions:
         officialExtensions:
           - siderolabs/nut-client
@@ -59,6 +62,8 @@ controlPlane:
 worker:
   schematic:
     customization:
+      # Keep the Mac-compatible GRUB boot path on every node image.
+      bootloader: grub
       systemExtensions:
         officialExtensions:
           - siderolabs/nut-client

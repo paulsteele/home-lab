@@ -127,7 +127,9 @@ Before using Kubernetes v1.35.4, read:
 
 The cluster uses upstream Talos v1.12.7 and Kubernetes v1.35.4 because the
 Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.
-Do not upgrade these nodes to Talos v1.13+ without a tested custom kernel.
+The Talos schematic also selects GRUB instead of the default systemd-boot UKI
+handoff after the Mac's EFI rejected the v1.12.7 UKI. Do not upgrade these nodes
+to Talos v1.13+ without a tested custom kernel.
 
 Cilium remains pinned to 1.20.0 because Cilium 1.13 only supports Kubernetes
 through v1.26. Cilium 1.20 requires the boolean
