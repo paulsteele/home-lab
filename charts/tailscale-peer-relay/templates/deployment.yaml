@@ -12,6 +12,14 @@ spec:
       labels:
         app: {{ .Values.relay.hostname }}
     spec:
+      securityContext:
+        sysctls:
+          - name: net.ipv4.ip_forward
+            value: "1"
+          - name: net.ipv6.conf.all.forwarding
+            value: "1"
+          - name: net.ipv6.conf.default.forwarding
+            value: "1"
       containers:
         - name: tailscale
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -58,10 +66,9 @@ spec:
                   - /bin/sh
                   - -c
                   - |
-                    {{- if .Values.relay.exitNode }}
-                    echo 1 > /proc/sys/net/ipv4/ip_forward
-                    echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
-                    {{- end }}
+                    # Forwarding is configured by Talos on the node. Kubernetes
+                    # mounts /proc/sys read-only here, so setting it in postStart
+                    # cannot work reliably.
                     for i in $(seq 1 120); do
                       if tailscale status --json 2>/dev/null | grep -qE '"BackendState":[[:space:]]*"Running"'; then
                         break

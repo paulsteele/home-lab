@@ -63,6 +63,10 @@ The cluster workflow is intentionally ordered:
 9. `cluster:08-health` — check Talos health.
 10. `cluster:09-workloads` — diff the remaining Helmfile releases.
 
+The stages after kubeconfig are intentionally independent: running
+`cluster:08-health` or `cluster:09-workloads` does not implicitly apply Cilium.
+Run `cluster:07-cilium`, then health, then workloads when bootstrapping.
+
 Run a named task directly, for example:
 
 ```sh
@@ -111,8 +115,12 @@ task helmfile:apply RELEASE=ser2net SKIP_DEPS=false
 
 `--skip-deps` is passed to Helmfile only when `SKIP_DEPS=true` (or when the
 interactive prompt is answered yes). Apply always uses Helmfile's interactive
-confirmation. `cluster:07-cilium` calls this same shared runner with
-`RELEASE=cilium`; it does not maintain a separate Helm installation path.
+confirmation. Named releases also include their declared Helmfile `needs`, so
+CRD providers are installed before their dependent resources. Diff validation
+against live API discovery is disabled so a first-run diff can render those
+resources before their CRDs exist. `cluster:07-cilium` calls this same shared
+runner with `RELEASE=cilium`; it does not maintain a separate Helm installation
+path.
 
 All Kubernetes releases, including `ser2net`, must be managed through
 `helmfile.yaml`. Do not use ad-hoc `helm install` or `kubectl apply` for

@@ -9,5 +9,5 @@ dependencies:
     version: 0.1.0
     repository: file://../base
   - name: cloudflare-tunnel-ingress-controller 
-    version: 0.0.9
+    version: 0.0.24
     repository: https://helm.strrl.dev 

@@ -6,3 +6,9 @@ baseResources:
     namespace: default
     domains:
     - '*.paul-steele.com'
+  # Kubernetes TLS Secrets are namespace-scoped. Argo's Ingress lives in ci,
+  # so it needs its own copy of the wildcard certificate.
+  - name: paul-steele.com
+    namespace: ci
+    domains:
+    - '*.paul-steele.com'

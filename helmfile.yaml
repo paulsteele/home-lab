@@ -29,6 +29,12 @@ repositories:
   url: https://helm.strrl.dev
 - name: blakeblackshear
   url: https://blakeblackshear.github.io/blakeshome-charts/
+
+# A first-run diff must also work before CRD-providing releases have been applied.
+helmDefaults:
+  diffArgs:
+    - --disable-validation
+
 releases:
 - name: automation
   namespace: default
@@ -45,6 +51,8 @@ releases:
 - name: ci
   namespace: ci
   chart: ./charts/argo
+  needs:
+    - default/certmanager-config
   secrets:
     - ./charts/argo/secrets.yaml
   values:
@@ -52,6 +60,8 @@ releases:
 - name: ci-workflows
   namespace: ci
   chart: ./charts/argo-workflows
+  needs:
+    - ci
   secrets:
     - ./charts/argo-workflows/secrets.yaml
 - name: dav
@@ -74,6 +84,8 @@ releases:
 - name: loadbalancer-config
   namespace: default
   chart: ./charts/metallb-configuration
+  needs:
+    - loadbalancer
 - name: gonic
   namespace: default
   chart: ./charts/gonic
@@ -108,6 +120,8 @@ releases:
 - name: certmanager-config
   namespace: default
   chart: ./charts/certmanager-config
+  needs:
+    - certmanager
 - name: tailscale-operator
   namespace: tailscale
   chart: ./charts/tailscale-operator
@@ -116,6 +130,8 @@ releases:
 - name: tailscale-config
   namespace: tailscale
   chart: ./charts/tailscale-config
+  needs:
+    - tailscale-operator
 - name: tailscale-peer-relay
   namespace: tailscale
   chart: ./charts/tailscale-peer-relay

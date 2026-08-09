@@ -171,7 +171,7 @@ tasks:
           --extra-flags="--force {{.KUBECONFIG_FILE}}" | bash
 
   cluster:07-cilium:
-    desc: Install only the Cilium Helmfile release before health checks
+    desc: Install only the Cilium Helmfile release
     deps: [cluster:06-kubeconfig]
     cmds:
       - task: helmfile:apply
@@ -181,7 +181,7 @@ tasks:
 
   cluster:08-health:
     desc: Check Talos health and verify gaming node placement
-    deps: [cluster:07-cilium]
+    deps: [cluster:06-kubeconfig]
     cmds:
       - |
         talhelper gencommand health \
@@ -208,8 +208,8 @@ tasks:
         kubectl get nodes -l gaming=true -o wide
 
   cluster:09-workloads:
-    desc: Diff Helmfile releases after Cilium, optionally RELEASE=<name>
-    deps: [cluster:08-health]
+    desc: Diff Helmfile releases after Cilium and health checks, optionally RELEASE=<name>
+    deps: [cluster:06-kubeconfig]
     cmds:
       - task: helmfile:diff
         vars:
@@ -279,7 +279,7 @@ tasks:
         fi
         set -- helmfile "$mode"
         if [ -n "$release" ] && [ "$release" != "all" ]; then
-          set -- "$@" --selector "name=$release"
+          set -- "$@" --selector "name=$release" --include-needs
         fi
         if [ "$skip_deps" = "true" ] || [ "$skip_deps" = "1" ]; then
           set -- "$@" --skip-deps

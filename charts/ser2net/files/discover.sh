@@ -17,6 +17,15 @@ for tty_path in /sys/class/tty/*; do
   [ -n "$real_device" ] || continue
   [ -d "$real_device" ] || continue
 
+  # Multi-interface USB serial devices, such as the HUSBZB-1, expose the
+  # same vendor/product IDs for each endpoint. Prefer the interface-specific
+  # mapping and retain the old vendor/product-only fallback for single-port
+  # devices.
+  interface_number=$(cat "$real_device/bInterfaceNumber" 2>/dev/null || true)
+  if [ -z "$interface_number" ]; then
+    interface_number=$(cat "$(dirname "$real_device")/bInterfaceNumber" 2>/dev/null || true)
+  fi
+
   subsystem=$(basename "$(readlink -f "$real_device/subsystem" 2>/dev/null || true)")
   case "$subsystem" in
     usb-serial) usbdir=$(dirname "$(dirname "$real_device")") ;;
@@ -28,10 +37,22 @@ for tty_path in /sys/class/tty/*; do
   [ -f "$usbdir/idVendor" ] || continue
   product_id=$(cat "$usbdir/idProduct")
   vendor_id=$(cat "$usbdir/idVendor")
-  snippet="$SNIPPETS_DIR/$vendor_id:$product_id.yaml"
+  snippet="$SNIPPETS_DIR/$vendor_id-$product_id.yaml"
+  if [ -n "$interface_number" ] && [ -f "$SNIPPETS_DIR/$vendor_id-$product_id-if$interface_number.yaml" ]; then
+    snippet="$SNIPPETS_DIR/$vendor_id-$product_id-if$interface_number.yaml"
+  fi
 
   if [ -f "$snippet" ]; then
-    sed "s#DEVNODE#/dev/$tty#g" "$snippet"
+    serial_device="/dev/$tty"
+    for stable_path in /dev/serial/by-id/*; do
+      [ -e "$stable_path" ] || continue
+      if [ "$(readlink -f "$stable_path" 2>/dev/null || true)" = "$serial_device" ]; then
+        serial_device="$stable_path"
+        break
+      fi
+    done
+    sed "s#DEVNODE#$serial_device#g" "$snippet"
+    printf '\n'
     found=1
   fi
 done

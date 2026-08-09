@@ -5,15 +5,20 @@ metadata:
   labels:
     {{- include "ser2net.labels" . | nindent 4 }}
 data:
-  # The key is selected by the USB vendor/product IDs discovered on the host.
+  # The key includes the USB interface because the HUSBZB-1 exposes two
+  # serial endpoints with the same vendor/product IDs.
   {{- if not .Values.serialMappings }}
   _README: No USB serial mappings configured yet.
   {{- end }}
   {{- range .Values.serialMappings }}
   {{- if and .vendorId .productId }}
-  {{ printf "%s:%s.yaml" .vendorId .productId | quote }}: |-
+  {{- if .interface }}
+  {{ printf "%s-%s-if%s.yaml" .vendorId .productId .interface | quote }}: |-
+  {{- else }}
+  {{ printf "%s-%s.yaml" .vendorId .productId | quote }}: |-
+  {{- end }}
     connection: &{{ .name }}
-      accepter: ipv4,tcp,{{ .port }}
+      accepter: tcp,{{ .port }}
       enable: on
       connector: serialdev,DEVNODE,{{ default "115200n81,local,nobreak" .serialOptions }}
       options:

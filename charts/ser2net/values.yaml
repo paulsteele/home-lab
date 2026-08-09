@@ -33,19 +33,19 @@ service:
       targetPort: 3334
       protocol: TCP
 
-# The startup script looks for /etc/ser2net/snippets/<vendor>:<product>.yaml.
-# Fill these IDs from the physical USB devices before enabling the bridge. Do not
-# use ttyUSB numbers here: those can change across reboots and node replacement.
-serialMappings: []
-# Example:
-# serialMappings:
-#   - name: zwave
-#     vendorId: "0658"
-#     productId: "0200"
-#     port: 3333
-#     serialOptions: 115200n81,local,nobreak
-#   - name: zigbee
-#     vendorId: "10c4"
-#     productId: "ea60"
-#     port: 3334
-#     serialOptions: 57600n81,local,nobreak
+# Match the USB interface number as well as vendor/product: the HUSBZB-1
+# exposes two serial interfaces with the same USB IDs. Do not use ttyUSB
+# numbers here: those can change across reboots and node replacement.
+serialMappings:
+  - name: zwave
+    vendorId: "10c4"
+    productId: "8a2a"
+    interface: "00"
+    port: 3333
+    serialOptions: 115200n81,local=true,nobreak=true
+  - name: zigbee
+    vendorId: "10c4"
+    productId: "8a2a"
+    interface: "01"
+    port: 3334
+    serialOptions: 57600n81,xonxoff=true,local=true,nobreak=true

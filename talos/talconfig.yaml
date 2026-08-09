@@ -19,10 +19,44 @@ patches:
         disabled: true
   - |-
     machine:
+      # The Tailscale peer-relay pod advertises an exit node and needs
+      # forwarding enabled in the node network namespace before the pod starts.
+      sysctls:
+        net.ipv4.ip_forward: "1"
+        net.ipv6.conf.all.forwarding: "1"
+        net.ipv6.conf.default.forwarding: "1"
       kubelet:
         extraConfig:
           shutdownGracePeriod: 60s
           shutdownGracePeriodCriticalPods: 20s
+          allowedUnsafeSysctls:
+            - net.ipv4.ip_forward
+            - net.ipv6.conf.all.forwarding
+            - net.ipv6.conf.default.forwarding
+  # These namespaces contain intentional host-integrated workloads such as the
+  # MetalLB speaker, ser2net, Frigate, and the Tailscale relay. Keep the
+  # baseline policy for all other namespaces.
+  - |-
+    cluster:
+      apiServer:
+        admissionControl:
+          - name: PodSecurity
+            configuration:
+              apiVersion: pod-security.admission.config.k8s.io/v1alpha1
+              defaults:
+                audit: restricted
+                audit-version: latest
+                enforce: baseline
+                enforce-version: latest
+                warn: restricted
+                warn-version: latest
+              exemptions:
+                namespaces:
+                  - default
+                  - tailscale
+                runtimeClasses: []
+                usernames: []
+              kind: PodSecurityConfiguration
 
 controlPlane:
   schematic:
