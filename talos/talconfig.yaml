@@ -1,7 +1,7 @@
 ---
 clusterName: home-lab
-# v1.12.11 keeps the upstream GCC/LTO_NONE kernel path required by the Intel Mac nodes.
-talosVersion: v1.12.11
+# v1.12.7 is the latest release explicitly confirmed to boot the affected Intel Mac models.
+talosVersion: v1.12.7
 kubernetesVersion: v1.35.4
 # Keep the real, reachable single-control-plane endpoint here.
 endpoint: https://192.168.0.11:6443

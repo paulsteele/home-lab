@@ -125,7 +125,7 @@ Before using Kubernetes v1.35.4, read:
 - `talos/workload-compatibility.md` for Talos host-device, NFS, and scheduling
   assumptions.
 
-The cluster uses upstream Talos v1.12.11 and Kubernetes v1.35.4 because the
+The cluster uses upstream Talos v1.12.7 and Kubernetes v1.35.4 because the
 Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.
 Do not upgrade these nodes to Talos v1.13+ without a tested custom kernel.
 

@@ -1,6 +1,6 @@
 # Helm compatibility gate for Kubernetes v1.35.4
 
-Talos is pinned to upstream v1.12.11 and the generated cluster is pinned to
+Talos is pinned to upstream v1.12.7 and the generated cluster is pinned to
 Kubernetes v1.35.4. This supported upstream line is selected for the Intel Mac
 nodes, whose Apple EFI firmware cannot boot the Clang/ThinLTO artifacts used by
 Talos v1.13+.
