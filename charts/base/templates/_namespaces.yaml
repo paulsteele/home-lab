@@ -1,0 +1,17 @@
+{{- define "base.namespaces" -}}
+{{- range $namespace := .Values.baseResources.namespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $namespace.name }}
+  {{- with $namespace.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $namespace.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+{{- end -}}

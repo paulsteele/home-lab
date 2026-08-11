@@ -1,36 +1,60 @@
 {{- define "base.services" -}}
-{{- range $index, $service:= .Values.baseResources.services }}
+{{- range $service := .Values.baseResources.services }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ default (include "base.name" $) $service.name }}
-  {{- if $service.annotations }}
+  {{- if $service.recommendedLabels }}
+  labels:
+    {{- include "base.recommendedLabels" $ | nindent 4 }}
+  {{- else }}
+  {{- with $service.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with $service.annotations }}
   annotations:
-    {{- range $key, $val := $service.annotations }}
-    {{ $key }}: "{{ $val }}"
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   ports:
-  {{- range $index, $port:= $service.ports }}
+  {{- range $index, $port := $service.ports }}
   - port: {{ $port.port }}
     protocol: {{ default "TCP" $port.protocol }}
     targetPort: {{ default $port.port $port.targetPort }}
-    name: port-{{ $index }}
+    name: {{ default (printf "port-%d" $index) $port.name }}
+    {{- with $port.appProtocol }}
+    appProtocol: {{ . }}
+    {{- end }}
+    {{- with $port.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
   {{- end }}
   {{- if not $service.hideSelector }}
   selector:
+    {{- if $service.recommendedSelectorLabels }}
+    {{- include "base.recommendedSelectorLabels" $ | nindent 4 }}
+    {{- else if $service.selector }}
+    {{- toYaml $service.selector | nindent 4 }}
+    {{- else }}
     app: {{ include "base.name" $ }}
+    {{- end }}
   {{- end }}
-  {{- if or $service.loadBalancerIP $service.loadBalancerClass }}
+  {{- if $service.type }}
+  type: {{ $service.type }}
+  {{- else if or $service.loadBalancerIP $service.loadBalancerClass }}
   type: LoadBalancer
   {{- end }}
-  {{- if $service.loadBalancerIP }}
-  loadBalancerIP: {{ $service.loadBalancerIP }}
+  {{- with $service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
   {{- end }}
-  {{- if $service.loadBalancerClass }}
-  loadBalancerClass: {{ $service.loadBalancerClass }}
+  {{- with $service.loadBalancerClass }}
+  loadBalancerClass: {{ . }}
+  {{- end }}
+  {{- with $service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ . }}
   {{- end }}
 ---
-{{- end -}}
+{{- end }}
 {{- end -}}

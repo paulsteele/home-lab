@@ -1,14 +1,46 @@
-{{- define "base.configmaps" -}}
-{{- range $index, $configmap := .Values.baseResources.configmaps }}
+{{- define "base.configmap" -}}
+{{- $root := .root -}}
+{{- $configmap := .configmap -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ $configmap.name }}
+  {{- if $configmap.recommendedLabels }}
+  labels:
+    {{- include "base.recommendedLabels" $root | nindent 4 }}
+  {{- else }}
+  {{- with $configmap.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- with $configmap.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 data:
-{{- range $index, $data := $configmap.data }}
-  {{ $data.name }}: |-
-    {{- $.Files.Get $data.file | nindent 6 }}
+{{- with $configmap.dataComment }}
+{{- . | nindent 2 }}
 {{- end }}
+{{- range $data := $configmap.data }}
+  {{- if $data.quoteName }}
+  {{ $data.name | quote }}: |-
+  {{- else }}
+  {{ $data.name }}: |-
+  {{- end }}
+  {{- if hasKey $data "value" }}
+{{ $data.value | toString | indent 4 }}
+  {{- else if $data.template }}
+{{ tpl $data.template $root | indent 4 }}
+  {{- else }}
+{{ $root.Files.Get $data.file | indent 4 }}
+  {{- end }}
+{{- end }}
+{{- end -}}
+
+{{- define "base.configmaps" -}}
+{{- range $configmap := .Values.baseResources.configmaps }}
+{{ include "base.configmap" (dict "root" $ "configmap" $configmap) }}
 ---
 {{- end }}
 {{- end -}}

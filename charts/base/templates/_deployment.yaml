@@ -1,17 +1,46 @@
 {{- define "base.deployment" -}}
+{{- $deployment := .Values.baseResources.deployment -}}
 apiVersion: apps/v1
 kind: Deployment
+{{ if $deployment.omitMetadataLabels }}
+metadata:
+  name: {{ include "base.name" . }}
+{{ else }}
 {{ include "base.metadata" . }}
+{{ end }}
 spec:
+  {{- if hasKey $deployment "replicas" }}
+  replicas: {{ $deployment.replicas }}
+  {{- else }}
   replicas: 1
+  {{- end }}
   selector:
     matchLabels:
       app: {{ include "base.name" . }}
+  {{- with $deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   template:
-    {{- include "base.metadata" . | nindent 4 }}
+    metadata:
+      {{- if not $deployment.omitPodName }}
+      name: {{ include "base.name" . }}
+      {{- end }}
+      labels:
+        {{- include "base.labels" . | nindent 8 }}
+        {{- with $deployment.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if or $deployment.podAnnotations $deployment.configMapChecksum }}
+      annotations:
+        {{- with $deployment.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if $deployment.configMapChecksum }}
+        checksum/configmaps: {{ include "base.configmaps" . | sha256sum }}
+        {{- end }}
+      {{- end }}
     spec:
-    {{- $data := dict -}}
-    {{- $_ := set $data "resource" .Values.baseResources.deployment -}}
-    {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
+    {{- $data := dict "resource" $deployment "volumes" .Values.baseResources.volumes -}}
     {{- include "base.deploymentSpec" $data | nindent 6 }}
 {{- end -}}

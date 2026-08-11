@@ -4,3 +4,7 @@ description: Self-hosted Tailscale peer relay exposed via MetalLB
 type: application
 version: 1.0.0
 appVersion: "1.96.5"
+dependencies:
+  - name: base
+    version: 0.1.0
+    repository: file://../base

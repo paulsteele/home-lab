@@ -1,8 +1,112 @@
-namespace:
-  name: privileged
-  labels:
-    home-lab.paul-steele.com/privileged: "true"
-
-policy:
-  name: privileged-workloads
+baseResources:
   deployerUsername: admin
+
+  namespaces:
+    - name: privileged
+      labels:
+        home-lab.paul-steele.com/privileged: "true"
+
+  validatingAdmissionPolicies:
+    - name: privileged-workloads
+      spec:
+        failurePolicy: Fail
+        matchConstraints:
+          resourceRules:
+            - apiGroups:
+                - ""
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - pods
+                - replicationcontrollers
+              scope: Namespaced
+            - apiGroups:
+                - apps
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - daemonsets
+                - deployments
+                - replicasets
+                - statefulsets
+              scope: Namespaced
+            - apiGroups:
+                - batch
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - cronjobs
+                - jobs
+              scope: Namespaced
+        validations:
+          - expression: >-
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'daemonsets' &&
+                object.metadata.name in ['ser2net', 'loadbalancer-metallb-speaker'] &&
+                request.userInfo.username == {{ .Values.baseResources.deployerUsername | quote }}
+              ) ||
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'deployments' &&
+                object.metadata.name in ['frigate', 'loadbalancer-metallb-controller'] &&
+                request.userInfo.username == {{ .Values.baseResources.deployerUsername | quote }}
+              ) ||
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'replicasets' &&
+                request.userInfo.username == 'system:serviceaccount:kube-system:deployment-controller' &&
+                has(object.metadata.ownerReferences) &&
+                object.metadata.ownerReferences.exists(ref,
+                  has(ref.controller) && ref.controller == true &&
+                  ref.apiVersion == 'apps/v1' && ref.kind == 'Deployment' &&
+                  ref.name in ['frigate', 'loadbalancer-metallb-controller']
+                )
+              ) ||
+              (
+                request.resource.group == '' &&
+                request.resource.resource == 'pods' &&
+                has(object.metadata.ownerReferences) &&
+                (
+                  (
+                    request.userInfo.username == 'system:serviceaccount:kube-system:replicaset-controller' &&
+                    object.metadata.ownerReferences.exists(ref,
+                      has(ref.controller) && ref.controller == true &&
+                      ref.apiVersion == 'apps/v1' && ref.kind == 'ReplicaSet' &&
+                      (ref.name.startsWith('frigate-') || ref.name.startsWith('loadbalancer-metallb-controller-'))
+                    )
+                  ) ||
+                  (
+                    request.userInfo.username == 'system:serviceaccount:kube-system:daemon-set-controller' &&
+                    object.metadata.ownerReferences.exists(ref,
+                      has(ref.controller) && ref.controller == true &&
+                      ref.apiVersion == 'apps/v1' && ref.kind == 'DaemonSet' &&
+                      ref.name in ['ser2net', 'loadbalancer-metallb-speaker']
+                    )
+                  )
+                )
+              )
+            message: >-
+              Only the approved ser2net, Frigate, and MetalLB workloads and their
+              controller-generated children may run in the privileged namespace.
+            reason: Forbidden
+
+  validatingAdmissionPolicyBindings:
+    - name: privileged-workloads
+      spec:
+        policyName: privileged-workloads
+        validationActions:
+          - Deny
+        matchResources:
+          namespaceSelector:
+            matchLabels:
+              home-lab.paul-steele.com/privileged: "true"

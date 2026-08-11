@@ -1,51 +1,120 @@
-# Stock Alpine; the startup script installs ser2net from Alpine's package
-# repository before discovering the host's USB serial devices.
-image:
-  repository: alpine
-  tag: "3.22"
-  pullPolicy: IfNotPresent
-imagePullSecrets: []
+baseResources:
+  name: ser2net
+  recommendedLabels: true
 
-# The current single control plane owns the physical serial adapters. Use the
-# standard hostname label so this remains a node-configured, not custom,
-# scheduling label.
-nodeSelector:
-  kubernetes.io/hostname: azure
+  configmaps:
+    snippets:
+      name: ser2net-snippets
+      recommendedLabels: true
+      dataComment: |-
+        # The key includes the USB interface because the HUSBZB-1 exposes two
+        # serial endpoints with the same vendor/product IDs.
+      data:
+        - name: 10c4-8a2a-if00.yaml
+          quoteName: true
+          value: |-
+            connection: &zwave
+              accepter: tcp,3333
+              enable: on
+              connector: serialdev,DEVNODE,115200n81,local=true,nobreak=true
+              options:
+                kickolduser: true
+        - name: 10c4-8a2a-if01.yaml
+          quoteName: true
+          value: |-
+            connection: &zigbee
+              accepter: tcp,3334
+              enable: on
+              connector: serialdev,DEVNODE,57600n81,xonxoff=true,local=true,nobreak=true
+              options:
+                kickolduser: true
+    scripts:
+      name: ser2net-scripts
+      recommendedLabels: true
+      data:
+        - name: entrypoint.sh
+          file: files/entrypoint.sh
+        - name: discover.sh
+          file: files/discover.sh
 
-tolerations:
-  - key: node-role.kubernetes.io/control-plane
-    operator: Exists
-    effect: NoSchedule
-  - key: homelab.paul-steele.com/control-plane
-    operator: Equal
-    value: reserved
-    effect: NoSchedule
+  services:
+    - name: ser2net
+      recommendedLabels: true
+      type: ClusterIP
+      recommendedSelectorLabels: true
+      ports:
+        - name: zwave
+          port: 3333
+          targetPort: 3333
+          protocol: TCP
+        - name: zigbee
+          port: 3334
+          targetPort: 3334
+          protocol: TCP
 
-service:
-  type: ClusterIP
-  ports:
-    - name: zwave
-      port: 3333
-      targetPort: 3333
-      protocol: TCP
-    - name: zigbee
-      port: 3334
-      targetPort: 3334
-      protocol: TCP
+  daemonset:
+    recommendedSelectorLabels: true
+    configMapChecksums:
+      snippets: /configmap.yaml
+      scripts: /scripts-configmap.yaml
+    hostNetwork: true
+    dnsPolicy: ClusterFirstWithHostNet
+    nodeSelector:
+      kubernetes.io/hostname: azure
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: homelab.paul-steele.com/control-plane
+        operator: Equal
+        value: reserved
+        effect: NoSchedule
+    containers:
+      - name: ser2net
+        image: alpine:3.22
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - /usr/local/libexec/ser2net/entrypoint.sh
+        securityContext:
+          privileged: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        volumeMounts:
+          - scripts
+          - host-dev
+          - host-sys
+          - snippets
 
-# Match the USB interface number as well as vendor/product: the HUSBZB-1
-# exposes two serial interfaces with the same USB IDs. Do not use ttyUSB
-# numbers here: those can change across reboots and node replacement.
-serialMappings:
-  - name: zwave
-    vendorId: "10c4"
-    productId: "8a2a"
-    interface: "00"
-    port: 3333
-    serialOptions: 115200n81,local=true,nobreak=true
-  - name: zigbee
-    vendorId: "10c4"
-    productId: "8a2a"
-    interface: "01"
-    port: 3334
-    serialOptions: 57600n81,xonxoff=true,local=true,nobreak=true
+  volumes:
+    - name: scripts
+      mountPath: /usr/local/libexec/ser2net
+      readOnly: true
+      source:
+        configmap:
+          name: ser2net-scripts
+          defaultMode: 365
+    - name: host-dev
+      mountPath: /dev
+      source:
+        hostPath:
+          path: /dev
+          type: Directory
+    - name: host-sys
+      mountPath: /sys
+      readOnly: true
+      source:
+        hostPath:
+          path: /sys
+          type: Directory
+    - name: snippets
+      mountPath: /etc/ser2net/snippets
+      readOnly: true
+      source:
+        configmap:
+          name: ser2net-snippets
+          defaultMode: 292

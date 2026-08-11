@@ -34,6 +34,8 @@ repositories:
 helmDefaults:
   diffArgs:
     - --disable-validation
+    # Ignore YAML formatting and key-order changes from shared base templates.
+    - --normalize-manifests
 
 releases:
 - name: privileged-config

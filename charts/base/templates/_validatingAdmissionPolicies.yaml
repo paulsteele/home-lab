@@ -1,0 +1,39 @@
+{{- define "base.validatingAdmissionPolicies" -}}
+{{- range $policy := .Values.baseResources.validatingAdmissionPolicies }}
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ $policy.name }}
+  {{- with $policy.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $policy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml $policy.spec) $ | nindent 2 }}
+---
+{{- end }}
+{{- end -}}
+
+{{- define "base.validatingAdmissionPolicyBindings" -}}
+{{- range $binding := .Values.baseResources.validatingAdmissionPolicyBindings }}
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: {{ $binding.name }}
+  {{- with $binding.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $binding.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml $binding.spec) $ | nindent 2 }}
+---
+{{- end }}
+{{- end -}}
