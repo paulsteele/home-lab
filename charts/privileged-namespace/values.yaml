@@ -1,0 +1,8 @@
+namespace:
+  name: privileged
+  labels:
+    home-lab.paul-steele.com/privileged: "true"
+
+policy:
+  name: privileged-workloads
+  deployerUsername: admin

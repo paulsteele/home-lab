@@ -133,6 +133,12 @@ Before using Kubernetes v1.35.4, read:
 - `talos/workload-compatibility.md` for Talos host-device, NFS, and scheduling
   assumptions.
 
+Host-integrated `ser2net`, Frigate, and MetalLB workloads run in the dedicated
+`privileged` namespace. Talos exempts that namespace from baseline Pod
+Security Admission, while a `ValidatingAdmissionPolicy` denies direct Pods and
+any workload controllers outside the repo-approved allowlist. Keep ordinary
+applications in `default`; `tailscale` retains its separate exemption.
+
 The cluster uses upstream Talos v1.12.7 and Kubernetes v1.35.4 because the
 Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.
 The Talos schematic also selects GRUB instead of the default systemd-boot UKI

@@ -36,6 +36,9 @@ helmDefaults:
     - --disable-validation
 
 releases:
+- name: privileged-config
+  namespace: default
+  chart: ./charts/privileged-namespace
 - name: automation
   namespace: default
   chart: ./charts/nodered
@@ -79,13 +82,16 @@ releases:
   namespace: default
   chart: ./charts/homeassistant
 - name: loadbalancer
-  namespace: default
+  namespace: privileged
   chart: ./charts/metallb
+  needs:
+    - default/privileged-config
 - name: loadbalancer-config
-  namespace: default
+  namespace: privileged
   chart: ./charts/metallb-configuration
   needs:
-    - loadbalancer
+    - default/privileged-config
+    - privileged/loadbalancer
 - name: gonic
   namespace: default
   chart: ./charts/gonic
@@ -107,8 +113,10 @@ releases:
   namespace: kube-system
   chart: ./charts/cilium
 - name: ser2net
-  namespace: default
+  namespace: privileged
   chart: ./charts/ser2net
+  needs:
+    - default/privileged-config
 - name: external-dns
   namespace: default
   chart: ./charts/external-dns
@@ -139,8 +147,10 @@ releases:
   namespace: default
   chart: ./charts/traefik
 - name: frigate
-  namespace: default
+  namespace: privileged
   chart: ./charts/frigate
+  needs:
+    - default/privileged-config
   secrets:
     - ./charts/frigate/secrets.yaml
 - name: mosquitto

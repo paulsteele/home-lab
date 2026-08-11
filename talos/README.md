@@ -105,4 +105,6 @@ task helmfile:diff RELEASE=cilium SKIP_DEPS=true
 task helmfile:apply RELEASE=ser2net SKIP_DEPS=false
 ```
 
-No workload is installed with an ad-hoc Helm or kubectl command.
+No workload is installed with an ad-hoc Helm or kubectl command. The
+`privileged-config` release creates the dedicated `privileged` namespace and its strict workload allowlist before Helmfile installs ser2net,
+Frigate, or MetalLB there.

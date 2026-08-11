@@ -52,7 +52,7 @@ patches:
                 warn-version: latest
               exemptions:
                 namespaces:
-                  - default
+                  - privileged
                   - tailscale
                 runtimeClasses: []
                 usernames: []
