@@ -100,6 +100,106 @@ baseResources:
               controller-generated children may run in the privileged namespace.
             reason: Forbidden
 
+    - name: tailscale-workloads
+      spec:
+        failurePolicy: Fail
+        matchConstraints:
+          resourceRules:
+            - apiGroups:
+                - ""
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - pods
+                - replicationcontrollers
+              scope: Namespaced
+            - apiGroups:
+                - apps
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - daemonsets
+                - deployments
+                - replicasets
+                - statefulsets
+              scope: Namespaced
+            - apiGroups:
+                - batch
+              apiVersions:
+                - v1
+              operations:
+                - CREATE
+                - UPDATE
+              resources:
+                - cronjobs
+                - jobs
+              scope: Namespaced
+        validations:
+          - expression: >-
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'deployments' &&
+                object.metadata.name in ['operator', 'peer-relay'] &&
+                request.userInfo.username == {{ .Values.baseResources.deployerUsername | quote }}
+              ) ||
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'statefulsets' &&
+                object.metadata.name == 'ingress-proxies' &&
+                request.userInfo.username == 'system:serviceaccount:tailscale:operator' &&
+                has(object.metadata.ownerReferences) &&
+                object.metadata.ownerReferences.exists(ref,
+                  has(ref.controller) && ref.controller == true &&
+                  ref.apiVersion == 'tailscale.com/v1alpha1' &&
+                  ref.kind == 'ProxyGroup' && ref.name == 'ingress-proxies'
+                )
+              ) ||
+              (
+                request.resource.group == 'apps' &&
+                request.resource.resource == 'replicasets' &&
+                request.userInfo.username == 'system:serviceaccount:kube-system:deployment-controller' &&
+                has(object.metadata.ownerReferences) &&
+                object.metadata.ownerReferences.exists(ref,
+                  has(ref.controller) && ref.controller == true &&
+                  ref.apiVersion == 'apps/v1' && ref.kind == 'Deployment' &&
+                  ref.name in ['operator', 'peer-relay']
+                )
+              ) ||
+              (
+                request.resource.group == '' &&
+                request.resource.resource == 'pods' &&
+                has(object.metadata.ownerReferences) &&
+                (
+                  (
+                    request.userInfo.username == 'system:serviceaccount:kube-system:replicaset-controller' &&
+                    object.metadata.ownerReferences.exists(ref,
+                      has(ref.controller) && ref.controller == true &&
+                      ref.apiVersion == 'apps/v1' && ref.kind == 'ReplicaSet' &&
+                      (ref.name.startsWith('operator-') || ref.name.startsWith('peer-relay-'))
+                    )
+                  ) ||
+                  (
+                    request.userInfo.username == 'system:serviceaccount:kube-system:statefulset-controller' &&
+                    object.metadata.ownerReferences.exists(ref,
+                      has(ref.controller) && ref.controller == true &&
+                      ref.apiVersion == 'apps/v1' && ref.kind == 'StatefulSet' &&
+                      ref.name == 'ingress-proxies'
+                    )
+                  )
+                )
+              )
+            message: >-
+              Only the approved Tailscale operator, peer relay, ingress proxy
+              workloads, and their controller-generated children may run in the
+              tailscale namespace.
+            reason: Forbidden
+
   validatingAdmissionPolicyBindings:
     - name: privileged-workloads
       spec:
@@ -110,3 +210,12 @@ baseResources:
           namespaceSelector:
             matchLabels:
               home-lab.paul-steele.com/privileged: "true"
+    - name: tailscale-workloads
+      spec:
+        policyName: tailscale-workloads
+        validationActions:
+          - Deny
+        matchResources:
+          namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: tailscale

@@ -34,6 +34,8 @@ repositories:
 helmDefaults:
   diffArgs:
     - --disable-validation
+    # Never print decrypted Secret values in routine local or CI diffs.
+    - --suppress-secrets
     # Ignore YAML formatting and key-order changes from shared base templates.
     - --normalize-manifests
 
@@ -135,6 +137,8 @@ releases:
 - name: tailscale-operator
   namespace: tailscale
   chart: ./charts/tailscale-operator
+  needs:
+    - default/privileged-config
   secrets:
     - ./charts/tailscale-operator/secrets.yaml
 - name: tailscale-config
@@ -145,6 +149,8 @@ releases:
 - name: tailscale-peer-relay
   namespace: tailscale
   chart: ./charts/tailscale-peer-relay
+  needs:
+    - default/privileged-config
 - name: traefik
   namespace: default
   chart: ./charts/traefik

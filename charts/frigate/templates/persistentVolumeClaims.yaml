@@ -1,0 +1,6 @@
+{{- range $key, $volume := .Values.baseResources.persistentVolumes }}
+{{- if or (not (hasKey $volume "createClaim")) $volume.createClaim }}
+{{ include "base.persistentVolumeClaimForKey" (dict "root" $ "key" $key "volume" $volume) }}
+---
+{{- end }}
+{{- end }}

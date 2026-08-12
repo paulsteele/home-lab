@@ -9,7 +9,7 @@ node-placement assumptions must be explicit.
 | Cilium | kube-proxy-free, hard-coded master IP | Cilium is pinned to 1.20.0, uses the real API host `192.168.0.11`, and Talhelper disables the kube-proxy manifest through the central machine patch. Cilium 1.20 requires `kubeProxyReplacement: true`, not `strict`. Test Cilium before all other workloads. |
 | ser2net | Host `/dev/ttyUSB*`, host process, fixed node IP | Helmfile deploys a privileged `hostNetwork` DaemonSet with `/dev` and `/sys` mounts in the guarded `privileged` namespace using stock `alpine:3.22`. A mounted startup script installs Alpine's `ser2net` package, then selects the current serial node through the standard `kubernetes.io/hostname: azure` label declared in `talconfig.yaml` and discovers USB devices by vendor/product snippets. The pod needs Alpine repository access when the package is not already present. |
 | Home Assistant / Z-Wave / ZHA | `socat` creates local `/dev/ttyUSB*` PTYs | Scripts use `ser2net.privileged.svc.cluster.local` ports 3333/3334. Verify the images contain `socat`; the existing Z-Wave script uses `apk add`, which is image-specific and should be replaced with a baked image dependency if startup becomes unreliable. |
-| Frigate / Coral | Host `/dev/bus/usb`, control-plane selector, USB Coral | Frigate runs in `privileged`; its container is privileged and mounts host `/dev/bus/usb` for the Coral TPU. Verify Talos USB access and Coral detection after every chart or node-image change. |
+| Frigate / Coral | Host `/dev/bus/usb`, control-plane selector, USB Coral | Frigate runs in `privileged`; its container is privileged and mounts host `/dev/bus/usb` for the Coral TPU. Static NFS PVs map `/volume1/files/frigate/config` and `/volume1/files/frigate/media`; create those directories on the Synology before applying the release. `/data` remains ephemeral. Verify Talos USB access and Coral detection after every chart or node-image change. |
 | MetalLB speaker | Host networking and `NET_RAW` | The `loadbalancer` and `loadbalancer-config` releases run in `privileged`; keep the controller, speaker, `IPAddressPool`, and `L2Advertisement` in the same namespace. |
 | Tailscale peer relay | Host `/dev/net/tun`, `NET_ADMIN`/`NET_RAW`, host device path | Confirm `/dev/net/tun` exists on every Talos image and retain the privileged/device policy. This workload is not node-local to a named node today. |
 | NFS-backed workloads | Debian `nfs-common` installed on every node | Remove the package task. Talos must be tested mounting the Synology NFS export; if mounts fail, use the supported NFS CSI driver rather than adding packages to the immutable host. |
@@ -17,10 +17,11 @@ node-placement assumptions must be explicit.
 | Generic local chart volumes | Some local chart values can use `hostPath` | Audit each rendered release with `helmfile template`; host paths must exist on the selected Talos node and be permitted by Pod Security Admission. |
 
 Talos exempts only `privileged` and `tailscale` from baseline Pod Security
-Admission. A built-in
-`ValidatingAdmissionPolicy` restricts `privileged` to the repo-approved
-ser2net, Frigate, and MetalLB workload names plus their controller-generated
-children; direct debug Pods and unapproved workload controllers are denied.
+Admission. Built-in `ValidatingAdmissionPolicy` resources restrict
+`privileged` to the repo-approved ser2net, Frigate, and MetalLB workloads and
+restrict `tailscale` to the operator, peer relay, and ingress proxy workloads,
+including their controller-generated children. Direct debug Pods and
+unapproved workload controllers are denied in both exempt namespaces.
 
 ## Required post-bootstrap checks
 

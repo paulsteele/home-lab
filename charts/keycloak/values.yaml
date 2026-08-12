@@ -77,7 +77,7 @@ keycloak:
       value: /secrets/db-creds/password
     - name: KEYCLOAK_USER_FILE
       value: /secrets/admin-user/user
-    - name: KEYCLOA_PASSWORD_FILE
+    - name: KEYCLOAK_PASSWORD_FILE
       value: /secrets/admin-user/password
 
   extraVolumeMounts: |

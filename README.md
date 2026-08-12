@@ -115,7 +115,9 @@ task helmfile:apply RELEASE=ser2net SKIP_DEPS=false
 
 `--skip-deps` is passed to Helmfile only when `SKIP_DEPS=true` (or when the
 interactive prompt is answered yes). Apply always uses Helmfile's interactive
-confirmation. Named releases also include their declared Helmfile `needs`, so
+confirmation. Routine Helm diffs suppress Secret contents; use diff for review
+instead of redirecting a full template containing decrypted Secrets to disk.
+Named releases also include their declared Helmfile `needs`, so
 CRD providers are installed before their dependent resources. Diff validation
 against live API discovery is disabled so a first-run diff can render those
 resources before their CRDs exist. `cluster:07-cilium` calls this same shared
@@ -136,8 +138,10 @@ Before using Kubernetes v1.35.4, read:
 Host-integrated `ser2net`, Frigate, and MetalLB workloads run in the dedicated
 `privileged` namespace. Talos exempts that namespace from baseline Pod
 Security Admission, while a `ValidatingAdmissionPolicy` denies direct Pods and
-any workload controllers outside the repo-approved allowlist. Keep ordinary
-applications in `default`; `tailscale` retains its separate exemption.
+any workload controllers outside the repo-approved allowlist. The separately
+exempt `tailscale` namespace has the same deny-by-default protection, allowing
+only the repo-approved operator, peer relay, ingress proxies, and their
+controller-generated children. Keep ordinary applications in `default`.
 
 The cluster uses upstream Talos v1.12.7 and Kubernetes v1.35.4 because the
 Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.

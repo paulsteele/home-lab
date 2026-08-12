@@ -4,6 +4,13 @@ baseResources:
     host: frigate.paul-steele.com
     serviceName: frigate
     port: 8971
+  persistentVolumes:
+    config:
+      capacity: 100Mi
+      nfs: /volume1/files/frigate/config
+    media:
+      capacity: 10Gi
+      nfs: /volume1/files/frigate/media
 frigate:
   strategyType: Recreate
   image:
@@ -66,15 +73,11 @@ frigate:
   persistence:
     config:
       enabled: true
-      accessMode: ReadWriteOnce
-      size: 100Mi
-      skipuninstall: true
+      existingClaim: frigate-static-config
       ephemeralWritableConfigYaml: true
     media:
       enabled: true
-      accessMode: ReadWriteOnce
-      size: 10Gi
-      skipuninstall: true
+      existingClaim: frigate-static-media
 
   nodeSelector:
     node-role.kubernetes.io/control-plane: "" 

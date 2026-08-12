@@ -1,23 +1,76 @@
-{{- define "base.persistentVolume" -}}
+{{- define "base.persistentVolumeResource" -}}
+{{- $root := .root -}}
+{{- $volume := .volume -}}
+{{- $name := .name -}}
+{{- $claimName := default $name $volume.claimName -}}
+{{- $storageClassName := default $name $volume.storageClassName -}}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: {{ $name }}
+  {{- with $volume.labels }}
   labels:
-    type: local
-  name: {{ include "base.name" . }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   accessModes:
-  - ReadWriteOnce
+    {{- toYaml (default (list "ReadWriteOnce") $volume.accessModes) | nindent 4 }}
   capacity:
-    storage: {{ .Values.baseResources.persistentVolume.capacity }}
-  {{- if .Values.baseResources.persistentVolume.nfs }}
+    storage: {{ $volume.capacity }}
+  {{- if or (not (hasKey $volume "createClaim")) $volume.createClaim }}
+  claimRef:
+    name: {{ $claimName }}
+    namespace: {{ default $root.Release.Namespace $volume.namespace }}
+  {{- end }}
+  {{- with $volume.nfs }}
   nfs:
-    path: {{ .Values.baseResources.persistentVolume.nfs.path }}
+    {{- if kindIs "map" . }}
+    path: {{ .path }}
+    server: {{ default "192.168.0.101" .server }}
+    {{- else }}
+    path: {{ . }}
     server: 192.168.0.101
+    {{- end }}
   {{- end }}
-  {{- if .Values.baseResources.persistentVolume.hostPath }}
+  {{- with $volume.hostPath }}
   hostPath:
-    path: {{ .Values.baseResources.persistentVolume.hostPath.path }}
+    {{- if kindIs "map" . }}
+    path: {{ .path }}
+    {{- with .type }}
+    type: {{ . }}
+    {{- end }}
+    {{- else }}
+    path: {{ . }}
+    {{- end }}
   {{- end }}
-  storageClassName: {{ include "base.name" . }}
+  {{- with $volume.reclaimPolicy }}
+  persistentVolumeReclaimPolicy: {{ . }}
+  {{- end }}
+  storageClassName: {{ $storageClassName }}
+{{- end -}}
+
+{{- define "base.persistentVolumeForKey" -}}
+{{- $root := .root -}}
+{{- $volume := .volume -}}
+{{- $key := .key -}}
+{{- $name := default (printf "%s-static-%s" $root.Release.Name $key | trunc 63 | trimSuffix "-") $volume.name -}}
+{{- $resource := deepCopy $volume -}}
+{{- if not (hasKey $resource "reclaimPolicy") -}}
+{{- $_ := set $resource "reclaimPolicy" "Retain" -}}
+{{- end -}}
+{{ include "base.persistentVolumeResource" (dict "root" $root "volume" $resource "name" $name) }}
+{{- end -}}
+
+{{- define "base.persistentVolume" -}}
+{{- $name := include "base.name" . -}}
+{{- $legacy := .Values.baseResources.persistentVolume -}}
+{{- $volume := dict
+  "labels" (dict "type" "local")
+  "capacity" $legacy.capacity
+  "storageClassName" $name
+  "createClaim" false
+-}}
+{{- with $legacy.nfs }}{{- $_ := set $volume "nfs" . -}}{{- end }}
+{{- with $legacy.hostPath }}{{- $_ := set $volume "hostPath" . -}}{{- end }}
+{{ include "base.persistentVolumeResource" (dict "root" . "volume" $volume "name" $name) }}
 {{- end -}}

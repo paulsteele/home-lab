@@ -1,0 +1,4 @@
+{{- range $key, $volume := .Values.baseResources.persistentVolumes }}
+{{ include "base.persistentVolumeForKey" (dict "root" $ "key" $key "volume" $volume) }}
+---
+{{- end }}

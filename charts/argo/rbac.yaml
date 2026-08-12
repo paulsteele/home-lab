@@ -74,7 +74,6 @@ baseResources:
           - patch
           - delete
       - apiGroups:
-          - 'extensions'
           - 'networking.k8s.io'
         resources:
           - ingresses
@@ -99,6 +98,13 @@ baseResources:
           - patch
           - delete
       
+  roleBindings:
+  - name: ci-workflow-deployments
+    namespace: deployments
+    serviceAccountName: ci-workflow
+    serviceAccountNamespace: ci
+    clusterRoleName: ci-workflow
+
   clusterRoleBindings:
   - name: ci-sso
     serviceAccountName: ci-sso
@@ -108,7 +114,3 @@ baseResources:
     serviceAccountName: ci-github
     serviceAccountNamespace: ci
     clusterRoleName: ci-submit-workflow
-  - name: ci-workflow
-    serviceAccountName: ci-workflow
-    serviceAccountNamespace: ci
-    clusterRoleName: ci-workflow

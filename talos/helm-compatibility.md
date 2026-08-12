@@ -53,12 +53,12 @@ normal dependency builds will correctly fail on the stale cert-manager/other
 flagged packages:
 
 ```sh
-helmfile build
+task helmfile:build
 helm lint charts/ser2net charts/cilium charts/frigate
-helmfile template > /tmp/home-lab-rendered.yaml
-kubectl apply --dry-run=server -f /tmp/home-lab-rendered.yaml
-helmfile diff
+task helmfile:diff RELEASE=frigate SKIP_DEPS=true
 ```
 
-The last two commands require a live v1.35.4 cluster. Do not bypass Helmfile
-with ad-hoc `helm install` or `kubectl apply` for releases.
+Diff requires a live v1.35.4 cluster; repeat it for each affected release.
+Routine diffs suppress Secret contents. Do not redirect a full Helmfile render
+containing decrypted Secrets to disk, and do not bypass Helmfile with ad-hoc
+`helm install` or `kubectl apply` for releases.

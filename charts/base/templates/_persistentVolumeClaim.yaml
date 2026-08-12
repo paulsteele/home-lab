@@ -1,13 +1,40 @@
-{{- define "base.persistentVolumeClaim" -}}
+{{- define "base.persistentVolumeClaimResource" -}}
+{{- $root := .root -}}
+{{- $volume := .volume -}}
+{{- $name := .name -}}
+{{- $claimName := default $name $volume.claimName -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "base.name" . }}
+  name: {{ $claimName }}
+  namespace: {{ default $root.Release.Namespace $volume.namespace }}
 spec:
   accessModes:
-  - ReadWriteOnce
+    {{- toYaml (default (list "ReadWriteOnce") $volume.accessModes) | nindent 4 }}
   resources:
     requests:
-      storage: {{ .Values.baseResources.persistentVolumeClaim.capacity }}
-  storageClassName: {{ include "base.name" . }}
+      storage: {{ default $volume.capacity $volume.claimCapacity }}
+  storageClassName: {{ default $name $volume.storageClassName }}
+  {{- if or (not (hasKey $volume "bindByName")) $volume.bindByName }}
+  volumeName: {{ $name }}
+  {{- end }}
+{{- end -}}
+
+{{- define "base.persistentVolumeClaimForKey" -}}
+{{- $root := .root -}}
+{{- $volume := .volume -}}
+{{- $key := .key -}}
+{{- $name := default (printf "%s-static-%s" $root.Release.Name $key | trunc 63 | trimSuffix "-") $volume.name -}}
+{{ include "base.persistentVolumeClaimResource" (dict "root" $root "volume" $volume "name" $name) }}
+{{- end -}}
+
+{{- define "base.persistentVolumeClaim" -}}
+{{- $name := include "base.name" . -}}
+{{- $legacy := .Values.baseResources.persistentVolumeClaim -}}
+{{- $volume := dict
+  "capacity" $legacy.capacity
+  "storageClassName" $name
+  "bindByName" false
+-}}
+{{ include "base.persistentVolumeClaimResource" (dict "root" . "volume" $volume "name" $name) }}
 {{- end -}}

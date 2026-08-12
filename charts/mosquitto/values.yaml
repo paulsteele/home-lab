@@ -22,7 +22,7 @@ baseResources:
   - name: data
     source:
       nfs: /volume1/files/mosquitto/data
-    mountPath: /books
+    mountPath: /mosquitto/data
   - name: config
     source:
       configmap:
