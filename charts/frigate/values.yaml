@@ -54,7 +54,7 @@ frigate:
                 - detect
                 - rtmp
         motion:
-          mask: 0.772,0,0.59,0.408,0.23,0.523,0,1,0,0
+          mask: 0.776,0,0.683,0.276,0.204,0.295,0.172,0.893,0,1,0.004,0
         zones:
           entry:
             coordinates: 
