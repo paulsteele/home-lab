@@ -30,7 +30,7 @@ frigate:
   # -- frigate configuration - see [Docs](https://docs.frigate.video/configuration/index) for more info
   config: |
     mqtt:
-      host: "mosquitto-mosquitto"
+      host: "mosquitto-mosquitto.default.svc.cluster.local"
       user: "{FRIGATE_MQTT_USER}"
       password: "{FRIGATE_MQTT_PASSWORD}"
     tls:
