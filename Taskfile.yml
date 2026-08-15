@@ -264,10 +264,33 @@ tasks:
           export KUBECONFIG='{{.KUBECONFIG_FILE}}'
         fi
         if [ -z "$release" ]; then
-          echo "Available Helmfile releases:"
-          helmfile list --skip-charts
-          printf 'Release name (blank for all): ' >&2
-          IFS= read -r release
+          for tool in jq fzf; do
+            command -v "$tool" >/dev/null 2>&1 || {
+              echo "Missing required release picker tool: $tool" >&2
+              exit 1
+            }
+          done
+          if ! selection=$(
+            helmfile list --skip-charts --output json |
+              jq -r '(["RELEASE", "NAMESPACE", "CHART"] | @tsv), (.[] | [.name, .namespace, (.chart | sub("^\\./charts/"; ""))] | @tsv)' |
+              fzf \
+                --height=80% \
+                --layout=reverse \
+                --border \
+                --multi \
+                --header-lines=1 \
+                --header='Tab = mark · Enter = marked (all if empty) · Esc = cancel' \
+                --delimiter='\t' \
+                --with-nth=1,2,3 \
+                --accept-nth=1 \
+                --tabstop=24 \
+                --bind='enter:transform:[ "$FZF_SELECT_COUNT" -eq 0 ] && echo "become(true)" || echo accept' \
+                --prompt='Release > '
+          ); then
+            echo 'No release selected; nothing to do.'
+            exit 0
+          fi
+          release=$selection
         fi
         if [ -z "$skip_deps" ]; then
           printf 'Use --skip-deps and skip repository/dependency updates? [y/N]: ' >&2
@@ -278,8 +301,11 @@ tasks:
           esac
         fi
         set -- helmfile "$mode"
-        if [ -n "$release" ] && [ "$release" != "all" ]; then
-          set -- "$@" --selector "name=$release" --include-needs
+        if [ -n "$release" ]; then
+          for selected_release in $release; do
+            set -- "$@" --selector "name=$selected_release"
+          done
+          set -- "$@" --include-needs
         fi
         if [ "$skip_deps" = "true" ] || [ "$skip_deps" = "1" ]; then
           set -- "$@" --skip-deps
