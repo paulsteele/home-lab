@@ -37,6 +37,6 @@ spec:
         {{- end }}
       {{- end }}
     spec:
-    {{- $data := dict "resource" $daemonset "volumes" .Values.baseResources.volumes -}}
+    {{- $data := dict "root" . "resource" $daemonset "volumes" .Values.baseResources.volumes -}}
     {{- include "base.deploymentSpec" $data | nindent 6 }}
 {{- end -}}

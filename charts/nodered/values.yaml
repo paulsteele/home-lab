@@ -13,6 +13,7 @@ baseResources:
         - port: 80
           targetPort: 1880
   deployment:
+    resourceProfile: medium
     containers:
     - image: nodered/node-red:4.1.8-22
       name: nodered

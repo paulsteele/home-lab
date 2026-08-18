@@ -8,7 +8,8 @@ baseResources:
         - port: 80
           targetPort: 80
   deployment:
-   containers:
+    resourceProfile: xlarge
+    containers:
     - image: sentriz/gonic:v0.20.1
       name: gonic
       envs:

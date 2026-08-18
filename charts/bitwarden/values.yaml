@@ -13,6 +13,7 @@ baseResources:
         - port: 80
         - port: 3012
   deployment:
+    resourceProfile: small
     containers:
     - image: vaultwarden/server:1.37.1-alpine
       name: vaultwarden

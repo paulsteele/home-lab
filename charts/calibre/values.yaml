@@ -7,6 +7,7 @@ baseResources:
     - ports:
         - port: 8083
   deployment:
+    resourceProfile: large
     containers:
     - image: crocodilestick/calibre-web-automated:v4.0.6
       name: calibre

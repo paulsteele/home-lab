@@ -17,6 +17,7 @@ baseResources:
   deployment:
     containers:
     - image: homeassistant/home-assistant:2025.8
+      resourceProfile: xlarge
       command:
       - sh
       args:
@@ -29,6 +30,7 @@ baseResources:
       - config
       - zha
     - image: zwavejs/zwave-js-ui:11.1.0
+      resourceProfile: medium
       command:
       - sh
       args:

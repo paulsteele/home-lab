@@ -8,7 +8,8 @@ baseResources:
         - port: 80
           targetPort: 80
   deployment:
-   containers:
+    resourceProfile: medium
+    containers:
     - image: ghcr.io/advplyr/audiobookshelf:2.12.3
       name: audiobooks
       envs:

@@ -41,6 +41,6 @@ spec:
         {{- end }}
       {{- end }}
     spec:
-    {{- $data := dict "resource" $deployment "volumes" .Values.baseResources.volumes -}}
+    {{- $data := dict "root" . "resource" $deployment "volumes" .Values.baseResources.volumes -}}
     {{- include "base.deploymentSpec" $data | nindent 6 }}
 {{- end -}}

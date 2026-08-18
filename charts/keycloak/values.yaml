@@ -1,12 +1,8 @@
 keycloak:
-  # Pod resource requests and limits
-  resources: { }
-    # requests:
-    #   cpu: "500m"
-    #   memory: "1024Mi"
-    # limits:
-  #   cpu: "500m"
-  #   memory: "1024Mi"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
   ingress:
     # If `true`, an Ingress is created
     enabled: true

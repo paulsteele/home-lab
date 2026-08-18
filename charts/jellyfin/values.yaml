@@ -8,6 +8,7 @@ baseResources:
         - port: 80
           targetPort: 8096
   deployment:
+    resourceProfile: xlarge
     containers:
     - image: jellyfin/jellyfin:10.11.11
       name: jellyfin

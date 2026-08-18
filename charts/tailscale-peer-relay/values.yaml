@@ -12,6 +12,7 @@ baseResources:
           protocol: UDP
 
   deployment:
+    resourceProfile: medium
     omitMetadataLabels: true
     omitPodName: true
     securityContext:

@@ -1,4 +1,5 @@
 {{- define "base.deploymentSpec" -}}
+{{- $root := get . "root" -}}
 {{- $resource := get . "resource" -}}
 {{- $volumes := default (list) (get . "volumes") -}}
 {{- $volumeDict := dict -}}
@@ -82,9 +83,10 @@ containers:
   securityContext:
 {{ toYaml $securityContext | nindent 4 }}
   {{- end }}
-  {{- with $container.resources }}
+  {{- $resolvedResources := include "base.resolveContainerResources" (dict "root" $root "resource" $resource "container" $container) | trim }}
+  {{- if $resolvedResources }}
   resources:
-{{ toYaml . | nindent 4 }}
+{{ $resolvedResources | nindent 4 }}
   {{- end }}
   {{- with $container.lifecycle }}
   lifecycle:

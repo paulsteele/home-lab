@@ -9,6 +9,7 @@ baseResources:
         - name: mosquitto-config 
           file: resources/mosquitto.conf
   deployment:
+    resourceProfile: small
     containers:
     - image: eclipse-mosquitto:2.0.22
       name: mosquitto

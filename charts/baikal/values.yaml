@@ -7,6 +7,7 @@ baseResources:
     - ports:
         - port: 80
   deployment:
+    resourceProfile: small
     containers:
       - image: ckulka/baikal:0.9.3-nginx
         name: baikal
