@@ -18,7 +18,9 @@ missing-artist, missing-title, query-match, and newly-added-lyrics counts on
 every run.
 
 The container runs as the Synology media owner (`1024:100`). The CronJob uses
-`Forbid` concurrency and a 12-hour active deadline. The Beets catalog is kept
+`Forbid` concurrency and a 12-hour active deadline. Successful child Jobs are
+deleted automatically; the three most recent failed Jobs are retained for
+diagnosis. The Beets catalog is kept
 at `/volume1/files/beets/config/library.db`; preserving it is important because
 its `added` timestamps bound provider retries to newly seen tracks.
 
