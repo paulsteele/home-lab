@@ -1,0 +1,90 @@
+baseResources:
+  configmaps:
+  - name: beets-config
+    recommendedLabels: true
+    data:
+    - name: config.yaml
+      file: resources/config.yaml
+  cronjob:
+    schedule: "30 2 * * *"
+    timeZone: America/Indiana/Indianapolis
+    concurrencyPolicy: Forbid
+    suspend: false
+    startingDeadlineSeconds: 3600
+    activeDeadlineSeconds: 43200
+    backoffLimit: 1
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 3
+    resourceProfile: medium
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1024
+      runAsGroup: 100
+      fsGroup: 100
+      fsGroupChangePolicy: OnRootMismatch
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+    - image: lscr.io/linuxserver/beets:version-2.13.1@sha256:7bf852f33b0d59c41e74843b430ca9bf75a449c26ddf03cc6d2c508737c783a2
+      name: beets
+      command:
+      - /bin/sh
+      - -ec
+      args:
+      - |
+        BEET=/lsiopy/bin/beet
+        CONFIG=/config/config.yaml
+
+        echo "Refreshing the Beets catalog without changing media tags..."
+        "$BEET" -c "$CONFIG" import -A -C -M -W -q -s -p /music
+        "$BEET" -c "$CONFIG" update -M
+
+        catalog_count=$("$BEET" -c "$CONFIG" ls -f '$path' | wc -l | tr -d ' ')
+        missing_artist=$("$BEET" -c "$CONFIG" ls -f '$path' 'artist::^$' | wc -l | tr -d ' ')
+        missing_title=$("$BEET" -c "$CONFIG" ls -f '$path' 'title::^$' | wc -l | tr -d ' ')
+        lyrics_before=$("$BEET" -c "$CONFIG" ls -f '$path' 'lyrics::.' | wc -l | tr -d ' ')
+        query_count=$("$BEET" -c "$CONFIG" ls -f '$path' "$BEETS_LYRICS_QUERY" | wc -l | tr -d ' ')
+        echo "Catalog summary: tracks=$catalog_count lyrics=$lyrics_before missing_artist=$missing_artist missing_title=$missing_title query_matches=$query_count"
+
+        echo "Fetching missing lyrics for query: $BEETS_LYRICS_QUERY"
+        "$BEET" -c "$CONFIG" lyrics "$BEETS_LYRICS_QUERY"
+
+        lyrics_after=$("$BEET" -c "$CONFIG" ls -f '$path' 'lyrics::.' | wc -l | tr -d ' ')
+        echo "Lyrics summary: before=$lyrics_before after=$lyrics_after added=$((lyrics_after - lyrics_before))"
+      envs:
+      - name: TZ
+        value: America/Indiana/Indianapolis
+      - name: HOME
+        value: /config
+      - name: BEETSDIR
+        value: /config
+      - name: BEETS_LYRICS_QUERY
+        value: added:-7d..
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+      volumeMounts:
+      - beets-data
+      - beets-config
+      - music
+  volumes:
+  - name: beets-data
+    source:
+      nfs: /volume1/files/beets/config
+    mountPath: /config
+  - name: beets-config
+    source:
+      configmap:
+        name: beets-config
+        items:
+          key: config.yaml
+          path: config.yaml
+    mountPath: /config/config.yaml
+    subPath: config.yaml
+    readOnly: true
+  - name: music
+    source:
+      nfs: /volume1/files/media/music
+    mountPath: /music

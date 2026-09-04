@@ -99,6 +99,9 @@ releases:
 - name: gonic
   namespace: default
   chart: ./charts/gonic
+- name: beets
+  namespace: default
+  chart: ./charts/beets
 - name: passwords
   namespace: default
   chart: ./charts/bitwarden

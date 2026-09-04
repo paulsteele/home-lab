@@ -1,23 +1,52 @@
 {{- define "base.cronjob" -}}
+{{- $cronjob := .Values.baseResources.cronjob -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "base.name" . }}
 spec:
+  schedule: {{ $cronjob.schedule | quote }}
+  {{- with $cronjob.timeZone }}
+  timeZone: {{ . | quote }}
+  {{- end }}
+  {{- with $cronjob.concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- if hasKey $cronjob "startingDeadlineSeconds" }}
+  startingDeadlineSeconds: {{ $cronjob.startingDeadlineSeconds }}
+  {{- end }}
+  {{- if hasKey $cronjob "suspend" }}
+  suspend: {{ $cronjob.suspend }}
+  {{- end }}
+  {{- if hasKey $cronjob "successfulJobsHistoryLimit" }}
+  successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
+  {{- else }}
+  successfulJobsHistoryLimit: 0
+  {{- end }}
+  {{- if hasKey $cronjob "failedJobsHistoryLimit" }}
+  failedJobsHistoryLimit: {{ $cronjob.failedJobsHistoryLimit }}
+  {{- end }}
   jobTemplate:
     metadata:
       name: {{ include "base.name" . }}
     spec:
+      {{- if hasKey $cronjob "backoffLimit" }}
+      backoffLimit: {{ $cronjob.backoffLimit }}
+      {{- end }}
+      {{- if hasKey $cronjob "activeDeadlineSeconds" }}
+      activeDeadlineSeconds: {{ $cronjob.activeDeadlineSeconds }}
+      {{- end }}
+      {{- if hasKey $cronjob "ttlSecondsAfterFinished" }}
+      ttlSecondsAfterFinished: {{ $cronjob.ttlSecondsAfterFinished }}
+      {{- end }}
       template:
         metadata:
           name: {{ include "base.name" . }}
         spec:
         {{- $data := dict -}}
         {{- $_ := set $data "root" . -}}
-        {{- $_ := set $data "resource" .Values.baseResources.cronjob -}}
+        {{- $_ := set $data "resource" $cronjob -}}
         {{- $_ := set $data "volumes" .Values.baseResources.volumes -}}
         {{- include "base.deploymentSpec" $data | nindent 10 }}
           restartPolicy: Never
-  schedule: {{ .Values.baseResources.cronjob.schedule }}
-  successfulJobsHistoryLimit: 0
 {{- end -}}

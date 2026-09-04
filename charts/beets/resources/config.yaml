@@ -1,0 +1,34 @@
+directory: /music
+library: /config/library.db
+plugins: lyrics
+
+ignore:
+  - ".*"
+  - "*~"
+  - "System Volume Information"
+  - "lost+found"
+  - "*.m4p"
+  - "*.M4P"
+ignore_hidden: yes
+
+import:
+  write: yes
+  copy: no
+  move: no
+  autotag: no
+  singletons: yes
+  quiet: yes
+  quiet_fallback: asis
+  resume: yes
+  incremental: no
+  duplicate_action: keep
+
+lyrics:
+  auto: no
+  force: no
+  keep_synced: yes
+  synced: yes
+  fallback: null
+  sources:
+    - lrclib
+    - lrcmux
