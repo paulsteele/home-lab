@@ -25,7 +25,9 @@ baseResources:
       seccompProfile:
         type: RuntimeDefault
     containers:
-    - image: lscr.io/linuxserver/beets:version-2.13.1@sha256:7bf852f33b0d59c41e74843b430ca9bf75a449c26ddf03cc6d2c508737c783a2
+    # Stable 2.13.1 crashes when LRCLIB returns a metadata-only candidate
+    # (beets#6906). This immutable nightly includes the upstream fix.
+    - image: lscr.io/linuxserver/beets:nightly-version-63b69fa9@sha256:29d5faa8c8c62512ea7b2b17fac610eec64af71bdd07bebfd1589bb1798132e3
       name: beets
       command:
       - /bin/sh

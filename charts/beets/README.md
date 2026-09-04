@@ -22,6 +22,13 @@ The container runs as the Synology media owner (`1024:100`). The CronJob uses
 at `/volume1/files/beets/config/library.db`; preserving it is important because
 its `added` timestamps bound provider retries to newly seen tracks.
 
+The image is an immutable LinuxServer nightly at Beets commit `63b69fa9`.
+Stable 2.13.1 crashes when LRCLIB returns a duration-matched metadata record
+whose plain and synchronized lyrics are both null. The pinned nightly includes
+the upstream fix from beets PR #6906, rejects that empty candidate, and
+continues to another candidate/provider. Replace it with the first stable
+Beets release containing that fix after repeating the fixture tests.
+
 ## Prerequisites
 
 1. Create `/volume1/files/beets/config` on the Synology and make it writable by
@@ -47,8 +54,11 @@ Do not start with an unattended full-library run.
    is unchanged, artwork/metadata remain, and the lyrics tag is readable. The
    implementation fixture test embedded timestamped lyrics in MP3 `USLT` and
    `SYLT`, M4A `©lyr`, and FLAC `LYRICS` without changing any audio-stream
-   hash; a second run made no file changes. The library's WAV samples do not
-   expose artist/title tags to Beets and are therefore logged and skipped. M4P
+   hash; a second run made no file changes. The pinned nightly was also tested
+   against LRCLIB's empty non-instrumental result for Arion's “Cold Blood & Ice
+   Cream Cones”; it completed without the stable 2.13.1 `NoneType` crash. The
+   library's WAV samples do not expose artist/title tags to Beets and are
+   therefore logged and skipped. M4P
    is intentionally excluded.
 2. Temporarily replace `BEETS_LYRICS_QUERY` in `values.yaml` with a tested Beets
    album query selecting roughly 25 real tracks and set

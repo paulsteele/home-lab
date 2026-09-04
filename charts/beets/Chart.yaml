@@ -3,7 +3,7 @@ name: beets
 description: Nightly embedded lyrics enrichment for the music library
 type: application
 version: 1.0.0
-appVersion: 2.13.1
+appVersion: 2.13.1-nightly.63b69fa9
 dependencies:
 - name: base
   version: 0.1.0
