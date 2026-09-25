@@ -5,6 +5,8 @@ baseResources:
     data:
     - name: config.yaml
       file: resources/config.yaml
+    - name: import_new.py
+      file: resources/import_new.py
   cronjob:
     schedule: "30 2 * * *"
     timeZone: America/Indiana/Indianapolis
@@ -37,8 +39,8 @@ baseResources:
         BEET=/lsiopy/bin/beet
         CONFIG=/config/config.yaml
 
-        echo "Refreshing the Beets catalog without changing media tags..."
-        "$BEET" -c "$CONFIG" import -A -C -M -W -q -s -p /music
+        echo "Importing only uncataloged music files without changing media tags..."
+        /lsiopy/bin/python /config/import_new.py "$BEET" "$CONFIG"
         "$BEET" -c "$CONFIG" update -M
 
         catalog_count=$("$BEET" -c "$CONFIG" ls -f '$path' | wc -l | tr -d ' ')
@@ -70,6 +72,7 @@ baseResources:
       volumeMounts:
       - beets-data
       - beets-config
+      - beets-import-script
       - music
   volumes:
   - name: beets-data
@@ -85,6 +88,16 @@ baseResources:
           path: config.yaml
     mountPath: /config/config.yaml
     subPath: config.yaml
+    readOnly: true
+  - name: beets-import-script
+    source:
+      configmap:
+        name: beets-config
+        items:
+          key: import_new.py
+          path: import_new.py
+    mountPath: /config/import_new.py
+    subPath: import_new.py
     readOnly: true
   - name: music
     source:

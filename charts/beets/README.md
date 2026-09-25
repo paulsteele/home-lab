@@ -7,20 +7,28 @@ lyrics tag.
 
 ## Safety model
 
-The job catalogs files with their existing metadata. Its import command always
-uses `--noautotag`, `--nocopy`, `--nomove`, and `--nowrite`; Beets therefore
-cannot reorganize the collection or rewrite tags during catalog refresh. Only
-the subsequent `lyrics` command writes tags, and `lyrics.force: no` preserves
-tracks that already contain lyrics. Likely DRM-protected `.m4p` files are
-ignored. Tracks without enough artist/title metadata and unmatched tracks are
-logged and left unchanged. The job prints catalog, existing-lyrics,
-missing-artist, missing-title, query-match, and newly-added-lyrics counts on
-every run.
+The job compares paths on `/music` with the persistent Beets catalog, then
+imports only uncataloged audio files (including files added to existing album
+folders). The discovery walk honors the Beets ignore rules and never reads
+media tags; an empty catalog triggers an initial full import. Its import command
+always uses `--noautotag`, `--nocopy`, `--nomove`, and `--nowrite`; Beets
+therefore cannot reorganize the collection or rewrite tags during catalog
+refresh. `beet update -M` still checks cataloged tracks for changes or removals
+without moving media. Only the subsequent `lyrics` command writes tags, and
+`lyrics.force: no` preserves tracks that already contain lyrics. Likely
+DRM-protected `.m4p` files are ignored. Tracks without enough artist/title
+metadata and unmatched tracks are logged and left unchanged.
+
+The job prints catalog, existing-lyrics, missing-artist, missing-title,
+query-match, and newly-added-lyrics counts on every run.
 
 The container runs as the Synology media owner (`1024:100`). The CronJob uses
 `Forbid` concurrency and a 12-hour active deadline. The Beets catalog is kept
 at `/volume1/files/beets/config/library.db`; preserving it is important because
-its `added` timestamps bound provider retries to newly seen tracks.
+its `added` timestamps bound provider retries to newly seen tracks. The path
+comparison requires only a directory walk on subsequent nights; it does not
+re-import every existing track. An unreadable catalog or music directory fails
+the Job rather than silently continuing.
 
 The image is an immutable LinuxServer nightly at Beets commit `63b69fa9`.
 Stable 2.13.1 crashes when LRCLIB returns a duration-matched metadata record
@@ -46,6 +54,18 @@ Beets release containing that fix after repeating the fixture tests.
 
 ## Staged rollout
 
+Run the unit tests locally to check catalog path matching and safe import
+selection:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s charts/beets/tests
+```
+
+An integration test with the pinned Beets image confirmed that a repeat run
+imports zero tracks. It also confirmed that a track added to an existing album
+folder is imported exactly once. These tests do not require Kubernetes
+resources.
+
 Do not start with an unattended full-library run.
 
 1. Copy representative MP3, M4A, FLAC, and WAV files to a scratch directory.
@@ -58,8 +78,9 @@ Do not start with an unattended full-library run.
    against LRCLIB's empty non-instrumental result for Arion's “Cold Blood & Ice
    Cream Cones”; it completed without the stable 2.13.1 `NoneType` crash. The
    library's WAV samples do not expose artist/title tags to Beets and are
-   therefore logged and skipped. M4P
-   is intentionally excluded.
+   therefore logged and skipped. M4P is intentionally excluded. Also verify
+   that a repeat catalog refresh imports zero tracks and a new file placed in
+   an already-cataloged album folder is discovered and imported once.
 2. Temporarily replace `BEETS_LYRICS_QUERY` in `values.yaml` with a tested Beets
    album query selecting roughly 25 real tracks and set
    `baseResources.cronjob.suspend: true`. Apply the chart and create a one-off
@@ -76,8 +97,9 @@ Do not start with an unattended full-library run.
    tracks are skipped.
 4. Restore `BEETS_LYRICS_QUERY` to `added:-7d..`, set `suspend: false`, review
    the diff, and apply it. Because all tracks are new to the initial Beets
-   catalog, this performs the full backfill. Later nightly runs retry new tracks for seven days and do not
-   repeatedly query providers for permanent misses.
+   catalog, this performs the full backfill. Later nightly runs only import
+   previously uncataloged audio files and retry new tracks for seven days;
+   permanent misses are not queried indefinitely.
 
 The scheduled run is at 02:30 in `America/Indiana/Indianapolis`. Gonic also
 performs an hourly scan so NFS writes made by this separate pod become visible
