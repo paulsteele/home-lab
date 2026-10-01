@@ -124,9 +124,23 @@ resources before their CRDs exist. `cluster:07-cilium` calls this same shared
 runner with `RELEASE=cilium`; it does not maintain a separate Helm installation
 path.
 
-All Kubernetes releases, including `ser2net`, must be managed through
-`helmfile.yaml`. Do not use ad-hoc `helm install` or `kubectl apply` for
-workloads.
+Helmfile manages infrastructure and chart-based workloads, including
+`ser2net`. Application repositories registered in
+`charts/argo-workflows/values.yaml` use the existing Argo `ci-build` workflow
+to build their Dockerfile and deploy their `k8s.template.yaml`; do not use
+ad-hoc Helm installations or manual workload manifests outside these owners.
+
+Jellyfin now lives in [paulsteele/jellyfin-mysql](https://github.com/paulsteele/jellyfin-mysql)
+and deploys as `deployments/jellyfin`, not the retired `video` Helm release.
+It uses MariaDB at `192.168.0.101:3307` with the existing shared
+`database-credentials` Secret, and remains pinned to Jellyfin 10.11.11 for its
+experimental database provider. Complete fresh setup at
+`https://video.paul-steele.com` and add libraries under `/media`.
+
+Its fresh NFS config/cache are under `/volume1/files/jellyfin-mysql`; the media
+path is unchanged. The original `/volume1/files/jellyfin/config` and `cache`
+remain untouched for rollback. See the application repository's README for
+setup, backup and old-release recovery instructions.
 
 Before using Kubernetes v1.35.4, read:
 
@@ -141,7 +155,9 @@ Security Admission, while a `ValidatingAdmissionPolicy` denies direct Pods and
 any workload controllers outside the repo-approved allowlist. The separately
 exempt `tailscale` namespace has the same deny-by-default protection, allowing
 only the repo-approved operator, peer relay, ingress proxies, and their
-controller-generated children. Keep ordinary applications in `default`.
+controller-generated children. Keep ordinary chart-based applications in `default`; Argo-managed
+application repositories deploy into `deployments` using the existing CI
+service-account permissions.
 
 The cluster uses upstream Talos v1.12.7 and Kubernetes v1.35.4 because the
 Intel Mac nodes cannot boot the Clang/ThinLTO EFI artifacts used by Talos v1.13+.

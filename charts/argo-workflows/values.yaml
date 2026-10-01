@@ -3,6 +3,8 @@ repositories:
   url: https://github.com/paulsteele/blog
 - name: hub
   url: https://github.com/paulsteele/hub
+- name: jellyfin-mysql
+  url: https://github.com/paulsteele/jellyfin-mysql
 - name: bank-etl
   url: https://github.com/paulsteele/bank-etl
 - name: talks 

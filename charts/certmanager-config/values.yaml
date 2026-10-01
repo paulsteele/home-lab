@@ -12,3 +12,7 @@ baseResources:
     namespace: ci
     domains:
     - '*.paul-steele.com'
+  - name: paul-steele.com
+    namespace: deployments
+    domains:
+    - '*.paul-steele.com'
